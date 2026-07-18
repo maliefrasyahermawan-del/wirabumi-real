@@ -12,6 +12,8 @@ import Kur from './pages/Kur';
 import Chatbot from './pages/Chatbot';
 import Dinkop from './pages/Dinkop';
 import Profile from './pages/Profile';
+import Pengeluaran from './pages/Pengeluaran';
+import LaporanKeuangan from './pages/LaporanKeuangan';
 
 export default function App() {
   return (
@@ -28,6 +30,8 @@ export default function App() {
           <Route path="/kur" element={<ProtectedRoute><Kur /></ProtectedRoute>} />
           <Route path="/asisten" element={<ProtectedRoute><Chatbot /></ProtectedRoute>} />
           <Route path="/profil" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/pengeluaran" element={<ProtectedRoute><Pengeluaran /></ProtectedRoute>} />
+          <Route path="/laporan" element={<ProtectedRoute><LaporanKeuangan /></ProtectedRoute>} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

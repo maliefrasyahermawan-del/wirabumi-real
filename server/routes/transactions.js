@@ -6,13 +6,11 @@ const router = Router();
 router.use(requireAuth);
 
 router.get('/', async (req, res) => {
-  const { since } = req.query;
+  const { since, until } = req.query;
   const params = [req.userId];
   let query = 'select * from transactions where user_id = $1';
-  if (since) {
-    params.push(since);
-    query += ` and tanggal >= $2`;
-  }
+  if (since) { params.push(since); query += ` and tanggal >= $${params.length}`; }
+  if (until) { params.push(until); query += ` and tanggal <= $${params.length}`; }
   query += ' order by tanggal desc, created_at desc';
   const result = await pool.query(query, params);
   res.json(result.rows);

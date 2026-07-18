@@ -37,6 +37,25 @@ create table if not exists transactions (
 );
 create index if not exists transactions_user_tanggal_idx on transactions (user_id, tanggal desc);
 
+-- Expense/beban tracking — kept separate from `transactions` (sales) since
+-- the two feed a real Laporan Laba Rugi (Pendapatan - Beban) rather than
+-- being the same kind of record with a type flag.
+create table if not exists expenses (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references users(id) on delete cascade,
+  tanggal date not null default current_date,
+  kategori text not null check (kategori in (
+    'Pembelian Bahan Baku/Stok', 'Gaji & Upah Karyawan', 'Sewa Tempat',
+    'Listrik, Air & Utilitas', 'Transportasi & BBM', 'Perlengkapan & Peralatan',
+    'Pemasaran & Promosi', 'Lain-lain'
+  )),
+  keterangan text not null,
+  jumlah numeric not null check (jumlah >= 0),
+  source text not null default 'manual' check (source in ('manual')),
+  created_at timestamptz not null default now()
+);
+create index if not exists expenses_user_tanggal_idx on expenses (user_id, tanggal desc);
+
 create table if not exists kur_documents (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references users(id) on delete cascade,

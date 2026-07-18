@@ -127,7 +127,49 @@ C. UNGGAH FOTO BUKTI TRANSFER (JUGA PENTING UNTUK JUJUR DIJELASKAN)
 
 
 ========================================================
-5. SKOR KELAYAKAN
+5. PENGELUARAN
+========================================================
+- Halaman terpisah dari Pembukuan (yang mencatat PENJUALAN), khusus
+  untuk mencatat BEBAN/PENGELUARAN usaha: tanggal, kategori (pilih
+  dari daftar tetap: Pembelian Bahan Baku/Stok, Gaji & Upah
+  Karyawan, Sewa Tempat, Listrik/Air/Utilitas, Transportasi & BBM,
+  Perlengkapan & Peralatan, Pemasaran & Promosi, Lain-lain),
+  keterangan, dan jumlah.
+- Input MANUAL saja untuk saat ini - belum ada tempel-chat atau
+  unggah-foto untuk pengeluaran (baru ada untuk pencatatan
+  penjualan).
+- Data ini digabung dengan data penjualan untuk menyusun Laporan
+  Laba Rugi (lihat bagian 6).
+
+========================================================
+6. LAPORAN LABA RUGI
+========================================================
+- Menampilkan ringkasan Pendapatan (dari data Pembukuan/penjualan)
+  dikurangi Beban (dari data Pengeluaran, dikelompokkan per
+  kategori) untuk periode satu bulan yang dipilih = Laba/Rugi
+  Bersih.
+- SEMUA ANGKA DIHITUNG REAL dari database (query SQL langsung ke
+  tabel transaksi & pengeluaran), bukan simulasi.
+- Bisa diunduh sebagai PDF dengan tata letak yang mengikuti STRUKTUR
+  Laporan Laba Rugi standar akuntansi (SAK EMKM - Standar Akuntansi
+  Keuangan untuk Usaha Mikro, Kecil, Menengah): bagian Pendapatan,
+  bagian Beban Usaha per kategori, lalu Laba/Rugi Bersih.
+- JUJUR - KETERBATASAN PENTING: ini BUKAN laporan keuangan SAK EMKM
+  yang lengkap. SAK EMKM formal terdiri dari 3 laporan: Laporan
+  Laba Rugi, Laporan Posisi Keuangan (Neraca), dan Catatan atas
+  Laporan Keuangan. WIRABUMI baru menyediakan yang PERTAMA (Laba
+  Rugi) karena baru itu yang bisa dihitung dari data yang dicatat
+  sekarang (penjualan + pengeluaran). Laporan Posisi Keuangan
+  (Neraca) butuh pencatatan aset, utang, dan modal usaha yang BELUM
+  ada fiturnya di WIRABUMI.
+- Laporan ini juga TIDAK melalui proses jurnal umum/buku besar
+  debit-kredit seperti akuntansi formal (double-entry bookkeeping)
+  - dihitung langsung dari penjumlahan tabel transaksi & pengeluaran
+  memakai SQL. Untuk kebutuhan resmi (pajak, audit, dsb), tetap
+  konsultasikan ke akuntan/konsultan pajak.
+
+========================================================
+7. SKOR KELAYAKAN
 ========================================================
 Skor 0-100 ini BENAR-BENAR DIHITUNG dari data pembukuanmu, lewat
 rumus yang jalan di database (bukan angka acak/hardcode). Rumusnya:
@@ -150,7 +192,7 @@ transaksi atau legalitas berubah.
 
 
 ========================================================
-6. BERKAS KUR
+8. BERKAS KUR
 ========================================================
 - Plafon (jumlah pinjaman) dan cicilan bulanan DIHITUNG SUNGGUHAN,
   bukan angka tetap:
@@ -178,7 +220,7 @@ transaksi atau legalitas berubah.
 
 
 ========================================================
-7. ASISTEN AI (CHATBOT)
+9. ASISTEN AI (CHATBOT)
 ========================================================
 JUJUR: NAMA "ASISTEN AI" INI SEDIKIT MENYESATKAN. Ini BUKAN AI
 sungguhan (bukan ChatGPT/Gemini/model bahasa apa pun). Ini adalah
@@ -202,7 +244,7 @@ dengan cara yang aneh/berbelit, bot bisa saja tidak nyambung.
 
 
 ========================================================
-8. DASHBOARD DINKOP
+10. DASHBOARD DINKOP
 ========================================================
 - Halaman ini untuk sudut pandang "dinas" - menampilkan data
   AGREGAT (gabungan) dari SEMUA UMKM yang terdaftar: total UMKM,
@@ -218,7 +260,7 @@ dengan cara yang aneh/berbelit, bot bisa saja tidak nyambung.
 
 
 ========================================================
-9. CARA KERJA
+11. CARA KERJA
 ========================================================
 - Halaman panduan interaktif yang menjelaskan alur 4 langkah
   WIRABUMI (Kumpulkan bukti jualan -> WIRABUMI merapikan -> Lihat
@@ -258,6 +300,11 @@ KETERBATASAN YANG PERLU DIKETAHUI (SUPAYA TETAP JUJUR)
 9. Fitur unggah foto butuh koneksi internet SEKALI di awal (untuk
    unduh file model bahasa OCR ~10-20 MB) - setelah itu tersimpan
    cache dan tidak perlu internet lagi untuk membaca foto.
+10. Laporan Laba Rugi BUKAN laporan keuangan SAK EMKM yang lengkap
+    (belum ada Laporan Posisi Keuangan/Neraca, belum lewat proses
+    jurnal umum & buku besar debit-kredit). Untuk kebutuhan resmi
+    (pajak, audit, pengajuan formal), tetap konsultasikan ke
+    akuntan/konsultan pajak.
 
 
 ========================================================
@@ -267,6 +314,8 @@ NYATA (dihitung/tersimpan sungguhan):
 - Akun & login, isolasi data per pengguna
 - Semua data pembukuan (manual, hasil tempel-chat, maupun hasil
   unggah foto)
+- Semua data pengeluaran/beban usaha
+- Laporan Laba Rugi (Pendapatan - Beban, real dari database) + PDF
 - Skor kelayakan (rumus 4 faktor)
 - Plafon & cicilan KUR (rumus anuitas asli)
 - PDF berkas KUR (file sungguhan, bisa diunduh)

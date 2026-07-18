@@ -60,10 +60,18 @@ input, textarea, select { font-family: inherit; }
 .brand-name.small { font-size: 16px; }
 .brand-badge { font-size: 12px; font-weight: 700; color: var(--blue-dark); background: var(--blue-light); padding: 4px 11px; border-radius: 999px; letter-spacing: 0.3px; margin-left: 6px; white-space: nowrap; }
 
-.navlinks { flex: 1; display: flex; align-items: center; justify-content: center; gap: 40px; white-space: nowrap; flex-wrap: wrap; }
+.navlinks { flex: 1; display: flex; align-items: center; justify-content: center; gap: 36px; white-space: nowrap; flex-wrap: wrap; row-gap: 8px; }
 .navlink { font-size: 14px; font-weight: 600; color: var(--text-muted); cursor: pointer; background: none; border: none; padding: 0; }
 .navlink:hover { color: var(--blue-dark); }
 .navlink.current { color: var(--blue-dark); font-weight: 700; }
+
+.nav-dropdown { position: absolute; top: calc(100% + 14px); left: 50%; transform: translateX(-50%); background: var(--white); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 12px 30px rgba(15,27,42,.12); padding: 8px; min-width: 210px; z-index: 20; display: flex; flex-direction: column; gap: 2px; }
+.nav-dropdown-item { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; text-align: left; background: none; border: none; cursor: pointer; padding: 9px 12px; border-radius: 8px; white-space: normal; }
+.nav-dropdown-item:hover { background: var(--blue-lighter); }
+.nav-dropdown-item.current { background: var(--blue-light); }
+.nav-dropdown-label { font-size: 13.5px; font-weight: 700; color: var(--text); }
+.nav-dropdown-item.current .nav-dropdown-label { color: var(--blue-dark); }
+.nav-dropdown-desc { font-size: 11.5px; color: var(--text-faint); }
 
 /* Buttons */
 .btn { font-family: inherit; cursor: pointer; border-radius: 10px; font-weight: 700; border: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
