@@ -1,0 +1,286 @@
+========================================================
+FITUR WIRABUMI - DOKUMENTASI LENGKAP DAN JUJUR
+========================================================
+
+Dokumen ini menjelaskan SEMUA fitur yang ada di aplikasi WIRABUMI
+apa adanya - termasuk mana yang benar-benar dihitung dari data asli,
+dan mana yang masih sederhana/terbatas. Tidak ada yang dilebih-lebihkan.
+
+TENTANG WIRABUMI
+--------------------------------------------------------
+WIRABUMI adalah aplikasi pembukuan dan kesiapan pengajuan KUR
+(Kredit Usaha Rakyat) untuk pelaku UMKM di kawasan Solo Raya.
+Aplikasi ini FUNGSIONAL NYATA - punya database sungguhan, akun
+pengguna sungguhan, dan perhitungan yang benar-benar jalan - BUKAN
+sekadar tampilan/mockup statis.
+
+Stack teknis: React + Vite (tampilan), Node/Express (server API),
+PostgreSQL yang jalan lokal di komputer (database). Tidak memakai
+layanan cloud pihak ketiga.
+
+
+========================================================
+1. BERANDA (Landing Page)
+========================================================
+- Halaman depan berisi penjelasan singkat tentang WIRABUMI.
+- Tiga angka statistik (UMKM Terhubung, Berkas KUR Dibuat, Skor
+  Rata-rata) ASLI - diambil langsung dari database, bukan angka
+  karangan. Kalau belum ada yang daftar, angkanya akan 0.
+- Contoh percakapan "Batik Kliwon Jaya" di kartu sebelah kanan itu
+  ILUSTRASI STATIS untuk menjelaskan konsep, bukan data sungguhan.
+
+
+========================================================
+2. DAFTAR & MASUK (Registrasi & Login)
+========================================================
+- Sistem akun sungguhan: email + kata sandi, disimpan di database
+  dengan kata sandi di-hash (bcrypt), bukan disimpan polos.
+- Setiap akun punya data pembukuan sendiri-sendiri, tidak
+  tercampur dengan akun lain (dijamin lewat pengecekan di server,
+  bukan cuma disembunyikan di tampilan).
+- Tidak ada verifikasi email/OTP - begitu daftar, langsung bisa
+  dipakai. Ini disengaja untuk kemudahan pemakaian lokal, BUKAN
+  standar keamanan untuk aplikasi publik/produksi sungguhan.
+- Belum ada fitur "lupa kata sandi" (reset password).
+
+
+========================================================
+3. PROFIL USAHA
+========================================================
+- Bisa mengubah: nama usaha, kategori usaha, kecamatan, alamat,
+  nomor telepon.
+- Email tidak bisa diubah dari halaman ini.
+- Data ini betul-betul tersimpan ke database dan langsung dipakai
+  di halaman KUR (untuk isi PDF) dan Dashboard Dinkop (untuk
+  agregat per kecamatan).
+
+
+========================================================
+4. PEMBUKUAN
+========================================================
+Ada tiga cara mencatat transaksi:
+
+A. INPUT MANUAL
+   - Form isi tanggal, nama produk, jumlah, satuan, harga, nama
+     pelanggan (opsional), status bayar (Lunas/DP 50%/Belum Lunas).
+   - Tersimpan sungguhan ke database, bisa dihapus kapan saja.
+
+B. TEMPEL CHAT (PALING PENTING UNTUK JUJUR DIJELASKAN)
+   - Kamu tempel isi obrolan WhatsApp/caption Instagram, lalu
+     sistem MENCOBA menebak produk, jumlah, dan harga secara
+     otomatis dari teks itu.
+   - INI BUKAN AI/ChatGPT/LLM. Ini murni program berbasis ATURAN
+     (regex/pencarian kata kunci): mencari pola angka+"rb"/"ribu"/
+     "jt"/"juta", mencari kata satuan (pcs, kg, m, dst), dan
+     menebak nama produk dari kata-kata yang tersisa setelah kata-
+     kata umum (bu, kak, ready, dll) dibuang.
+   - Karena ini cuma aturan sederhana, HASILNYA BISA SALAH/KURANG
+     PAS - terutama untuk nama produk. Karena itu, hasil tebakan
+     SELALU ditampilkan dulu di tabel yang bisa kamu koreksi
+     (produk, jumlah, harga, status) sebelum benar-benar disimpan.
+     Tidak ada yang tersimpan otomatis tanpa kamu lihat dulu.
+   - Ada label "yakin" (low/medium/high) yang menunjukkan seberapa
+     percaya sistem pada tebakannya - ini juga dihitung dari aturan
+     sederhana (misal: apakah harga & jumlah sama-sama ketemu),
+     bukan skor kepercayaan AI.
+
+C. UNGGAH FOTO BUKTI TRANSFER (JUGA PENTING UNTUK JUJUR DIJELASKAN)
+   - Kamu unggah foto/screenshot konfirmasi transfer bank (mis.
+     layar "m-Transfer: BERHASIL" dari BCA/BNI/dll), lalu sistem
+     mencoba membaca nominal, tanggal, dan keterangannya.
+   - PROSESNYA DUA TAHAP:
+     1) OCR (pengenalan teks dari gambar) memakai library
+        Tesseract.js - BUKAN AI/LLM, ini teknologi pengenalan
+        karakter (OCR) klasik yang sudah ada puluhan tahun. OCR ini
+        berjalan 100% DI BROWSER kamu sendiri - gambar/fotomu TIDAK
+        pernah dikirim ke server WIRABUMI atau layanan cloud
+        manapun.
+        CATATAN JUJUR: supaya OCR bisa baca huruf Indonesia, browser
+        perlu UNDUH file model bahasa (sekitar 10-20 MB) dari CDN
+        publik (bukan server WIRABUMI, bukan layanan AI) saat
+        dipakai PERTAMA KALI. Jadi butuh koneksi internet sekali di
+        awal; setelah itu file itu tersimpan cache di browser.
+     2) Setelah teks berhasil dibaca, teks itu diproses dengan
+        ATURAN SEDERHANA (regex) yang sama filosofinya dengan tempel
+        chat: mencari pola "NOMINAL TRANSFER Rp ...", "BERITA ...",
+        "TUJUAN TRANSAKSI ...", tanggal, nama bank, dan nama
+        penerima.
+   - HASIL OCR BISA SALAH BACA, terutama kalau foto buram, miring,
+     gelap, atau terpotong. Karena itu:
+     * Hasil bacaan MENTAH (raw OCR text) bisa dilihat lewat tombol
+       "Lihat teks hasil OCR" supaya kamu bisa cek sendiri apa yang
+       sebenarnya terbaca sistem.
+     * Hasil ekstraksi (produk, jumlah, harga, nama pelanggan,
+       status) SELALU masuk tabel review yang bisa kamu koreksi
+       dulu sebelum disimpan - sama seperti tempel chat, tidak ada
+       yang tersimpan otomatis tanpa kamu lihat.
+   - ASUMSI PENTING: fitur ini dirancang untuk kasus PELANGGAN
+     membayar ke usahamu (uang MASUK/penjualan), lalu screenshot
+     bukti transfer itu dikirim pelanggan ke kamu sebagai bukti
+     bayar. Fitur ini BELUM membedakan uang masuk vs uang keluar
+     (pengeluaran/belanja usaha) - semua yang diunggah di sini akan
+     dicatat sebagai transaksi penjualan (menambah omzet). Kalau
+     foto yang kamu unggah sebenarnya transfer KELUAR (kamu belanja/
+     membayar orang lain), JANGAN disimpan sebagai penjualan -
+     koreksi dulu atau batalkan, karena akan salah menaikkan skor
+     dan omzetmu.
+
+
+========================================================
+5. SKOR KELAYAKAN
+========================================================
+Skor 0-100 ini BENAR-BENAR DIHITUNG dari data pembukuanmu, lewat
+rumus yang jalan di database (bukan angka acak/hardcode). Rumusnya:
+
+- 25% Konsistensi transaksi harian: makin banyak HARI berbeda kamu
+  mencatat transaksi dalam 90 hari terakhir, makin tinggi.
+- 25% Volume penjualan bulanan: membandingkan omzet 30 hari
+  terakhir dengan 30 hari sebelumnya (naik = skor naik).
+- 25% Rasio pelanggan tetap: dihitung dari kolom "nama pelanggan"
+  di transaksi - kalau nama pelanggan sama muncul berkali-kali,
+  dianggap pelanggan setia. Kalau kamu jarang isi nama pelanggan
+  (kurang dari 3 transaksi terisi), skor bagian ini otomatis
+  dikasih nilai netral 50, bukan 0 atau 100.
+- 25% Kelengkapan legalitas: dari 3 dokumen (NIB, P-IRT, Sertifikasi
+  Halal) yang kamu centang di halaman KUR.
+
+Skor >= 60 berstatus "Layak Diajukan", di bawah itu "Perlu
+Peningkatan". Semua dihitung ulang otomatis setiap kali data
+transaksi atau legalitas berubah.
+
+
+========================================================
+6. BERKAS KUR
+========================================================
+- Plafon (jumlah pinjaman) dan cicilan bulanan DIHITUNG SUNGGUHAN,
+  bukan angka tetap:
+  * Plafon = rata-rata omzet bulanan (6 bulan terakhir) dikali
+    pengganda yang tergantung skor kelayakan (2.5x kalau skor di
+    bawah 60, 3.5x kalau 60-79, 4.5x kalau 80 ke atas), dibulatkan
+    ke kelipatan Rp 500.000, dengan batas maksimal Rp 100.000.000.
+  * Cicilan bulanan pakai RUMUS ANUITAS PINJAMAN yang sesungguhnya
+    (rumus yang sama dipakai bank), dengan asumsi bunga 6% efektif
+    per tahun - bukan cuma dibagi rata.
+  * Bisa pilih tenor 12/24/36 bulan, angka langsung berubah sesuai
+    pilihan.
+- Tombol "Buat & Unduh Paket Dokumen (PDF)" BENAR-BENAR membuat
+  file PDF sungguhan (bukan gambar statis) berisi profil usaha,
+  ringkasan 6 bulan transaksi, dan simulasi cicilan - lalu file itu
+  diunduh ke komputermu.
+- Setiap kali PDF dibuat, itu TERCATAT ke database (untuk hitungan
+  "Berkas KUR Dibuat" di Dashboard Dinkop dan Beranda).
+- Checklist legalitas (NIB, P-IRT, Sertifikasi Halal) - kalau kamu
+  centang, itu HANYA MENANDAI di sistem kamu bahwa dokumen itu
+  sudah kamu punya. WIRABUMI TIDAK memverifikasi ke OSS/BPJPH
+  sungguhan, dan TIDAK benar-benar mengajukan pinjaman ke bank mana
+  pun. Berkas PDF ini adalah bahan yang kamu bawa sendiri ke bank
+  atau lembaga terkait.
+
+
+========================================================
+7. ASISTEN AI (CHATBOT)
+========================================================
+JUJUR: NAMA "ASISTEN AI" INI SEDIKIT MENYESATKAN. Ini BUKAN AI
+sungguhan (bukan ChatGPT/Gemini/model bahasa apa pun). Ini adalah
+program pencocokan kata kunci biasa:
+- Kalau pesanmu mengandung kata seperti "omzet"/"penjualan", bot
+  menjawab dengan angka omzet ASLI dari database kamu.
+- Kalau mengandung "skor"/"kelayakan", dijawab dari skor ASLI.
+- Begitu juga untuk kata plafon/pinjam, cicilan/angsuran,
+  legal/nib/halal, produk/laris, dan tips menaikkan skor.
+- Kalau mengandung sapaan (halo, hai, selamat pagi/siang/sore/
+    malam), dibalas sapaan yang sesuai.
+- Kalau tidak cocok kata kunci mana pun, dijawab jawaban standar
+  "belum punya jawaban pasti".
+Jadi: ANGKA-ANGKA yang dijawab bot itu NYATA (diambil dari data
+pembukuanmu), tapi CARA bot memahami pertanyaanmu itu SEDERHANA
+(bukan pemahaman bahasa natural yang canggih). Kalau kamu bertanya
+dengan cara yang aneh/berbelit, bot bisa saja tidak nyambung.
+- Riwayat chat tersimpan ke database, maksimal 5 percakapan
+  terakhir (10 pesan) - lebih dari itu, yang paling lama otomatis
+  dihapus.
+
+
+========================================================
+8. DASHBOARD DINKOP
+========================================================
+- Halaman ini untuk sudut pandang "dinas" - menampilkan data
+  AGREGAT (gabungan) dari SEMUA UMKM yang terdaftar: total UMKM,
+  rata-rata skor, persentase yang layak KUR, jumlah berkas KUR
+  dibuat, skor rata-rata per kecamatan, dan tren jumlah UMKM aktif
+  per bulan.
+- SEMUA ANGKA INI DIHITUNG REAL DARI DATABASE, bukan data contoh.
+  Kalau baru ada 1 UMKM terdaftar, dashboard ini akan menampilkan
+  data dari 1 UMKM itu saja.
+- Sengaja TIDAK menampilkan data transaksi/identitas per individu
+  UMKM - hanya angka gabungan, untuk menjaga privasi.
+- Halaman ini bisa diakses TANPA login (publik).
+
+
+========================================================
+9. CARA KERJA
+========================================================
+- Halaman panduan interaktif yang menjelaskan alur 4 langkah
+  WIRABUMI (Kumpulkan bukti jualan -> WIRABUMI merapikan -> Lihat
+  skor kelayakan -> Ajukan KUR).
+- Ini halaman PENJELASAN/MARKETING saja, kontennya statis (teks
+  tetap), tapi tombol-tombolnya mengarahkan ke halaman fitur
+  sungguhan yang sudah dijelaskan di atas.
+
+
+========================================================
+KETERBATASAN YANG PERLU DIKETAHUI (SUPAYA TETAP JUJUR)
+========================================================
+1. Chatbot BUKAN AI - hanya pencocokan kata kunci. Jangan berharap
+   dia paham pertanyaan yang rumit atau berbelit-belit.
+2. Parser tempel-chat BUKAN AI - bisa salah menebak produk terutama
+   untuk chat yang tidak lazim. Karena itu selalu ada langkah
+   review sebelum disimpan.
+3. Fitur unggah foto BUKAN AI - OCR (Tesseract.js) hanya membaca
+   teks dari gambar, bukan memahami isinya. Foto buram/miring/gelap
+   bisa gagal terbaca atau salah baca. Fitur ini juga BELUM bisa
+   membedakan transfer masuk (penjualan) vs transfer keluar
+   (pengeluaran) - semua diperlakukan sebagai penjualan, jadi
+   pengguna harus teliti saat memilih foto yang diunggah.
+4. Tidak ada verifikasi dokumen legalitas ke instansi resmi
+   (OSS/BPJPH) - checklist di aplikasi ini murni pencatatan
+   internal.
+5. Tidak ada pengajuan KUR sungguhan ke bank - PDF yang dihasilkan
+   adalah bahan yang kamu bawa sendiri.
+6. Aplikasi ini jalan LOKAL di satu komputer (database PostgreSQL
+   lokal) - belum di-deploy ke internet, jadi belum bisa diakses
+   dari perangkat lain kecuali di-deploy ke server sungguhan.
+7. Tidak ada reset password, tidak ada verifikasi email, tidak ada
+   pemberitahuan (notifikasi email/WhatsApp) otomatis.
+8. Suku bunga KUR (6% efektif/tahun) dan formula pengganda plafon
+   adalah ASUMSI yang dipakai untuk simulasi - bukan angka resmi
+   dari bank/pemerintah yang mengikat.
+9. Fitur unggah foto butuh koneksi internet SEKALI di awal (untuk
+   unduh file model bahasa OCR ~10-20 MB) - setelah itu tersimpan
+   cache dan tidak perlu internet lagi untuk membaca foto.
+
+
+========================================================
+RINGKASAN: MANA YANG NYATA, MANA YANG SEDERHANA
+========================================================
+NYATA (dihitung/tersimpan sungguhan):
+- Akun & login, isolasi data per pengguna
+- Semua data pembukuan (manual, hasil tempel-chat, maupun hasil
+  unggah foto)
+- Skor kelayakan (rumus 4 faktor)
+- Plafon & cicilan KUR (rumus anuitas asli)
+- PDF berkas KUR (file sungguhan, bisa diunduh)
+- Statistik Beranda & Dashboard Dinkop (agregat asli dari database)
+- Riwayat chat (tersimpan, dengan batas 5 percakapan)
+- OCR baca teks dari gambar (Tesseract.js, teknologi OCR asli,
+  berjalan lokal di browser - bukan AI, bukan kirim data ke cloud)
+
+SEDERHANA / BUKAN AI (pencocokan kata kunci & aturan manual):
+- Asisten AI (chatbot) - jawaban berdasar kata kunci
+- Parser tempel-chat - ekstraksi transaksi berdasar pola teks
+- Parser unggah-foto - ekstraksi transaksi dari hasil OCR berdasar
+  pola teks, sama seperti parser tempel-chat
+
+Dokumen ini dibuat agar siapa pun yang membaca tahu persis apa yang
+sungguhan berjalan di WIRABUMI dan apa yang masih sederhana - tanpa
+dilebih-lebihkan.
