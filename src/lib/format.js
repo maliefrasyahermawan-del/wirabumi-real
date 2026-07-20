@@ -12,3 +12,14 @@ export function todayISO() {
   const d = new Date();
   return d.toISOString().slice(0, 10);
 }
+
+export function formatThousands(rawInput) {
+  const digits = String(rawInput).replace(/[^0-9]/g, '');
+  if (!digits) return '';
+  return Number(digits).toLocaleString('id-ID');
+}
+
+export function parseThousands(formatted) {
+  const digits = String(formatted).replace(/[^0-9]/g, '');
+  return digits ? Number(digits) : 0;
+}

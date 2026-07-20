@@ -32,8 +32,8 @@ export default function Landing() {
         <div className="wrap-1240 hero-grid">
           <div style={{ animation: 'wbFade .5s ease' }}>
             <div className="eyebrow"><span className="eyebrow-dot"></span>UNTUK UMKM SOLO RAYA</div>
-            <h1 className="hero-title">Jualanmu sudah tercatat.<br />Tinggal <em>diakui bank.</em></h1>
-            <p className="hero-sub">WIRABUMI membaca chat WhatsApp dan caption jualanmu, lalu mengubahnya jadi pembukuan rapi, skor kelayakan, dan berkas KUR siap ajukan, dihitung dari data transaksi usahamu sendiri.</p>
+            <h1 className="hero-title">Usahamu laku tiap hari,<br />tapi nggak punya "bukti" buat bank?</h1>
+            <p className="hero-sub">WIRABUMI ubah itu tanpa kamu ubah cara jualan.</p>
             <div className="hero-ctas">
               <button className="btn btn-primary btn-md" onClick={goStart}>{user ? 'Buka Pembukuan' : 'Daftar Gratis'} →</button>
               <button className="btn btn-ghost-dark btn-md" onClick={() => navigate('/dashboard')}>Lihat Dashboard</button>

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import TopNav from '../components/TopNav';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../lib/apiClient';
-import { rupiah, formatDateID, todayISO } from '../lib/format';
+import { rupiah, formatDateID, todayISO, formatThousands, parseThousands } from '../lib/format';
 
 const KATEGORI_OPTIONS = [
   'Pembelian Bahan Baku/Stok', 'Gaji & Upah Karyawan', 'Sewa Tempat',
@@ -35,7 +35,7 @@ export default function Pengeluaran() {
   async function handleAdd(e) {
     e.preventDefault();
     setError('');
-    const jumlah = parseFloat(String(form.jumlah).replace(/[^0-9.]/g, ''));
+    const jumlah = parseThousands(form.jumlah);
     if (!form.keterangan.trim() || !jumlah || jumlah <= 0) {
       setError('Isi keterangan dan jumlah yang valid.');
       return;
@@ -89,7 +89,7 @@ export default function Pengeluaran() {
                 </select>
               </div>
               <div className="field"><label>Keterangan</label><input value={form.keterangan} onChange={(e) => setField('keterangan', e.target.value)} placeholder="mis. Beli kain mori & pewarna" /></div>
-              <div className="field"><label>Jumlah (Rp)</label><input value={form.jumlah} onChange={(e) => setField('jumlah', e.target.value)} placeholder="mis. 500000" /></div>
+              <div className="field"><label>Jumlah (Rp)</label><input inputMode="numeric" value={form.jumlah} onChange={(e) => setField('jumlah', formatThousands(e.target.value))} placeholder="mis. 500.000" /></div>
               <button className="btn btn-primary btn-block" style={{ padding: 13, borderRadius: 10, marginTop: 4 }} disabled={saving} type="submit">
                 {saving ? 'Menyimpan…' : '+ Tambah Pengeluaran'}
               </button>

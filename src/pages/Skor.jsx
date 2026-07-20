@@ -36,7 +36,7 @@ export default function Skor() {
 
         <div className="score-panel" style={{ animation: 'wbFade .5s ease' }}>
           <div className="center-text">
-            <div className="score-ring" style={{ background: `conic-gradient(#1A5FA8 0 ${conicDeg}deg, #E3EEFA ${conicDeg}deg 360deg)` }}>
+            <div className="score-ring" style={{ background: `conic-gradient(var(--blue) 0 ${conicDeg}deg, var(--blue-light) ${conicDeg}deg 360deg)` }}>
               <div className="score-ring-inner">
                 <div className="score-num">{total}</div>
                 <div className="score-of">dari 100</div>

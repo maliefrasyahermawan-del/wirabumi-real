@@ -62,11 +62,11 @@ function buildAnswer(qRaw, ctx) {
   // generic "what can you do" fallback below so a bare "halo" gets an actual
   // greeting back instead of the capabilities list.
   if (/\bhai\b|\bhalo+\b|\bhallo\b|\bhi\b|\bpagi\b|\bsiang\b|\bsore\b|\bmalam\b/.test(q)) {
-    if (/pagi/.test(q)) return 'Selamat pagi! Aku Asisten Keuangan WIRABUMI 👋 Ada yang bisa aku bantu soal usahamu?';
-    if (/siang/.test(q)) return 'Selamat siang! Aku Asisten Keuangan WIRABUMI 👋 Ada yang bisa aku bantu soal usahamu?';
-    if (/sore/.test(q)) return 'Selamat sore! Aku Asisten Keuangan WIRABUMI 👋 Ada yang bisa aku bantu soal usahamu?';
-    if (/malam/.test(q)) return 'Selamat malam! Aku Asisten Keuangan WIRABUMI 👋 Ada yang bisa aku bantu soal usahamu?';
-    return 'Hai! Aku Asisten Keuangan WIRABUMI 👋 Ada yang bisa aku bantu soal usahamu?';
+    if (/pagi/.test(q)) return 'Selamat pagi! Aku Mas Sido, asisten keuangan WIRABUMI 👋 Ada yang bisa aku bantu soal usahamu?';
+    if (/siang/.test(q)) return 'Selamat siang! Aku Mas Sido, asisten keuangan WIRABUMI 👋 Ada yang bisa aku bantu soal usahamu?';
+    if (/sore/.test(q)) return 'Selamat sore! Aku Mas Sido, asisten keuangan WIRABUMI 👋 Ada yang bisa aku bantu soal usahamu?';
+    if (/malam/.test(q)) return 'Selamat malam! Aku Mas Sido, asisten keuangan WIRABUMI 👋 Ada yang bisa aku bantu soal usahamu?';
+    return 'Hai! Aku Mas Sido, asisten keuangan WIRABUMI 👋 Ada yang bisa aku bantu soal usahamu?';
   }
   if (/help|bantu|bisa apa|apa aja/.test(q)) {
     return 'Aku bisa bantu soal: omzet & penjualan, skor kelayakan, simulasi plafon KUR, angsuran bulanan, produk terlaris, dan status legalitas usahamu. Semua dihitung langsung dari data pembukuanmu. Mau mulai dari mana?';
@@ -123,7 +123,7 @@ export default function Chatbot() {
         // A session-start nicety only — intentionally not persisted, so there's
         // no first-load race to double-insert it (StrictMode's double effect
         // invocation would otherwise write it twice).
-        const greeting = 'Halo! Aku Asisten Keuangan WIRABUMI 👋 Aku terhubung ke data usahamu: omzet, skor kelayakan, sampai simulasi KUR. Coba tanya apa saja, atau klik salah satu pertanyaan di bawah.';
+        const greeting = 'Halo, kenalin aku Mas Sido 👋 Aku asisten keuangan WIRABUMI, tugasku bantu jawab pertanyaan soal usahamu langsung dari data pembukuanmu sendiri: omzet, skor kelayakan, sampai simulasi KUR. Namaku diambil dari kata "sido" pada motif batik Sidomukti, yang dalam bahasa Jawa berarti "jadi" atau "tercapai", doa supaya usahamu jadi dan tercapai. Coba tanya apa saja, atau klik salah satu pertanyaan di bawah.';
         setMessages([{ role: 'bot', text: greeting }]);
       }
     }
@@ -157,10 +157,10 @@ export default function Chatbot() {
           <div style={{ width: 46, height: 46, borderRadius: 13, background: 'var(--blue)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--white)', fontSize: 22 }}>◍</div>
           <div>
             <div className="flex-center gap-8" style={{ gap: 9 }}>
-              <h1 className="serif" style={{ fontWeight: 600, fontSize: 22, margin: 0 }}>Asisten Keuangan WIRABUMI</h1>
+              <h1 className="serif" style={{ fontWeight: 600, fontSize: 22, margin: 0 }}>Mas Sido</h1>
               <span className="connected-badge"><span className="connected-dot"></span>Terhubung ke data usahamu</span>
             </div>
-            <div className="muted" style={{ fontSize: 13, marginTop: 2 }}>Menjawab dari {txnCount} transaksi · {profile?.business_name}</div>
+            <div className="muted" style={{ fontSize: 13, marginTop: 2 }}>Asisten Keuangan WIRABUMI · Menjawab dari {txnCount} transaksi · {profile?.business_name}</div>
           </div>
         </div>
 
@@ -194,7 +194,7 @@ export default function Chatbot() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); pushUser(input); } }}
-            placeholder="Tanya soal omzet, skor, KUR, angsuran…"
+            placeholder="Tanya Mas Sido soal omzet, skor, KUR, angsuran…"
           />
           <button className="btn btn-primary" style={{ fontSize: 15, padding: '14px 24px', borderRadius: 12 }} onClick={() => pushUser(input)}>Kirim</button>
         </div>

@@ -19,6 +19,7 @@ create table if not exists profiles (
   legal_nib boolean not null default false,
   legal_pirt boolean not null default false,
   legal_halal boolean not null default false,
+  avatar_url text,
   created_at timestamptz not null default now()
 );
 
@@ -33,6 +34,7 @@ create table if not exists transactions (
   pelanggan text,
   status text not null default 'Lunas' check (status in ('Lunas','DP 50%','Belum Lunas')),
   source text not null default 'manual' check (source in ('manual','chat_parse','photo_ocr')),
+  confidence text check (confidence in ('low','medium','high')),
   created_at timestamptz not null default now()
 );
 create index if not exists transactions_user_tanggal_idx on transactions (user_id, tanggal desc);
@@ -74,6 +76,28 @@ create table if not exists chat_messages (
   created_at timestamptz not null default now()
 );
 create index if not exists chat_messages_user_idx on chat_messages (user_id, created_at);
+
+create table if not exists feedback (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references users(id) on delete cascade,
+  message text not null,
+  created_at timestamptz not null default now()
+);
+
+-- In-app notifications only (no push/email). dedupe_key makes each generated
+-- notification idempotent per its natural period (a day, a week, a month) so
+-- the generator can run on every request without creating duplicates.
+create table if not exists notifications (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references users(id) on delete cascade,
+  type text not null check (type in ('capture_daily','low_confidence','monthly_recap','weekly_drop')),
+  dedupe_key text not null,
+  title text not null,
+  created_at timestamptz not null default now(),
+  read_at timestamptz,
+  unique (user_id, dedupe_key)
+);
+create index if not exists notifications_user_idx on notifications (user_id, created_at desc);
 
 -- ============ Scoring (same formula as before) ============
 create or replace function compute_score(p_user_id uuid)

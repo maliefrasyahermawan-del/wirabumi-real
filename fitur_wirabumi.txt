@@ -220,11 +220,15 @@ transaksi atau legalitas berubah.
 
 
 ========================================================
-9. ASISTEN AI (CHATBOT)
+9. MAS SIDO (CHATBOT ASISTEN KEUANGAN)
 ========================================================
-JUJUR: NAMA "ASISTEN AI" INI SEDIKIT MENYESATKAN. Ini BUKAN AI
-sungguhan (bukan ChatGPT/Gemini/model bahasa apa pun). Ini adalah
-program pencocokan kata kunci biasa:
+Mas Sido adalah nama chatbot asisten keuangan WIRABUMI. Namanya
+diambil dari kata "sido" pada motif batik Sidomukti, yang dalam
+bahasa Jawa berarti "jadi"/"tercapai" - doa supaya usaha yang
+memakai WIRABUMI jadi dan tercapai.
+
+JUJUR: Mas Sido BUKAN AI sungguhan (bukan ChatGPT/Gemini/model
+bahasa apa pun). Ini adalah program pencocokan kata kunci biasa:
 - Kalau pesanmu mengandung kata seperti "omzet"/"penjualan", bot
   menjawab dengan angka omzet ASLI dari database kamu.
 - Kalau mengandung "skor"/"kelayakan", dijawab dari skor ASLI.
@@ -325,7 +329,7 @@ NYATA (dihitung/tersimpan sungguhan):
   berjalan lokal di browser - bukan AI, bukan kirim data ke cloud)
 
 SEDERHANA / BUKAN AI (pencocokan kata kunci & aturan manual):
-- Asisten AI (chatbot) - jawaban berdasar kata kunci
+- Mas Sido (chatbot asisten keuangan) - jawaban berdasar kata kunci
 - Parser tempel-chat - ekstraksi transaksi berdasar pola teks
 - Parser unggah-foto - ekstraksi transaksi dari hasil OCR berdasar
   pola teks, sama seperti parser tempel-chat

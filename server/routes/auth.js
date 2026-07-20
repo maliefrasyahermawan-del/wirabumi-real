@@ -52,7 +52,7 @@ router.post('/login', async (req, res) => {
 router.get('/me', requireAuth, async (req, res) => {
   const result = await pool.query(
     `select u.id, u.email, p.business_name, p.business_category, p.business_address,
-            p.kecamatan, p.phone, p.legal_nib, p.legal_pirt, p.legal_halal
+            p.kecamatan, p.phone, p.legal_nib, p.legal_pirt, p.legal_halal, p.avatar_url
      from users u join profiles p on p.user_id = u.id where u.id = $1`,
     [req.userId]
   );

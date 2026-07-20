@@ -41,11 +41,12 @@ router.post('/bulk', async (req, res) => {
     const inserted = [];
     for (const r of rows) {
       if (!r.produk || !r.harga || r.harga <= 0) continue;
+      const confidence = ['low', 'medium', 'high'].includes(r.confidence) ? r.confidence : null;
       const result = await client.query(
-        `insert into transactions (user_id, tanggal, produk, qty, satuan, harga, pelanggan, status, source)
-         values ($1, coalesce($2, current_date), $3, coalesce($4, 1), coalesce($5, 'pcs'), $6, $7, coalesce($8, 'Lunas'), $9)
+        `insert into transactions (user_id, tanggal, produk, qty, satuan, harga, pelanggan, status, source, confidence)
+         values ($1, coalesce($2, current_date), $3, coalesce($4, 1), coalesce($5, 'pcs'), $6, $7, coalesce($8, 'Lunas'), $9, $10)
          returning *`,
-        [req.userId, r.tanggal || null, r.produk, r.qty || null, r.satuan || null, r.harga, r.pelanggan || null, r.status || null, source]
+        [req.userId, r.tanggal || null, r.produk, r.qty || null, r.satuan || null, r.harga, r.pelanggan || null, r.status || null, source, confidence]
       );
       inserted.push(result.rows[0]);
     }

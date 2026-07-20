@@ -68,7 +68,7 @@ export default function CaraKerja() {
           </div>
 
           <div className="ck-detail" style={{ animation: 'wbFade .4s ease' }}>
-            <div className="eyebrow" style={{ background: 'var(--white)', border: '1px solid var(--border)' }}>LANGKAH {step + 1}</div>
+            <div className="eyebrow" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>LANGKAH {step + 1}</div>
             <h2 className="serif" style={{ fontWeight: 600, fontSize: 27, letterSpacing: '-0.4px', margin: '16px 0 0' }}>{cur.detailTitle}</h2>
             <p style={{ fontSize: 15.5, lineHeight: 1.6, color: 'var(--text-muted)', margin: '12px 0 22px' }}>{cur.detailBody}</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -92,7 +92,7 @@ export default function CaraKerja() {
           </button>
           <button className="ck-promo" onClick={() => goProtected('/asisten')}>
             <div className="ck-promo-icon">◍</div>
-            <div><div style={{ fontWeight: 700, fontSize: 16 }}>Asisten AI Keuangan</div><div style={{ fontSize: 13.5, color: 'var(--text-muted)', lineHeight: 1.5, marginTop: 3 }}>Tanya apa saja soal usahamu, asisten menjawab dari data penjualanmu sendiri.</div></div>
+            <div><div style={{ fontWeight: 700, fontSize: 16 }}>Mas Sido, Asisten Keuangan</div><div style={{ fontSize: 13.5, color: 'var(--text-muted)', lineHeight: 1.5, marginTop: 3 }}>Tanya apa saja soal usahamu, Mas Sido menjawab dari data penjualanmu sendiri.</div></div>
           </button>
         </div>
       </div>
