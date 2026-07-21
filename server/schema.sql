@@ -90,7 +90,7 @@ create table if not exists feedback (
 create table if not exists notifications (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references users(id) on delete cascade,
-  type text not null check (type in ('capture_daily','low_confidence','monthly_recap','weekly_drop')),
+  type text not null check (type in ('capture_daily','low_confidence','monthly_recap','weekly_drop','score_increase')),
   dedupe_key text not null,
   title text not null,
   created_at timestamptz not null default now(),
@@ -98,6 +98,27 @@ create table if not exists notifications (
   unique (user_id, dedupe_key)
 );
 create index if not exists notifications_user_idx on notifications (user_id, created_at desc);
+
+-- Quest system: badges are permanent once earned (never revoked even if the
+-- underlying metric later regresses, same as a real achievement). Quest
+-- completion itself is NOT stored here — it's always derived live from real
+-- transactions/profile data (see server/routes/quests.js), so there's no
+-- separate ledger that can drift out of sync with reality.
+create table if not exists badges (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references users(id) on delete cascade,
+  badge_key text not null check (badge_key in ('umkm_pemula','konsisten','legal_lengkap','siap_kur','umkm_unggulan')),
+  earned_at timestamptz not null default now(),
+  unique (user_id, badge_key)
+);
+
+-- Tracks the last total_score we've shown the user, purely so the
+-- notification generator can detect "your score went up" and fire once.
+create table if not exists score_snapshots (
+  user_id uuid primary key references users(id) on delete cascade,
+  last_score int not null,
+  updated_at timestamptz not null default now()
+);
 
 -- ============ Scoring (same formula as before) ============
 create or replace function compute_score(p_user_id uuid)

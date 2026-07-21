@@ -14,6 +14,7 @@ import kurRoutes from './routes/kur.js';
 import chatRoutes from './routes/chat.js';
 import feedbackRoutes from './routes/feedback.js';
 import notificationsRoutes from './routes/notifications.js';
+import questsRoutes from './routes/quests.js';
 import publicRoutes from './routes/public.js';
 
 dotenv.config();
@@ -33,6 +34,7 @@ app.use('/api/kur', kurRoutes);
 app.use('/api/chat-messages', chatRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/notifications', notificationsRoutes);
+app.use('/api/quests', questsRoutes);
 app.use('/api', publicRoutes);
 
 app.use((err, _req, res, _next) => {

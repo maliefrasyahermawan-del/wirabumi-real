@@ -1,339 +1,532 @@
 ========================================================
-FITUR WIRABUMI - DOKUMENTASI LENGKAP DAN JUJUR
+FITUR WIRABUMI — DOKUMENTASI LENGKAP DAN JUJUR
+(ditulis ulang dari nol, langsung dari kode yang berjalan saat ini)
 ========================================================
 
-Dokumen ini menjelaskan SEMUA fitur yang ada di aplikasi WIRABUMI
-apa adanya - termasuk mana yang benar-benar dihitung dari data asli,
-dan mana yang masih sederhana/terbatas. Tidak ada yang dilebih-lebihkan.
+Dokumen ini menjelaskan SEMUA fitur WIRABUMI apa adanya: mana yang
+benar-benar dihitung/tersimpan dari data asli, mana yang masih
+sederhana/berbasis aturan, dan yang mana (cuma satu) yang benar-benar
+memakai AI. Tidak ada yang dilebih-lebihkan, tidak ada yang
+disembunyikan.
 
 TENTANG WIRABUMI
 --------------------------------------------------------
-WIRABUMI adalah aplikasi pembukuan dan kesiapan pengajuan KUR
-(Kredit Usaha Rakyat) untuk pelaku UMKM di kawasan Solo Raya.
-Aplikasi ini FUNGSIONAL NYATA - punya database sungguhan, akun
-pengguna sungguhan, dan perhitungan yang benar-benar jalan - BUKAN
-sekadar tampilan/mockup statis.
+WIRABUMI adalah aplikasi pembukuan dan kesiapan pengajuan KUR (Kredit
+Usaha Rakyat) untuk pelaku UMKM di kawasan Solo Raya. Nama WIRABUMI
+sendiri singkatan dari "Wirausaha Bumi Solo Raya" — "Wira" dari kata
+wirausaha, "Bumi" merujuk pada wilayah/tanah Solo Raya (cerita lengkap
+ada di halaman Tentang di dalam aplikasi).
 
-Stack teknis: React + Vite (tampilan), Node/Express (server API),
-PostgreSQL yang jalan lokal di komputer (database). Tidak memakai
-layanan cloud pihak ketiga.
+Aplikasi ini FUNGSIONAL NYATA: database sungguhan, akun pengguna
+sungguhan, dan seluruh perhitungan (skor, plafon, laba rugi) benar-benar
+jalan dari data yang kamu catat sendiri — BUKAN tampilan/mockup statis.
+
+
+========================================================
+ARSITEKTUR & STACK TEKNIS
+========================================================
+- Frontend: React 19 + Vite (client-side routing pakai react-router-dom
+  v7). Semua halaman ada di src/pages/, komponen bersama (navbar,
+  dashboard usaha) di src/components/.
+- Backend: Node.js + Express 5, di server/. Setiap grup fitur punya
+  file route sendiri di server/routes/ (auth, profile, transactions,
+  expenses, report, score, kur, chat, feedback, notifications, quests,
+  public).
+- Database: PostgreSQL yang jalan LOKAL di komputer sendiri (bukan
+  Supabase, bukan cloud database apa pun). Skema lengkap ada di
+  server/schema.sql, termasuk 2 fungsi SQL inti (compute_score dan
+  get_kur_offer) yang jadi satu-satunya sumber kebenaran skor & plafon
+  — dipanggil dari banyak tempat (halaman Skor, halaman KUR, chatbot,
+  sistem quest, dashboard Dinkop) supaya angkanya selalu konsisten,
+  tidak dihitung ulang dengan rumus berbeda-beda di tiap halaman.
+- Autentikasi: token JWT (jsonwebtoken), kata sandi di-hash dengan
+  bcryptjs. Middleware requireAuth mewajibkan token valid dan
+  menyaring semua query database berdasar user_id — isolasi data antar
+  akun dijamin di server, bukan cuma disembunyikan di tampilan.
+- Upload file: multer, dipakai untuk foto profil (avatar) dan foto
+  bukti transfer (dibaca di browser, tidak diunggah ke server untuk
+  di-OCR — lihat bagian Pembukuan).
+- PDF: jsPDF + jspdf-autotable, dipakai untuk berkas KUR dan Laporan
+  Laba Rugi.
+- OCR (satu-satunya komponen AI sungguhan di aplikasi ini): Tesseract.js
+  — lihat penjelasan detail di bagian "APAKAH ADA YANG BENERAN AI" di
+  bawah.
+- Tidak memakai layanan cloud pihak ketiga apa pun (bukan Supabase,
+  bukan OpenAI/Anthropic API, bukan Google Vision, dll). Semua jalan
+  lokal: frontend di http://localhost:5173 (Vite dev server), backend
+  di http://localhost:4001 (Express), database di localhost:5432
+  (Postgres).
+
+
+========================================================
+NAVIGASI
+========================================================
+Navbar atas (komponen TopNav) berisi:
+- Dashboard, Beranda, Cara Kerja
+- Dropdown "Keuangan": Pembukuan (catat penjualan), Pengeluaran (catat
+  beban usaha), Laporan Laba Rugi (ringkasan & PDF), Ajukan KUR
+  (simulasi plafon & unduh berkas)
+- Mas Sido (chatbot)
+- Lonceng notifikasi (badge jumlah belum dibaca)
+- Tombol ganti tema terang/gelap
+- Avatar/foto profil → dropdown: Lihat Profil, Pengaturan Akun,
+  Tentang, Berikan Ulasan, Keluar
+
+Catatan penamaan: menu "Pembukuan" itulah sisi PEMASUKAN (setiap
+transaksi yang dicatat = penjualan/uang masuk). Tidak ada menu terpisah
+bernama "Pemasukan" karena itu akan jadi nama ganda untuk hal yang
+sama; "Pengeluaran" adalah pasangannya untuk uang keluar.
 
 
 ========================================================
 1. BERANDA (Landing Page)
 ========================================================
-- Halaman depan berisi penjelasan singkat tentang WIRABUMI.
+- Halaman depan publik, bisa diakses tanpa login.
 - Tiga angka statistik (UMKM Terhubung, Berkas KUR Dibuat, Skor
-  Rata-rata) ASLI - diambil langsung dari database, bukan angka
-  karangan. Kalau belum ada yang daftar, angkanya akan 0.
-- Contoh percakapan "Batik Kliwon Jaya" di kartu sebelah kanan itu
+  Rata-rata) ASLI — diambil dari fungsi SQL platform_stats(), dihitung
+  dari seluruh data profiles/kur_documents di database. Kalau belum
+  ada yang daftar, angkanya 0.
+- Contoh percakapan "Batik Kliwon Jaya" di kartu sebelah kanan adalah
   ILUSTRASI STATIS untuk menjelaskan konsep, bukan data sungguhan.
 
 
 ========================================================
-2. DAFTAR & MASUK (Registrasi & Login)
+2. TENTANG
 ========================================================
-- Sistem akun sungguhan: email + kata sandi, disimpan di database
-  dengan kata sandi di-hash (bcrypt), bukan disimpan polos.
-- Setiap akun punya data pembukuan sendiri-sendiri, tidak
-  tercampur dengan akun lain (dijamin lewat pengecekan di server,
-  bukan cuma disembunyikan di tampilan).
-- Tidak ada verifikasi email/OTP - begitu daftar, langsung bisa
-  dipakai. Ini disengaja untuk kemudahan pemakaian lokal, BUKAN
-  standar keamanan untuk aplikasi publik/produksi sungguhan.
+- Halaman publik yang menjelaskan: asal nama WIRABUMI (Wirausaha Bumi
+  Solo Raya), alasan aplikasi ini dibuat (banyak UMKM Solo Raya yang
+  jualannya sudah jalan lewat WhatsApp tapi belum punya "bukti" yang
+  bisa dibaca bank), apa yang benar-benar dilakukan sistem, dan
+  harapan di baliknya.
+- Konten statis (teks tetap, ditulis oleh tim), bukan data dinamis.
+
+
+========================================================
+3. DAFTAR & MASUK (Registrasi & Login)
+========================================================
+- Akun sungguhan: email + kata sandi (hash bcrypt, bukan disimpan
+  polos). Login mengembalikan JWT yang dipakai untuk semua request
+  berikutnya.
+- Setiap akun punya data pembukuan sendiri-sendiri, dijamin lewat
+  requireAuth + filter user_id di setiap query — bukan cuma
+  disembunyikan di tampilan.
+- Tidak ada verifikasi email/OTP — begitu daftar, langsung bisa
+  dipakai. Ini disengaja untuk kemudahan lokal, BUKAN standar
+  keamanan aplikasi publik/produksi.
 - Belum ada fitur "lupa kata sandi" (reset password).
 
 
 ========================================================
-3. PROFIL USAHA
+4. PROFIL USAHA & AKUN
 ========================================================
-- Bisa mengubah: nama usaha, kategori usaha, kecamatan, alamat,
-  nomor telepon.
-- Email tidak bisa diubah dari halaman ini.
-- Data ini betul-betul tersimpan ke database dan langsung dipakai
-  di halaman KUR (untuk isi PDF) dan Dashboard Dinkop (untuk
-  agregat per kecamatan).
+Halaman Profil punya 3 bagian (tab di sisi kiri):
+
+A. PROFIL USAHA
+   - Foto profil (avatar): unggah JPG/PNG/WEBP maks. 2MB, tersimpan
+     sungguhan di server (folder uploads/avatars) dan tampil di
+     navbar. Foto lama otomatis dihapus saat diganti.
+   - Nama usaha, kategori usaha (teks bebas), kecamatan (pilihan
+     tetap: Pasar Kliwon, Serengan, Laweyan, Jebres, Banjarsari),
+     alamat usaha, nomor telepon.
+   - Data ini dipakai di berkas PDF KUR dan agregat per-kecamatan di
+     Dashboard Dinkop.
+
+B. AKUN
+   - Menampilkan email akun (tidak bisa diubah dari sini).
+
+C. LENCANA
+   - Menampilkan status 5 lencana (badge) — lihat bagian Quest &
+     Lencana di bawah untuk detail syarat masing-masing.
 
 
 ========================================================
-4. PEMBUKUAN
+5. PEMBUKUAN (Pemasukan/Penjualan)
 ========================================================
-Ada tiga cara mencatat transaksi:
+Halaman Pembukuan sendiri adalah tabel pencarian & pengurutan
+transaksi yang sudah tersimpan (bisa cari & sortir kolom). Menambah
+transaksi baru dilakukan di halaman terpisah, Pembukuan > Tambah, lewat
+tiga cara:
 
 A. INPUT MANUAL
-   - Form isi tanggal, nama produk, jumlah, satuan, harga, nama
-     pelanggan (opsional), status bayar (Lunas/DP 50%/Belum Lunas).
+   - Form isi tanggal, nama produk, jumlah, satuan (ada saran satuan
+     umum: pcs, buah, kg, dll), harga, nama pelanggan (opsional),
+     status bayar (Lunas/DP 50%/Belum Lunas).
    - Tersimpan sungguhan ke database, bisa dihapus kapan saja.
 
-B. TEMPEL CHAT (PALING PENTING UNTUK JUJUR DIJELASKAN)
-   - Kamu tempel isi obrolan WhatsApp/caption Instagram, lalu
-     sistem MENCOBA menebak produk, jumlah, dan harga secara
-     otomatis dari teks itu.
-   - INI BUKAN AI/ChatGPT/LLM. Ini murni program berbasis ATURAN
-     (regex/pencarian kata kunci): mencari pola angka+"rb"/"ribu"/
-     "jt"/"juta", mencari kata satuan (pcs, kg, m, dst), dan
-     menebak nama produk dari kata-kata yang tersisa setelah kata-
-     kata umum (bu, kak, ready, dll) dibuang.
-   - Karena ini cuma aturan sederhana, HASILNYA BISA SALAH/KURANG
-     PAS - terutama untuk nama produk. Karena itu, hasil tebakan
-     SELALU ditampilkan dulu di tabel yang bisa kamu koreksi
-     (produk, jumlah, harga, status) sebelum benar-benar disimpan.
-     Tidak ada yang tersimpan otomatis tanpa kamu lihat dulu.
-   - Ada label "yakin" (low/medium/high) yang menunjukkan seberapa
-     percaya sistem pada tebakannya - ini juga dihitung dari aturan
-     sederhana (misal: apakah harga & jumlah sama-sama ketemu),
-     bukan skor kepercayaan AI.
+B. TEMPEL CHAT
+   - Tempel isi obrolan WhatsApp/caption Instagram, sistem MENCOBA
+     menebak produk, jumlah, dan harga dari teks itu.
+   - BUKAN AI — murni aturan (regex) di src/lib/chatParser.js: mencari
+     pola angka+rb/ribu/jt/juta, kata satuan (pcs/kg/m/dst), kata
+     penanda transaksi selesai (total/transfer/lunas/oke), lalu
+     menebak nama produk dari sisa kata setelah kata umum (bu, kak,
+     ready, dll) dibuang.
+   - Karena aturan sederhana, HASIL BISA SALAH — terutama nama produk.
+     Karena itu hasil tebakan selalu tampil dulu di tabel yang bisa
+     dikoreksi (produk/jumlah/harga/status) sebelum disimpan. Tidak
+     ada yang tersimpan otomatis tanpa dilihat dulu.
+   - Ada label "yakin" (low/medium/high), juga dihitung dari aturan
+     sederhana (apakah harga & jumlah sama-sama ketemu, apakah nama
+     produk cukup panjang) — bukan skor kepercayaan model AI.
 
-C. UNGGAH FOTO BUKTI TRANSFER (JUGA PENTING UNTUK JUJUR DIJELASKAN)
-   - Kamu unggah foto/screenshot konfirmasi transfer bank (mis.
-     layar "m-Transfer: BERHASIL" dari BCA/BNI/dll), lalu sistem
-     mencoba membaca nominal, tanggal, dan keterangannya.
-   - PROSESNYA DUA TAHAP:
-     1) OCR (pengenalan teks dari gambar) memakai library
-        Tesseract.js - BUKAN AI/LLM, ini teknologi pengenalan
-        karakter (OCR) klasik yang sudah ada puluhan tahun. OCR ini
-        berjalan 100% DI BROWSER kamu sendiri - gambar/fotomu TIDAK
-        pernah dikirim ke server WIRABUMI atau layanan cloud
-        manapun.
-        CATATAN JUJUR: supaya OCR bisa baca huruf Indonesia, browser
-        perlu UNDUH file model bahasa (sekitar 10-20 MB) dari CDN
-        publik (bukan server WIRABUMI, bukan layanan AI) saat
-        dipakai PERTAMA KALI. Jadi butuh koneksi internet sekali di
-        awal; setelah itu file itu tersimpan cache di browser.
-     2) Setelah teks berhasil dibaca, teks itu diproses dengan
-        ATURAN SEDERHANA (regex) yang sama filosofinya dengan tempel
-        chat: mencari pola "NOMINAL TRANSFER Rp ...", "BERITA ...",
-        "TUJUAN TRANSAKSI ...", tanggal, nama bank, dan nama
-        penerima.
-   - HASIL OCR BISA SALAH BACA, terutama kalau foto buram, miring,
-     gelap, atau terpotong. Karena itu:
-     * Hasil bacaan MENTAH (raw OCR text) bisa dilihat lewat tombol
-       "Lihat teks hasil OCR" supaya kamu bisa cek sendiri apa yang
-       sebenarnya terbaca sistem.
-     * Hasil ekstraksi (produk, jumlah, harga, nama pelanggan,
-       status) SELALU masuk tabel review yang bisa kamu koreksi
-       dulu sebelum disimpan - sama seperti tempel chat, tidak ada
-       yang tersimpan otomatis tanpa kamu lihat.
-   - ASUMSI PENTING: fitur ini dirancang untuk kasus PELANGGAN
-     membayar ke usahamu (uang MASUK/penjualan), lalu screenshot
-     bukti transfer itu dikirim pelanggan ke kamu sebagai bukti
-     bayar. Fitur ini BELUM membedakan uang masuk vs uang keluar
-     (pengeluaran/belanja usaha) - semua yang diunggah di sini akan
-     dicatat sebagai transaksi penjualan (menambah omzet). Kalau
-     foto yang kamu unggah sebenarnya transfer KELUAR (kamu belanja/
-     membayar orang lain), JANGAN disimpan sebagai penjualan -
-     koreksi dulu atau batalkan, karena akan salah menaikkan skor
-     dan omzetmu.
+C. UNGGAH FOTO BUKTI TRANSFER
+   - Unggah foto/screenshot konfirmasi transfer bank (mis. layar
+     "m-Transfer: BERHASIL"), sistem mencoba membaca nominal, tanggal,
+     dan keterangannya.
+   - DUA TAHAP:
+     1) OCR (pengenalan teks dari gambar) memakai Tesseract.js — ini
+        SATU-SATUNYA bagian AI sungguhan di aplikasi (lihat penjelasan
+        di bawah). Berjalan 100% di browser sendiri; foto TIDAK pernah
+        dikirim ke server WIRABUMI atau cloud manapun. Model bahasa
+        Indonesia untuk OCR (~10-20MB) diunduh dari CDN publik saat
+        dipakai pertama kali, lalu tersimpan cache browser.
+     2) Teks hasil OCR diproses dengan aturan sederhana (regex) di
+        src/lib/receiptParser.js — mencari pola "NOMINAL TRANSFER Rp",
+        "BERITA", "TUJUAN TRANSAKSI", tanggal, nama bank/penerima.
+        Filosofinya sama dengan parser tempel-chat: bukan AI.
+   - Hasil OCR mentah bisa dilihat lewat tombol "Lihat teks hasil OCR"
+     untuk verifikasi manual. Hasil ekstraksi tetap masuk tabel review
+     yang bisa dikoreksi sebelum disimpan.
+   - ASUMSI PENTING: fitur ini dirancang untuk transfer MASUK
+     (pelanggan bayar ke usahamu). Belum membedakan transfer masuk vs
+     keluar — semua yang diunggah dicatat sebagai transaksi penjualan.
+     Kalau fotonya sebenarnya transfer keluar (belanja/bayar orang
+     lain), jangan disimpan sebagai penjualan.
 
 
 ========================================================
-5. PENGELUARAN
+6. PENGELUARAN
 ========================================================
-- Halaman terpisah dari Pembukuan (yang mencatat PENJUALAN), khusus
-  untuk mencatat BEBAN/PENGELUARAN usaha: tanggal, kategori (pilih
-  dari daftar tetap: Pembelian Bahan Baku/Stok, Gaji & Upah
-  Karyawan, Sewa Tempat, Listrik/Air/Utilitas, Transportasi & BBM,
+- Halaman terpisah dari Pembukuan, khusus mencatat BEBAN usaha:
+  tanggal, kategori (Pembelian Bahan Baku/Stok, Gaji & Upah Karyawan,
+  Sewa Tempat, Listrik/Air & Utilitas, Transportasi & BBM,
   Perlengkapan & Peralatan, Pemasaran & Promosi, Lain-lain),
-  keterangan, dan jumlah.
-- Input MANUAL saja untuk saat ini - belum ada tempel-chat atau
-  unggah-foto untuk pengeluaran (baru ada untuk pencatatan
-  penjualan).
-- Data ini digabung dengan data penjualan untuk menyusun Laporan
-  Laba Rugi (lihat bagian 6).
+  keterangan, jumlah.
+- Input MANUAL saja — belum ada tempel-chat/unggah-foto untuk
+  pengeluaran (baru ada di sisi penjualan).
+- Digabung dengan data penjualan untuk Laporan Laba Rugi.
+
 
 ========================================================
-6. LAPORAN LABA RUGI
+7. LAPORAN LABA RUGI
 ========================================================
-- Menampilkan ringkasan Pendapatan (dari data Pembukuan/penjualan)
-  dikurangi Beban (dari data Pengeluaran, dikelompokkan per
-  kategori) untuk periode satu bulan yang dipilih = Laba/Rugi
-  Bersih.
-- SEMUA ANGKA DIHITUNG REAL dari database (query SQL langsung ke
-  tabel transaksi & pengeluaran), bukan simulasi.
-- Bisa diunduh sebagai PDF dengan tata letak yang mengikuti STRUKTUR
-  Laporan Laba Rugi standar akuntansi (SAK EMKM - Standar Akuntansi
-  Keuangan untuk Usaha Mikro, Kecil, Menengah): bagian Pendapatan,
-  bagian Beban Usaha per kategori, lalu Laba/Rugi Bersih.
-- JUJUR - KETERBATASAN PENTING: ini BUKAN laporan keuangan SAK EMKM
-  yang lengkap. SAK EMKM formal terdiri dari 3 laporan: Laporan
-  Laba Rugi, Laporan Posisi Keuangan (Neraca), dan Catatan atas
-  Laporan Keuangan. WIRABUMI baru menyediakan yang PERTAMA (Laba
-  Rugi) karena baru itu yang bisa dihitung dari data yang dicatat
-  sekarang (penjualan + pengeluaran). Laporan Posisi Keuangan
-  (Neraca) butuh pencatatan aset, utang, dan modal usaha yang BELUM
-  ada fiturnya di WIRABUMI.
-- Laporan ini juga TIDAK melalui proses jurnal umum/buku besar
-  debit-kredit seperti akuntansi formal (double-entry bookkeeping)
-  - dihitung langsung dari penjumlahan tabel transaksi & pengeluaran
-  memakai SQL. Untuk kebutuhan resmi (pajak, audit, dsb), tetap
-  konsultasikan ke akuntan/konsultan pajak.
+- Pendapatan (dari Pembukuan) dikurangi Beban (dari Pengeluaran,
+  dikelompokkan per kategori) untuk periode satu bulan yang dipilih =
+  Laba/Rugi Bersih. SEMUA ANGKA DIHITUNG REAL dari query SQL langsung
+  ke tabel transactions & expenses.
+- Bisa diunduh sebagai PDF dengan struktur Laporan Laba Rugi standar
+  SAK EMKM (Standar Akuntansi Keuangan untuk UMKM): bagian Pendapatan,
+  Beban Usaha per kategori, lalu Laba/Rugi Bersih.
+- KETERBATASAN JUJUR: ini BUKAN laporan keuangan SAK EMKM yang
+  lengkap. SAK EMKM formal punya 3 laporan (Laba Rugi, Posisi
+  Keuangan/Neraca, Catatan atas Laporan Keuangan) — WIRABUMI baru
+  menyediakan yang pertama, karena baru itu yang bisa dihitung dari
+  data yang dicatat sekarang (penjualan + pengeluaran). Laporan Posisi
+  Keuangan butuh pencatatan aset/utang/modal yang belum ada fiturnya.
+  Laporan ini juga tidak melalui jurnal umum/buku besar debit-kredit
+  formal — dihitung langsung dari penjumlahan SQL. Untuk kebutuhan
+  resmi (pajak, audit), tetap konsultasikan ke akuntan/konsultan pajak.
+
 
 ========================================================
-7. SKOR KELAYAKAN
+8. SKOR KELAYAKAN
 ========================================================
-Skor 0-100 ini BENAR-BENAR DIHITUNG dari data pembukuanmu, lewat
-rumus yang jalan di database (bukan angka acak/hardcode). Rumusnya:
+Skor 0-100, DIHITUNG SUNGGUHAN oleh fungsi SQL compute_score() —
+bukan angka acak/hardcode, dipanggil ulang otomatis tiap kali data
+transaksi/legalitas berubah. Rumus (bobot sama rata, 25% masing-masing):
 
-- 25% Konsistensi transaksi harian: makin banyak HARI berbeda kamu
-  mencatat transaksi dalam 90 hari terakhir, makin tinggi.
-- 25% Volume penjualan bulanan: membandingkan omzet 30 hari
-  terakhir dengan 30 hari sebelumnya (naik = skor naik).
-- 25% Rasio pelanggan tetap: dihitung dari kolom "nama pelanggan"
-  di transaksi - kalau nama pelanggan sama muncul berkali-kali,
-  dianggap pelanggan setia. Kalau kamu jarang isi nama pelanggan
-  (kurang dari 3 transaksi terisi), skor bagian ini otomatis
-  dikasih nilai netral 50, bukan 0 atau 100.
-- 25% Kelengkapan legalitas: dari 3 dokumen (NIB, P-IRT, Sertifikasi
-  Halal) yang kamu centang di halaman KUR.
+1. Konsistensi transaksi harian — jumlah HARI BERBEDA ada transaksi
+   dalam 90 hari terakhir, dibagi 30 hari, dikali 100 (maks. 100).
+2. Volume penjualan bulanan — bandingkan total omzet 30 hari terakhir
+   vs 30 hari sebelumnya. Kalau periode sebelumnya nol tapi sekarang
+   ada penjualan, dianggap pertumbuhan 100%. Skor = 50 + (persentase
+   pertumbuhan × 100), dibatasi 0-100.
+3. Rasio pelanggan tetap — dari kolom "nama pelanggan" di transaksi
+   180 hari terakhir. Kalau nama yang sama muncul >1 kali, dianggap
+   pelanggan setia. Kalau transaksi berisi nama pelanggan kurang dari
+   3, skor bagian ini otomatis diberi nilai netral 50 (bukan 0/100)
+   supaya tidak menghukum pengguna yang jarang isi nama pelanggan.
+4. Kelengkapan legalitas — dari 3 dokumen (NIB, P-IRT, Sertifikasi
+   Halal) yang dicentang di halaman KUR, dibagi 3 dikali 100.
 
 Skor >= 60 berstatus "Layak Diajukan", di bawah itu "Perlu
-Peningkatan". Semua dihitung ulang otomatis setiap kali data
-transaksi atau legalitas berubah.
+Peningkatan". Halaman Skor juga menampilkan tip spesifik per faktor
+untuk menaikkan skor.
 
 
 ========================================================
-8. BERKAS KUR
+9. AJUKAN KUR
 ========================================================
-- Plafon (jumlah pinjaman) dan cicilan bulanan DIHITUNG SUNGGUHAN,
-  bukan angka tetap:
-  * Plafon = rata-rata omzet bulanan (6 bulan terakhir) dikali
-    pengganda yang tergantung skor kelayakan (2.5x kalau skor di
-    bawah 60, 3.5x kalau 60-79, 4.5x kalau 80 ke atas), dibulatkan
-    ke kelipatan Rp 500.000, dengan batas maksimal Rp 100.000.000.
-  * Cicilan bulanan pakai RUMUS ANUITAS PINJAMAN yang sesungguhnya
-    (rumus yang sama dipakai bank), dengan asumsi bunga 6% efektif
-    per tahun - bukan cuma dibagi rata.
-  * Bisa pilih tenor 12/24/36 bulan, angka langsung berubah sesuai
+- Plafon (jumlah pinjaman) dan cicilan bulanan DIHITUNG SUNGGUHAN oleh
+  fungsi SQL get_kur_offer():
+  * Rata-rata omzet bulanan = total omzet 180 hari terakhir dibagi 6.
+  * Pengganda tergantung skor: 2.5x (skor <60), 3.5x (skor 60-79),
+    4.5x (skor >=80).
+  * Plafon = rata-rata omzet × pengganda, dibulatkan ke bawah ke
+    kelipatan Rp500.000, dibatasi maksimal Rp100.000.000.
+  * Cicilan bulanan pakai RUMUS ANUITAS PINJAMAN sesungguhnya (rumus
+    yang sama dipakai bank), asumsi bunga 6% efektif/tahun.
+  * Tenor bisa dipilih 12/24/36 bulan, angka langsung berubah sesuai
     pilihan.
-- Tombol "Buat & Unduh Paket Dokumen (PDF)" BENAR-BENAR membuat
-  file PDF sungguhan (bukan gambar statis) berisi profil usaha,
-  ringkasan 6 bulan transaksi, dan simulasi cicilan - lalu file itu
-  diunduh ke komputermu.
-- Setiap kali PDF dibuat, itu TERCATAT ke database (untuk hitungan
-  "Berkas KUR Dibuat" di Dashboard Dinkop dan Beranda).
-- Checklist legalitas (NIB, P-IRT, Sertifikasi Halal) - kalau kamu
-  centang, itu HANYA MENANDAI di sistem kamu bahwa dokumen itu
-  sudah kamu punya. WIRABUMI TIDAK memverifikasi ke OSS/BPJPH
-  sungguhan, dan TIDAK benar-benar mengajukan pinjaman ke bank mana
-  pun. Berkas PDF ini adalah bahan yang kamu bawa sendiri ke bank
-  atau lembaga terkait.
+- Checklist legalitas (NIB, P-IRT, Sertifikasi Halal) — mencentang di
+  sini HANYA MENANDAI di sistem sendiri bahwa dokumen itu sudah
+  dipunya. WIRABUMI TIDAK memverifikasi ke OSS/BPJPH sungguhan.
+- Tombol "Buat & Unduh Paket Dokumen (PDF)" benar-benar membuat file
+  PDF sungguhan (jsPDF) berisi profil usaha, ringkasan transaksi, dan
+  simulasi cicilan, lalu diunduh ke komputer. Setiap PDF yang dibuat
+  tercatat ke tabel kur_documents (dipakai untuk hitungan "Berkas KUR
+  Dibuat" di Beranda & Dashboard Dinkop).
+- TIDAK ADA pengajuan KUR sungguhan ke bank mana pun — PDF ini adalah
+  bahan yang dibawa sendiri ke bank/lembaga terkait.
 
 
 ========================================================
-9. MAS SIDO (CHATBOT ASISTEN KEUANGAN)
+10. MAS SIDO (Chatbot Asisten Keuangan)
 ========================================================
-Mas Sido adalah nama chatbot asisten keuangan WIRABUMI. Namanya
-diambil dari kata "sido" pada motif batik Sidomukti, yang dalam
-bahasa Jawa berarti "jadi"/"tercapai" - doa supaya usaha yang
-memakai WIRABUMI jadi dan tercapai.
+Nama "Mas Sido" diambil dari kata "sido" pada motif batik Sidomukti,
+bahasa Jawa untuk "jadi"/"tercapai" — doa supaya usaha yang memakai
+WIRABUMI jadi dan tercapai. (Ini beda dengan asal nama WIRABUMI sendiri
+yang dijelaskan di halaman Tentang — "Sido" adalah nama persona
+chatbot, bukan singkatan nama aplikasi.)
 
-JUJUR: Mas Sido BUKAN AI sungguhan (bukan ChatGPT/Gemini/model
-bahasa apa pun). Ini adalah program pencocokan kata kunci biasa:
-- Kalau pesanmu mengandung kata seperti "omzet"/"penjualan", bot
-  menjawab dengan angka omzet ASLI dari database kamu.
-- Kalau mengandung "skor"/"kelayakan", dijawab dari skor ASLI.
-- Begitu juga untuk kata plafon/pinjam, cicilan/angsuran,
-  legal/nib/halal, produk/laris, dan tips menaikkan skor.
-- Kalau mengandung sapaan (halo, hai, selamat pagi/siang/sore/
-    malam), dibalas sapaan yang sesuai.
-- Kalau tidak cocok kata kunci mana pun, dijawab jawaban standar
-  "belum punya jawaban pasti".
-Jadi: ANGKA-ANGKA yang dijawab bot itu NYATA (diambil dari data
-pembukuanmu), tapi CARA bot memahami pertanyaanmu itu SEDERHANA
-(bukan pemahaman bahasa natural yang canggih). Kalau kamu bertanya
-dengan cara yang aneh/berbelit, bot bisa saja tidak nyambung.
-- Riwayat chat tersimpan ke database, maksimal 5 percakapan
-  terakhir (10 pesan) - lebih dari itu, yang paling lama otomatis
-  dihapus.
+JUJUR: Mas Sido BUKAN AI sungguhan (bukan ChatGPT/Gemini/model bahasa
+apa pun) — kode sumbernya sendiri berkomentar "Plain keyword matching
+(no AI)". Cara kerjanya: mencocokkan kata dalam pertanyaanmu ke satu
+set pola regex (omzet/penjualan, skor/kelayakan, plafon/pinjam,
+cicilan/angsuran, legal/nib/halal, produk/laris, tips menaikkan skor,
+sapaan pagi/siang/sore/malam), lalu menjawab pakai TEMPLATE kalimat
+yang diisi angka ASLI dari database (skor, omzet, plafon, dll — bukan
+angka karangan). Kalau tidak ada pola yang cocok, dijawab jawaban
+standar "belum punya jawaban pasti".
+Jadi: ANGKA yang dijawab NYATA, tapi CARA memahami pertanyaan itu
+SEDERHANA. Pertanyaan dengan gaya bahasa aneh/berbelit bisa saja tidak
+nyambung.
+Riwayat chat tersimpan ke database, dibatasi 5 percakapan terakhir (10
+pesan) — lebih dari itu, yang paling lama otomatis dihapus.
 
 
 ========================================================
-10. DASHBOARD DINKOP
+11. QUEST & LENCANA (Gamifikasi Skor Kelayakan)
 ========================================================
-- Halaman ini untuk sudut pandang "dinas" - menampilkan data
-  AGREGAT (gabungan) dari SEMUA UMKM yang terdaftar: total UMKM,
-  rata-rata skor, persentase yang layak KUR, jumlah berkas KUR
-  dibuat, skor rata-rata per kecamatan, dan tren jumlah UMKM aktif
-  per bulan.
-- SEMUA ANGKA INI DIHITUNG REAL DARI DATABASE, bukan data contoh.
-  Kalau baru ada 1 UMKM terdaftar, dashboard ini akan menampilkan
-  data dari 1 UMKM itu saja.
-- Sengaja TIDAK menampilkan data transaksi/identitas per individu
-  UMKM - hanya angka gabungan, untuk menjaga privasi.
-- Halaman ini bisa diakses TANPA login (publik).
+Muncul di Dashboard sebagai "Langkah yang Direkomendasikan": maksimal
+3 langkah aktif sekaligus, dari katalog 10 quest yang dibagi ke 4
+kategori — sama persis dengan 4 faktor skor kelayakan:
+
+- Konsistensi: catat transaksi pertama lewat Tempel Chat (5 poin),
+  transaksi 7 hari berturut-turut (3 poin), 30 hari berturut-turut
+  (8 poin).
+- Volume: capai omzet Rp3 juta bulan ini (4 poin), naikkan omzet 15%
+  dari bulan lalu (6 poin).
+- Pelanggan: dapatkan 1 pelanggan berulang (3 poin), 5 pelanggan
+  berulang (7 poin).
+- Legalitas: urus NIB via OSS (6 poin, gratis), daftar P-IRT (5 poin,
+  berbayar), ajukan Sertifikasi Halal (5 poin, berbayar).
+
+ALGORITMA PRIORITAS: sistem mengurutkan 4 faktor dari yang paling
+lemah, lalu mengambil 1 quest (effort/waktu paling kecil, poin
+terbesar) dari kategori terlemah lebih dulu — supaya kategori yang
+sama-sama lemah tidak saling menyingkirkan (mis. kalau Konsistensi dan
+Legalitas sama-sama rendah, keduanya tetap kebagian slot, bukan
+diambil semua dari satu kategori). Sisa slot baru diisi quest kedua
+dari kategori yang sama setelah semua kategori kebagian giliran.
+
+JUJUR — PENTING:
+- "Poin" di tiap quest adalah LABEL, BUKAN angka yang ditambahkan ke
+  skor lewat "buku besar poin" terpisah. Skor kelayakan yang
+  sesungguhnya SELALU dihitung ulang dari compute_score() yang sama
+  seperti di halaman Skor — tidak ada cara memompa skor lewat quest.
+- Status quest (belum mulai/selesai) 100% dideteksi otomatis dari data
+  pembukuan & profil yang sudah ada — bukan tombol "tandai selesai"
+  manual. Tombol di kartu quest cuma mengarahkan ke halaman terkait
+  (Pembukuan > Tambah, atau KUR).
+- "Dampak finansial" tiap quest (mis. "Plafon amanmu naik jadi
+  Rp11.000.000") adalah SIMULASI REAL: sistem menghitung ulang skor &
+  plafon KUR seolah-olah quest itu selesai, memakai rumus
+  compute_score()/get_kur_offer() yang persis sama.
+- Quest "Hubungkan akun WhatsApp Business" di rancangan awal diganti
+  jadi "Catat transaksi pertama lewat Tempel Chat", karena WIRABUMI
+  tidak punya integrasi API WhatsApp Business sungguhan.
+
+LENCANA (halaman Profil > Lencana), permanen begitu diraih (tidak
+hilang meski data berubah lagi):
+- 🌱 UMKM Pemula — selesaikan quest pertama.
+- 🔥 Konsisten — transaksi 30 hari berturut-turut.
+- 📋 Legal Lengkap — NIB + P-IRT + Halal lengkap semua.
+- 🏆 Siap KUR — skor kelayakan di atas 70.
+- 👑 UMKM Unggulan — skor kelayakan di atas 85.
+
+Notifikasi "Skormu naik jadi X!" otomatis muncul di lonceng begitu
+skor asli (dari compute_score()) naik dibanding pengecekan terakhir.
 
 
 ========================================================
-11. CARA KERJA
+12. NOTIFIKASI IN-APP
 ========================================================
-- Halaman panduan interaktif yang menjelaskan alur 4 langkah
-  WIRABUMI (Kumpulkan bukti jualan -> WIRABUMI merapikan -> Lihat
-  skor kelayakan -> Ajukan KUR).
-- Ini halaman PENJELASAN/MARKETING saja, kontennya statis (teks
-  tetap), tapi tombol-tombolnya mengarahkan ke halaman fitur
-  sungguhan yang sudah dijelaskan di atas.
+Semua notifikasi murni IN-APP (badge lonceng saja) — TIDAK ADA push
+notification, email, atau WhatsApp keluar aplikasi. Dihitung ulang
+setiap kali halaman dibuka, dengan kunci dedupe supaya tidak muncul
+berulang dalam periode alaminya:
+
+1. Capture harian — "X transaksi baru terdeteksi hari ini, total
+   RpY" (muncul sekali per hari kalau ada transaksi hari itu).
+2. Chat kurang yakin — "Ada X chat yang WIRABUMI kurang yakin
+   bacanya, cek & koreksi manual?" (transaksi 7 hari terakhir dengan
+   label yakin low/medium dari sumber tempel-chat/foto).
+3. Rekap bulanan — "Pembukuan bulan [Nama Bulan] selesai disusun, X
+   transaksi, total RpY" (muncul sekali per bulan, untuk bulan
+   sebelumnya).
+4. Omzet turun — "Omzetmu turun X% minggu ini dibanding rata-rata,
+   lihat detail?" (kalau omzet 7 hari terakhir di bawah 80% rata-rata
+   4 minggu sebelumnya, sekali per minggu kalender/ISO week).
+5. Skor naik — "Skormu naik jadi X!" (hanya kalau ada pengecekan skor
+   sebelumnya untuk dibandingkan, dan skor sungguhan naik).
+
+Semua angka di atas dihitung dari data transaksi asli, bukan simulasi.
 
 
 ========================================================
-KETERBATASAN YANG PERLU DIKETAHUI (SUPAYA TETAP JUJUR)
+13. DASHBOARD (Usaha + Dinkop)
 ========================================================
-1. Chatbot BUKAN AI - hanya pencocokan kata kunci. Jangan berharap
-   dia paham pertanyaan yang rumit atau berbelit-belit.
-2. Parser tempel-chat BUKAN AI - bisa salah menebak produk terutama
-   untuk chat yang tidak lazim. Karena itu selalu ada langkah
-   review sebelum disimpan.
-3. Fitur unggah foto BUKAN AI - OCR (Tesseract.js) hanya membaca
-   teks dari gambar, bukan memahami isinya. Foto buram/miring/gelap
-   bisa gagal terbaca atau salah baca. Fitur ini juga BELUM bisa
-   membedakan transfer masuk (penjualan) vs transfer keluar
-   (pengeluaran) - semua diperlakukan sebagai penjualan, jadi
-   pengguna harus teliti saat memilih foto yang diunggah.
-4. Tidak ada verifikasi dokumen legalitas ke instansi resmi
-   (OSS/BPJPH) - checklist di aplikasi ini murni pencatatan
-   internal.
-5. Tidak ada pengajuan KUR sungguhan ke bank - PDF yang dihasilkan
-   adalah bahan yang kamu bawa sendiri.
-6. Aplikasi ini jalan LOKAL di satu komputer (database PostgreSQL
-   lokal) - belum di-deploy ke internet, jadi belum bisa diakses
-   dari perangkat lain kecuali di-deploy ke server sungguhan.
-7. Tidak ada reset password, tidak ada verifikasi email, tidak ada
-   pemberitahuan (notifikasi email/WhatsApp) otomatis.
+Satu halaman (menu "Dashboard" di navbar) berisi dua bagian:
+
+A. DASHBOARD USAHA (personal, komponen UsahaDashboard)
+   - KPI: Skor Kelayakan, Omzet Bulan Ini, Laba Bersih Bulan Ini,
+     Plafon KUR Tersedia — semua REAL dari data sendiri.
+   - Grafik tren omzet dengan pilihan periode (1 minggu/3 minggu/1
+     bulan/3 bulan, maksimal 3 bulan ke belakang) — klik salah satu
+     batang untuk melihat produk terlaris di periode itu.
+   - Bagian "Langkah yang Direkomendasikan" (quest) dan Legalitas —
+     lihat bagian 11.
+   - Produk terlaris 90 hari terakhir.
+
+B. DASHBOARD DINKOP (agregat, sudut pandang dinas)
+   - Ditampilkan sebagai kartu "teaser" yang bisa diklik untuk dibuka
+     penuh (Lihat Dashboard Dinkop →), diletakkan di bawah Dashboard
+     Usaha.
+   - Menampilkan data GABUNGAN semua UMKM terdaftar: total UMKM,
+     rata-rata skor, persentase layak KUR, jumlah berkas KUR dibuat,
+     skor rata-rata per kecamatan, tren jumlah UMKM aktif per bulan.
+     SEMUA DIHITUNG REAL dari fungsi SQL dinkop_dashboard().
+   - Sengaja TIDAK menampilkan data transaksi/identitas per individu
+     UMKM — hanya angka gabungan, untuk menjaga privasi.
+   - Bagian ini bisa diakses tanpa login (endpoint publik).
+
+
+========================================================
+14. BERIKAN ULASAN
+========================================================
+- Diakses dari dropdown profil → "Berikan Ulasan". Form teks bebas
+  (maks. 500 karakter), tersimpan sungguhan ke tabel feedback beserta
+  user_id dan waktu kirim. Tidak ada halaman untuk membaca balik
+  ulasan orang lain di dalam aplikasi ini (satu arah, untuk tim).
+
+
+========================================================
+15. CARA KERJA
+========================================================
+- Halaman panduan interaktif 4 langkah (klik tiap langkah untuk lihat
+  detail): Kumpulkan bukti jualan -> WIRABUMI merapikan -> Lihat skor
+  kelayakan -> Ajukan KUR. Konten statis/penjelasan, tapi tombol-
+  tombolnya mengarah ke halaman fitur sungguhan di atas.
+
+
+========================================================
+16. MODE GELAP (Dark Mode)
+========================================================
+- Tombol bulan/matahari di navbar, mengganti seluruh palet warna
+  aplikasi lewat CSS custom property (data-theme di elemen root).
+  Preferensi tersimpan di localStorage, dan mengikuti preferensi
+  sistem operasi kalau belum pernah diganti manual sebelumnya.
+
+
+========================================================
+APAKAH ADA YANG BENERAN AI?
+========================================================
+Jawaban jujur: YA, tapi HANYA SATU bagian kecil dari seluruh sistem.
+
+BUKAN AI (murni aturan/matematika, dan kode sumbernya sendiri memang
+berkomentar demikian):
+- Skor kelayakan & simulasi KUR (compute_score/get_kur_offer) — rumus
+  SQL biasa (rata-rata berbobot, tabel pengganda).
+- Sistem quest & lencana — katalog tetap dengan syarat deteksi
+  otomatis, bukan model apa pun.
+- Mas Sido (chatbot) — pencocokan kata kunci (regex) + template
+  kalimat berisi angka asli.
+- Parser Tempel Chat & parser hasil OCR foto — regex/heuristik, bukan
+  machine learning.
+
+BENERAN AI:
+- Tesseract.js, dipakai saat unggah foto bukti transfer di fitur
+  Pembukuan. ini adalah mesin OCR (pengenalan karakter dari gambar)
+  yang di dalamnya memakai model jaringan saraf terlatih (LSTM) untuk
+  membaca teks dari foto. Ini teknologi pihak ketiga yang sudah jadi
+  (bukan dilatih sendiri oleh tim WIRABUMI), dan hasilnya (teks
+  mentah) langsung diproses lagi oleh regex biasa di atas — jadi AI-
+  nya hanya sebatas "membaca huruf dari gambar", bukan "memahami"
+  transaksinya.
+
+Jadi kalau ditanya "ini aplikasi AI?" — jawaban akuratnya: hanya
+bagian pembacaan foto bukti transfer yang benar-benar AI (dan itu pun
+model pihak ketiga, bukan buatan sendiri). Semua fitur lain yang
+terasa "pintar" (Mas Sido, Tempel Chat, skor, quest) sengaja dibangun
+berbasis aturan yang bisa dijelaskan dan dipertanggungjawabkan, bukan
+tebakan model yang tidak bisa dijelaskan alasannya.
+
+
+========================================================
+KETERBATASAN YANG PERLU DIKETAHUI
+========================================================
+1. Mas Sido bukan AI — hanya pencocokan kata kunci, tidak akan paham
+   pertanyaan yang rumit/berbelit.
+2. Parser Tempel Chat bukan AI — bisa salah menebak produk untuk chat
+   yang tidak lazim, karena itu selalu ada langkah review.
+3. Fitur unggah foto: OCR hanya membaca teks, tidak memahami isinya.
+   Foto buram/miring/gelap bisa gagal/salah baca. Belum bisa membedakan
+   transfer masuk (penjualan) vs keluar (pengeluaran).
+4. Tidak ada verifikasi legalitas ke instansi resmi (OSS/BPJPH) —
+   checklist murni pencatatan internal.
+5. Tidak ada pengajuan KUR sungguhan ke bank — PDF adalah bahan yang
+   dibawa sendiri.
+6. Aplikasi jalan LOKAL di satu komputer (Postgres lokal) — belum
+   di-deploy ke internet.
+7. Tidak ada reset password, verifikasi email, atau notifikasi
+   email/WhatsApp otomatis (notifikasi murni in-app).
 8. Suku bunga KUR (6% efektif/tahun) dan formula pengganda plafon
-   adalah ASUMSI yang dipakai untuk simulasi - bukan angka resmi
-   dari bank/pemerintah yang mengikat.
-9. Fitur unggah foto butuh koneksi internet SEKALI di awal (untuk
-   unduh file model bahasa OCR ~10-20 MB) - setelah itu tersimpan
-   cache dan tidak perlu internet lagi untuk membaca foto.
-10. Laporan Laba Rugi BUKAN laporan keuangan SAK EMKM yang lengkap
-    (belum ada Laporan Posisi Keuangan/Neraca, belum lewat proses
-    jurnal umum & buku besar debit-kredit). Untuk kebutuhan resmi
-    (pajak, audit, pengajuan formal), tetap konsultasikan ke
-    akuntan/konsultan pajak.
+   adalah ASUMSI simulasi, bukan angka resmi bank/pemerintah yang
+   mengikat.
+9. Fitur unggah foto butuh koneksi internet sekali di awal (unduh
+   model bahasa OCR ~10-20MB), setelah itu tersimpan cache browser.
+10. Laporan Laba Rugi bukan laporan keuangan SAK EMKM yang lengkap
+    (belum ada Neraca, belum lewat jurnal umum/buku besar). Untuk
+    kebutuhan resmi tetap konsultasikan ke akuntan/konsultan pajak.
+11. "Poin" di sistem quest adalah label ilustratif, bukan angka yang
+    ditambahkan langsung ke skor lewat pembukuan poin terpisah.
 
 
 ========================================================
-RINGKASAN: MANA YANG NYATA, MANA YANG SEDERHANA
+RINGKASAN: MANA YANG NYATA, MANA YANG SEDERHANA, MANA YANG AI
 ========================================================
-NYATA (dihitung/tersimpan sungguhan):
+NYATA (dihitung/tersimpan sungguhan dari database):
 - Akun & login, isolasi data per pengguna
-- Semua data pembukuan (manual, hasil tempel-chat, maupun hasil
-  unggah foto)
-- Semua data pengeluaran/beban usaha
-- Laporan Laba Rugi (Pendapatan - Beban, real dari database) + PDF
-- Skor kelayakan (rumus 4 faktor)
-- Plafon & cicilan KUR (rumus anuitas asli)
-- PDF berkas KUR (file sungguhan, bisa diunduh)
-- Statistik Beranda & Dashboard Dinkop (agregat asli dari database)
-- Riwayat chat (tersimpan, dengan batas 5 percakapan)
-- OCR baca teks dari gambar (Tesseract.js, teknologi OCR asli,
-  berjalan lokal di browser - bukan AI, bukan kirim data ke cloud)
+- Semua data pembukuan (manual, tempel-chat, unggah-foto) & pengeluaran
+- Laporan Laba Rugi + PDF, Skor Kelayakan (4 faktor), Plafon & cicilan
+  KUR (rumus anuitas asli), PDF berkas KUR
+- Statistik Beranda & Dashboard Dinkop (agregat asli)
+- Riwayat chat Mas Sido (tersimpan, dibatasi 5 percakapan)
+- Sistem quest & lencana (status dideteksi dari data asli, simulasi
+  dampak skor/plafon pakai rumus asli, lencana tersimpan permanen)
+- Notifikasi in-app (5 jenis, semua dihitung dari data asli)
+- Foto profil (avatar), mode gelap, ulasan pengguna
 
-SEDERHANA / BUKAN AI (pencocokan kata kunci & aturan manual):
-- Mas Sido (chatbot asisten keuangan) - jawaban berdasar kata kunci
-- Parser tempel-chat - ekstraksi transaksi berdasar pola teks
-- Parser unggah-foto - ekstraksi transaksi dari hasil OCR berdasar
-  pola teks, sama seperti parser tempel-chat
+SEDERHANA / BUKAN AI (aturan & pencocokan kata kunci):
+- Mas Sido (chatbot) — jawaban berdasar kata kunci + data asli
+- Parser Tempel Chat & parser hasil OCR foto — ekstraksi berbasis pola
+  teks (regex)
 
-Dokumen ini dibuat agar siapa pun yang membaca tahu persis apa yang
-sungguhan berjalan di WIRABUMI dan apa yang masih sederhana - tanpa
-dilebih-lebihkan.
+AI SUNGGUHAN (satu-satunya):
+- Tesseract.js — OCR (model jaringan saraf pihak ketiga) untuk membaca
+  teks dari foto bukti transfer, berjalan lokal di browser.
+
+Dokumen ini ditulis ulang supaya siapa pun yang membaca tahu persis
+apa yang sungguhan berjalan di WIRABUMI, apa yang masih sederhana, dan
+di mana tepatnya AI benar-benar dipakai — tanpa dilebih-lebihkan.

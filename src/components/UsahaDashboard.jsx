@@ -102,12 +102,30 @@ function topProductsInRange(txns, start, end) {
     .slice(0, 5);
 }
 
+function QuestCard({ quest, onStart }) {
+  const isAuto = quest.estimasi_waktu === 'Otomatis terdeteksi';
+  const metaParts = [`+${quest.poin} poin`, quest.estimasi_waktu];
+  if (quest.category === 'legal') metaParts.push(quest.gratis ? 'Gratis' : 'Berbayar');
+  return (
+    <div className="quest-card">
+      <div className="quest-card-title">{quest.title}</div>
+      <div className="quest-card-meta">{metaParts.join(' · ')}</div>
+      {quest.dampak_finansial && <div className="quest-card-impact">→ {quest.dampak_finansial}</div>}
+      <button className="btn btn-primary btn-sm" style={{ marginTop: 12 }} onClick={() => onStart(quest)}>
+        {isAuto ? 'Catat Transaksi →' : 'Mulai Sekarang'}
+      </button>
+    </div>
+  );
+}
+
 export default function UsahaDashboard() {
   const { profile } = useAuth();
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [period, setPeriod] = useState('1m');
   const [selectedBucket, setSelectedBucket] = useState(null);
+  const [quests, setQuests] = useState(null);
+  const [showCompleted, setShowCompleted] = useState(false);
 
   function choosePeriod(key) {
     setPeriod(key);
@@ -117,12 +135,14 @@ export default function UsahaDashboard() {
   useEffect(() => {
     async function load() {
       const { since, until } = monthRangeISO();
-      const [score, offer, laba, txns] = await Promise.all([
+      const [score, offer, laba, txns, questsRes] = await Promise.all([
         api.get('/score'),
         api.get('/kur/offer?tenor=24'),
         api.get(`/report/laba-rugi?since=${since}&until=${until}`),
         api.get('/transactions'),
+        api.get('/quests'),
       ]);
+      setQuests(questsRes);
 
       const now = new Date();
       const monthTxns = (txns || []).filter((t) => {
@@ -196,6 +216,44 @@ export default function UsahaDashboard() {
           <div className="kpi-delta-flat">tenor {offer.tenor_bulan} bulan</div>
         </div>
       </div>
+
+      {quests && (
+        <div className="card-lg" style={{ marginTop: 16 }}>
+          <div style={{ fontWeight: 800, fontSize: 13, color: 'var(--text-faint)', letterSpacing: '0.3px', marginBottom: 4 }}>
+            LANGKAH YANG DIREKOMENDASIKAN ({quests.active_quests.length})
+          </div>
+          <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: '2px 0 16px' }}>
+            Langkah berikutnya yang paling berdampak buat skormu, dipilih otomatis dari faktor yang paling lemah.
+          </p>
+          {quests.active_quests.length === 0 ? (
+            <div className="empty-state">Semua langkah yang tersedia sudah kamu selesaikan. Mantap!</div>
+          ) : (
+            <div className="quest-grid">
+              {quests.active_quests.map((q) => (
+                <QuestCard key={q.key} quest={q} onStart={(quest) => navigate(quest.target)} />
+              ))}
+            </div>
+          )}
+
+          <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid var(--border)' }}>
+            <span onClick={() => setShowCompleted((s) => !s)} style={{ cursor: 'pointer', fontSize: 13, fontWeight: 700, color: 'var(--green)' }}>
+              ✓ Langkah Selesai ({quests.completed_quests.length}) {showCompleted ? '▴' : '▾'}
+            </span>
+            {showCompleted && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 12 }}>
+                {quests.completed_quests.length === 0 ? (
+                  <div className="empty-state">Belum ada langkah yang selesai.</div>
+                ) : quests.completed_quests.map((q) => (
+                  <div key={q.key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, fontSize: 13.5 }}>
+                    <span>{q.title}</span>
+                    <span className="muted" style={{ fontWeight: 700 }}>+{q.poin} poin</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="card-lg" style={{ marginTop: 16 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>

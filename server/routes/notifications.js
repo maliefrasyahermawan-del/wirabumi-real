@@ -94,6 +94,25 @@ async function ensureNotifications(userId) {
     const title = `Omzetmu turun ${pct}% minggu ini dibanding rata-rata, lihat detail?`;
     await upsertNotification(userId, 'weekly_drop', `weekly-drop-${isoWeekKey(now)}`, title);
   }
+
+  // Score-increase: only fires when we already had a prior snapshot to compare
+  // against (so the very first check-in of a brand-new account stays quiet),
+  // and only when the real compute_score() total has actually gone up.
+  const scoreRes = await pool.query('select compute_score($1) as s', [userId]);
+  const currentScore = scoreRes.rows[0].s.total_score;
+  const snapshotRes = await pool.query('select last_score from score_snapshots where user_id = $1', [userId]);
+  const lastScore = snapshotRes.rows[0]?.last_score;
+  if (lastScore !== undefined && currentScore > lastScore) {
+    const title = `Skormu naik jadi ${currentScore}!`;
+    await upsertNotification(userId, 'score_increase', `score-${currentScore}-${today}`, title);
+  }
+  if (lastScore !== currentScore) {
+    await pool.query(
+      `insert into score_snapshots (user_id, last_score) values ($1, $2)
+       on conflict (user_id) do update set last_score = excluded.last_score, updated_at = now()`,
+      [userId, currentScore]
+    );
+  }
 }
 
 router.get('/', async (req, res) => {

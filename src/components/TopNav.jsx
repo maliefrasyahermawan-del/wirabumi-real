@@ -160,6 +160,7 @@ const KEUANGAN_LINKS = [
   { to: '/pembukuan', label: 'Pembukuan', desc: 'Catat penjualan' },
   { to: '/pengeluaran', label: 'Pengeluaran', desc: 'Catat beban usaha' },
   { to: '/laporan', label: 'Laporan Laba Rugi', desc: 'Ringkasan & PDF' },
+  { to: '/kur', label: 'Ajukan KUR', desc: 'Simulasi plafon & unduh berkas' },
 ];
 
 const TAIL_LINKS = [

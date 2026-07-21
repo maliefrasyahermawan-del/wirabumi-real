@@ -1,14 +1,16 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import TopNav from '../components/TopNav';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../lib/apiClient';
+import { formatDateID } from '../lib/format';
 
 const KECAMATAN_OPTIONS = ['Pasar Kliwon', 'Serengan', 'Laweyan', 'Jebres', 'Banjarsari'];
 const AVATAR_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const SECTIONS = [
   { key: 'profil', label: 'Profil Usaha' },
   { key: 'akun', label: 'Akun' },
+  { key: 'lencana', label: 'Lencana' },
 ];
 
 export default function Profile() {
@@ -29,6 +31,11 @@ export default function Profile() {
   const [avatarError, setAvatarError] = useState('');
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const fileInputRef = useRef(null);
+  const [badges, setBadges] = useState(null);
+
+  useEffect(() => {
+    api.get('/quests').then((r) => setBadges(r.badges)).catch(() => {});
+  }, []);
 
   async function handleAvatarChange(e) {
     const file = e.target.files[0];
@@ -183,6 +190,25 @@ export default function Profile() {
                   <label>Email</label>
                   <input value={user.email} disabled style={{ background: 'var(--blue-lighter)', color: 'var(--text-faint)' }} />
                 </div>
+              </div>
+            )}
+
+            {section === 'lencana' && (
+              <div className="card-lg">
+                {!badges ? (
+                  <div className="empty-state">Memuat…</div>
+                ) : (
+                  <div className="badge-grid">
+                    {badges.map((b) => (
+                      <div key={b.key} className={`badge-card ${b.earned ? 'earned' : 'locked'}`}>
+                        <div className="badge-icon">{b.icon}</div>
+                        <div className="badge-label">{b.label}</div>
+                        <div className="badge-desc">{b.desc}</div>
+                        {b.earned && <div className="badge-earned-date">Diraih {formatDateID(b.earned_at.slice(0, 10))}</div>}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>

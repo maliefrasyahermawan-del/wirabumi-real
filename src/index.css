@@ -356,6 +356,21 @@ textarea.capture-input:focus { border-color: var(--blue); }
 .kpi-delta-flat { font-size: 12px; color: var(--text-faint); font-weight: 600; margin-top: 2px; }
 
 .dinkop-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px; margin-top: 16px; align-items: start; }
+
+.quest-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+.quest-card { background: var(--blue-lighter); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+.quest-card-title { font-weight: 700; font-size: 15px; color: var(--text); }
+.quest-card-meta { font-size: 12.5px; color: var(--text-faint); margin-top: 4px; font-weight: 600; }
+.quest-card-impact { font-size: 13px; color: var(--blue-dark); font-weight: 700; margin-top: 10px; line-height: 1.4; }
+
+.badge-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+.badge-card { border: 1px solid var(--border); border-radius: 14px; padding: 20px 16px; text-align: center; }
+.badge-card.earned { background: var(--blue-lighter); }
+.badge-card.locked { opacity: 0.45; filter: grayscale(1); }
+.badge-icon { font-size: 34px; line-height: 1; }
+.badge-label { font-weight: 700; font-size: 14px; margin-top: 10px; }
+.badge-desc { font-size: 12px; color: var(--text-faint); margin-top: 4px; line-height: 1.4; }
+.badge-earned-date { font-size: 11px; color: var(--blue-dark); font-weight: 700; margin-top: 10px; }
 .kec-row { display: grid; grid-template-columns: 120px 1fr 46px 60px; gap: 12px; align-items: center; }
 .kec-bar-track { height: 10px; background: var(--bar-track); border-radius: 999px; overflow: hidden; }
 .kec-bar-fill { height: 100%; background: var(--blue); border-radius: 999px; transform-origin: left; animation: wbGrow .7s ease; }
