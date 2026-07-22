@@ -1,9 +1,29 @@
 import { Router } from 'express';
 import { pool } from '../db.js';
 import { requireAuth } from '../auth.js';
+import { buildAnswer } from '../../src/lib/chatbotAnswer.js';
+import { answerWithLLM } from '../lib/llmChatbotAnswer.js';
 
 const router = Router();
 router.use(requireAuth);
+
+// Mas Sido: try the Groq LLM first (handles real free-form questions instead
+// of a fixed keyword list), fall back to the original rule-based answer
+// engine the instant anything about the LLM call goes wrong.
+router.post('/ask', async (req, res) => {
+  const question = (req.body?.question || '').trim();
+  const ctx = req.body?.ctx;
+  if (!question) return res.status(400).json({ error: 'Pertanyaan tidak boleh kosong.' });
+  if (!ctx || typeof ctx !== 'object') return res.status(400).json({ error: 'Konteks data tidak ada.' });
+
+  const llmResult = await answerWithLLM(question, ctx);
+  if (llmResult.success) {
+    return res.json({ answer: llmResult.answer, source: 'llm' });
+  }
+
+  console.warn('[chat/ask] Groq gagal, pakai fallback keyword:', llmResult.error);
+  res.json({ answer: buildAnswer(question, ctx), source: 'rule-based-fallback' });
+});
 
 // A "conversation" is one user question + one bot answer (2 rows), so keeping
 // the most recent 5 conversations means keeping the most recent 10 messages.

@@ -5,9 +5,9 @@ FITUR WIRABUMI — DOKUMENTASI LENGKAP DAN JUJUR
 
 Dokumen ini menjelaskan SEMUA fitur WIRABUMI apa adanya: mana yang
 benar-benar dihitung/tersimpan dari data asli, mana yang masih
-sederhana/berbasis aturan, dan yang mana (cuma satu) yang benar-benar
-memakai AI. Tidak ada yang dilebih-lebihkan, tidak ada yang
-disembunyikan.
+berbasis aturan, dan mana yang sekarang benar-benar memakai AI (LLM
+Groq di 4 titik, plus OCR Tesseract.js). Tidak ada yang dilebih-
+lebihkan, tidak ada yang disembunyikan.
 
 TENTANG WIRABUMI
 --------------------------------------------------------
@@ -48,14 +48,90 @@ ARSITEKTUR & STACK TEKNIS
   di-OCR — lihat bagian Pembukuan).
 - PDF: jsPDF + jspdf-autotable, dipakai untuk berkas KUR dan Laporan
   Laba Rugi.
-- OCR (satu-satunya komponen AI sungguhan di aplikasi ini): Tesseract.js
-  — lihat penjelasan detail di bagian "APAKAH ADA YANG BENERAN AI" di
-  bawah.
-- Tidak memakai layanan cloud pihak ketiga apa pun (bukan Supabase,
-  bukan OpenAI/Anthropic API, bukan Google Vision, dll). Semua jalan
-  lokal: frontend di http://localhost:5173 (Vite dev server), backend
-  di http://localhost:4001 (Express), database di localhost:5432
-  (Postgres).
+- OCR: Tesseract.js, dipakai saat unggah foto bukti transfer — lihat
+  penjelasan detail di bagian "APAKAH ADA YANG BENERAN AI" di bawah.
+- LLM: server/lib/groqClient.js adalah modul bersama untuk memanggil
+  Groq API (model llama-3.3-70b-versatile), dipakai di 4 titik (parser
+  Tempel Chat, narasi Skor, parser hasil OCR foto, Mas Sido — lihat
+  bagian "APAKAH ADA YANG BENERAN AI" untuk detail lengkapnya). Timeout
+  8 detik per panggilan, dan KEEMPATNYA otomatis jatuh ke logic
+  rule-based lama kalau panggilan Groq gagal/timeout/API key kosong —
+  tidak ada fitur yang bisa mati total hanya karena Groq bermasalah.
+- Database & autentikasi tetap 100% lokal (Postgres sendiri, bukan
+  Supabase). Satu-satunya panggilan ke layanan pihak ketiga di luar
+  komputer sendiri adalah ke Groq API untuk 3 fitur LLM di atas —
+  dan itu pun opsional (lihat GROQ_API_KEY di .env.example): kalau
+  kosong, aplikasi tetap jalan penuh lewat fallback rule-based, cuma
+  tanpa bagian yang benar-benar AI. Frontend di http://localhost:5173
+  (Vite dev server), backend di http://localhost:4001 (Express),
+  database di localhost:5432 (Postgres).
+
+
+========================================================
+PANDUAN MENJALANKAN (SETUP LOKAL)
+========================================================
+Prasyarat:
+- Node.js 18 ke atas (dicoba dengan v24.12.0). Versi 18+ WAJIB karena
+  fitur AI (server/lib/groqClient.js) memakai fetch/AbortController
+  bawaan Node, bukan library tambahan.
+- PostgreSQL sudah terpasang & service-nya jalan di komputer sendiri.
+- (Opsional) API key Groq gratis, kalau mau 3 fitur AI benar-benar
+  aktif memanggil LLM, bukan cuma jalan di mode cadangan.
+
+Langkah-langkah:
+
+1. Install dependency (satu kali saja — backend & frontend jadi satu
+   package.json di root project, tidak ada folder server/node_modules
+   terpisah):
+     npm install
+
+2. Siapkan database PostgreSQL. Lewat psql atau GUI (mis. pgAdmin),
+   buat role & database-nya dulu:
+     CREATE ROLE wirabumi_app WITH LOGIN PASSWORD 'ganti_password_ini';
+     CREATE DATABASE wirabumi OWNER wirabumi_app;
+   Lalu jalankan SELURUH isi server/schema.sql ke database wirabumi itu
+   (membuat semua tabel + fungsi compute_score/get_kur_offer/dst):
+     psql -U wirabumi_app -d wirabumi -f server/schema.sql
+   Kalau muncul error "function gen_random_uuid() does not exist"
+   (biasanya cuma di Postgres versi lama, di bawah 13), jalankan dulu
+   satu baris ini sebelum mengulang perintah di atas:
+     CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+3. Salin .env.example jadi .env di root project, lalu isi:
+   - DATABASE_URL: ganti CHANGE_ME dengan password dari langkah 2.
+   - JWT_SECRET: isi string acak apa saja (bebas, asal tidak kosong).
+   - PORT: biarkan 4001 (harus sama dengan proxy target di
+     vite.config.js — kalau diganti, ganti juga di sana).
+   - GROQ_API_KEY: opsional, boleh dikosongkan dulu — aplikasi tetap
+     jalan penuh lewat mode cadangan tanpa ini. Isi belakangan kalau
+     mau 3 fitur AI-nya benar-benar aktif (lihat "APAKAH ADA YANG
+     BENERAN AI" di bawah untuk detail masing-masing fitur).
+
+4. Jalankan backend (satu terminal, biarkan tetap terbuka/jalan):
+     npm run server
+   Berhasil kalau muncul "WIRABUMI API listening on
+   http://localhost:4001".
+
+5. Jalankan frontend (terminal KEDUA yang terpisah, juga dibiarkan
+   tetap jalan):
+     npm run dev
+   Vite akan menampilkan alamat lokalnya (biasanya
+   http://localhost:5173) — buka alamat itu di browser.
+
+6. Di browser, klik "Daftar Gratis" untuk membuat akun pertama, lalu
+   mulai pakai aplikasinya (isi Pembukuan, cek halaman Skor, dst).
+
+Mengaktifkan 3 fitur AI (opsional, bisa menyusul kapan saja):
+   a. Ambil API key gratis di https://console.groq.com/keys
+   b. Isi GROQ_API_KEY=key_kamu di .env
+   c. Matikan proses backend lalu jalankan ulang npm run server —
+      WAJIB restart, karena dotenv cuma dibaca sekali saat proses
+      backend baru mulai. Frontend (npm run dev) tidak perlu direstart.
+   d. Coba fitur Tempel Chat / halaman Skor / unggah foto bukti
+      transfer — badge "✨ Diproses AI (Groq)" akan muncul di tabel
+      review kalau panggilan ke Groq berhasil. Kalau masih muncul
+      "⚙️ Mode cadangan (aturan)", cek log terminal backend — akan ada
+      baris yang menjelaskan kenapa (mis. key salah, API timeout).
 
 
 ========================================================
@@ -156,34 +232,51 @@ A. INPUT MANUAL
 B. TEMPEL CHAT
    - Tempel isi obrolan WhatsApp/caption Instagram, sistem MENCOBA
      menebak produk, jumlah, dan harga dari teks itu.
-   - BUKAN AI — murni aturan (regex) di src/lib/chatParser.js: mencari
-     pola angka+rb/ribu/jt/juta, kata satuan (pcs/kg/m/dst), kata
-     penanda transaksi selesai (total/transfer/lunas/oke), lalu
-     menebak nama produk dari sisa kata setelah kata umum (bu, kak,
-     ready, dll) dibuang.
-   - Karena aturan sederhana, HASIL BISA SALAH — terutama nama produk.
-     Karena itu hasil tebakan selalu tampil dulu di tabel yang bisa
-     dikoreksi (produk/jumlah/harga/status) sebelum disimpan. Tidak
-     ada yang tersimpan otomatis tanpa dilihat dulu.
-   - Ada label "yakin" (low/medium/high), juga dihitung dari aturan
-     sederhana (apakah harga & jumlah sama-sama ketemu, apakah nama
-     produk cukup panjang) — bukan skor kepercayaan model AI.
+   - SEKARANG BENERAN AI (LLM), DENGAN FALLBACK: teks chat dikirim ke
+     backend (POST /api/parse/chat), yang mencoba Groq LLM
+     (llama-3.3-70b-versatile, lewat server/lib/llmChatParser.js) lebih
+     dulu untuk membaca chat informal (singkatan, typo, banyak transaksi
+     sekaligus) dan mengekstrak semua transaksinya sebagai JSON. Kalau
+     panggilan Groq gagal/timeout/API key kosong, backend OTOMATIS jatuh
+     ke parser aturan (regex) lama di src/lib/chatParser.js — jadi fitur
+     ini tidak akan pernah benar-benar mati hanya karena Groq bermasalah.
+   - Hasil parse (dari LLM maupun fallback) SELALU tampil dulu di tabel
+     review yang bisa dikoreksi (produk/jumlah/harga/status/pelanggan)
+     sebelum disimpan. Tidak ada yang tersimpan otomatis tanpa dilihat
+     dulu — ini berlaku sama untuk kedua jalur.
+   - Ada badge kecil di atas tabel review yang menunjukkan jalur mana
+     yang dipakai: "✨ Diproses AI (Groq)" atau "⚙️ Mode cadangan
+     (aturan)" — supaya jujur ke pengguna jalur mana yang sebenarnya
+     memproses chat itu.
+   - Label "yakin" (low/medium/high): kalau lewat LLM, model diminta
+     menilai sendiri seberapa lengkap info yang dia baca (qty & harga
+     jelas = high, sebagian ditebak = medium/low); kalau lewat fallback
+     regex, dihitung dari aturan sederhana seperti sebelumnya (apakah
+     harga & jumlah sama-sama ketemu). Bukan angka yang dijamin
+     100% akurat di kedua jalur — tetap perlu dicek di tabel review.
 
 C. UNGGAH FOTO BUKTI TRANSFER
    - Unggah foto/screenshot konfirmasi transfer bank (mis. layar
      "m-Transfer: BERHASIL"), sistem mencoba membaca nominal, tanggal,
      dan keterangannya.
-   - DUA TAHAP:
-     1) OCR (pengenalan teks dari gambar) memakai Tesseract.js — ini
-        SATU-SATUNYA bagian AI sungguhan di aplikasi (lihat penjelasan
-        di bawah). Berjalan 100% di browser sendiri; foto TIDAK pernah
-        dikirim ke server WIRABUMI atau cloud manapun. Model bahasa
-        Indonesia untuk OCR (~10-20MB) diunduh dari CDN publik saat
-        dipakai pertama kali, lalu tersimpan cache browser.
-     2) Teks hasil OCR diproses dengan aturan sederhana (regex) di
-        src/lib/receiptParser.js — mencari pola "NOMINAL TRANSFER Rp",
-        "BERITA", "TUJUAN TRANSAKSI", tanggal, nama bank/penerima.
-        Filosofinya sama dengan parser tempel-chat: bukan AI.
+   - DUA TAHAP (tahap 1 TIDAK diubah sama sekali oleh penambahan LLM):
+     1) OCR (pengenalan teks dari gambar) memakai Tesseract.js — teknologi
+        AI sungguhan (lihat penjelasan di bawah), berjalan 100% di
+        browser sendiri; foto TIDAK pernah dikirim ke server WIRABUMI
+        atau cloud manapun. Model bahasa Indonesia untuk OCR (~10-20MB)
+        diunduh dari CDN publik saat dipakai pertama kali, lalu
+        tersimpan cache browser.
+     2) Teks mentah hasil OCR itu (bukan fotonya) dikirim ke backend
+        (POST /api/parse/receipt), yang mencoba Groq LLM lebih dulu
+        (server/lib/llmReceiptParser.js) untuk membaca teks OCR yang
+        sering berantakan/typo dan mengekstraknya jadi data terstruktur
+        (nominal, tanggal, bank, nama penerima, berita, dst) — LLM jauh
+        lebih toleran terhadap noise OCR dibanding regex kaku. Kalau
+        Groq gagal/timeout/API key kosong, backend OTOMATIS jatuh ke
+        parser aturan (regex) lama di src/lib/receiptParser.js.
+   - Sama seperti Tempel Chat, ada badge "✨ Diproses AI (Groq)" atau
+     "⚙️ Mode cadangan (aturan)" di atas tabel review, dan hasil dari
+     jalur manapun tetap harus melalui tabel review sebelum disimpan.
    - Hasil OCR mentah bisa dilihat lewat tombol "Lihat teks hasil OCR"
      untuk verifikasi manual. Hasil ekstraksi tetap masuk tabel review
      yang bisa dikoreksi sebelum disimpan.
@@ -253,6 +346,19 @@ Skor >= 60 berstatus "Layak Diajukan", di bawah itu "Perlu
 Peningkatan". Halaman Skor juga menampilkan tip spesifik per faktor
 untuk menaikkan skor.
 
+PENJELASAN NARATIF (LAPISAN AI TAMBAHAN, BUKAN PENGGANTI RUMUS): di
+atas angka-angka hasil compute_score() di atas, halaman Skor sekarang
+juga menampilkan kartu "Penjelasan Skor" — 2-3 kalimat naratif berbahasa
+Indonesia santai yang dibuat oleh Groq LLM (server/lib/llmScoreNarrative.js),
+mis. "Konsistensi transaksimu kuat (78/100), tapi legalitas masih jadi
+titik lemah (45/100)...". PENTING: compute_score() SENDIRI TIDAK
+disentuh sama sekali oleh LLM — LLM hanya diberi angka yang SUDAH
+dihitung SQL dan diminta menuliskannya ulang jadi kalimat, tidak pernah
+diminta menghitung atau mengarang angka baru. Kalau Groq gagal/API key
+kosong, kartu ini tetap tampil dengan kalimat fallback statis sederhana
+(disusun dari total_score & status asli, bukan kalimat AI) — halaman
+Skor tidak akan pernah error hanya karena Groq bermasalah.
+
 
 ========================================================
 9. AJUKAN KUR
@@ -289,20 +395,35 @@ WIRABUMI jadi dan tercapai. (Ini beda dengan asal nama WIRABUMI sendiri
 yang dijelaskan di halaman Tentang — "Sido" adalah nama persona
 chatbot, bukan singkatan nama aplikasi.)
 
-JUJUR: Mas Sido BUKAN AI sungguhan (bukan ChatGPT/Gemini/model bahasa
-apa pun) — kode sumbernya sendiri berkomentar "Plain keyword matching
-(no AI)". Cara kerjanya: mencocokkan kata dalam pertanyaanmu ke satu
-set pola regex (omzet/penjualan, skor/kelayakan, plafon/pinjam,
-cicilan/angsuran, legal/nib/halal, produk/laris, tips menaikkan skor,
-sapaan pagi/siang/sore/malam), lalu menjawab pakai TEMPLATE kalimat
-yang diisi angka ASLI dari database (skor, omzet, plafon, dll — bukan
-angka karangan). Kalau tidak ada pola yang cocok, dijawab jawaban
-standar "belum punya jawaban pasti".
-Jadi: ANGKA yang dijawab NYATA, tapi CARA memahami pertanyaan itu
-SEDERHANA. Pertanyaan dengan gaya bahasa aneh/berbelit bisa saja tidak
-nyambung.
+UPDATE: SEKARANG BENERAN AI (LLM), DENGAN FALLBACK — Mas Sido tadinya
+murni pencocokan kata kunci (regex), tapi sekarang jawabannya lewat
+POST /api/chat-messages/ask: frontend mengirim pertanyaan + data konteks
+usaha (skor & 4 faktornya, simulasi KUR, omzet bulan ini, produk
+terlaris, legalitas — data yang SAMA yang sudah ditampilkan di halaman
+lain, cuma dikumpulkan ulang di sini) ke backend, yang mencoba Groq LLM
+lebih dulu (server/lib/llmChatbotAnswer.js) untuk menjawab pertanyaan
+bebas dalam bahasa natural, BUKAN cuma pertanyaan yang persis cocok
+pola regex. LLM diberi instruksi tegas: jawab HANYA dari data yang
+diberikan, jangan mengarang angka, dan kalau datanya tidak cukup untuk
+menjawab (termasuk pertanyaan di luar topik usaha/keuangan), jawab
+jujur "tidak tahu" sambil menyarankan topik yang bisa dijawab — bukan
+sok tahu menebak-nebak.
+Kalau panggilan Groq gagal/timeout/API key kosong, backend OTOMATIS
+jatuh ke mesin jawaban aturan (regex) lama, yang sekarang dipindah ke
+src/lib/chatbotAnswer.js (logikanya PERSIS sama seperti sebelumnya,
+cuma dipindah lokasi filenya supaya bisa dipakai backend sebagai
+fallback juga) — jadi Mas Sido tidak akan pernah benar-benar diam
+hanya karena Groq bermasalah.
+JUJUR — bedanya dengan versi lama: dulu Mas Sido HANYA bisa menjawab
+pertanyaan yang persis mengandung salah satu kata kunci di daftar
+tetapnya; kalau tidak, selalu dijawab "belum punya jawaban pasti".
+Sekarang, lewat LLM, dia bisa memahami pertanyaan yang ditulis dengan
+gaya bebas/berbelit (mis. "bisnisku lagi lesu, gimana caranya biar bisa
+dapet pinjaman modal dari bank?") dan tetap menjawab relevan dari data
+asli — sesuatu yang mustahil dilakukan versi keyword-matching murni.
 Riwayat chat tersimpan ke database, dibatasi 5 percakapan terakhir (10
-pesan) — lebih dari itu, yang paling lama otomatis dihapus.
+pesan) — lebih dari itu, yang paling lama otomatis dihapus. Ini tidak
+berubah dari sebelumnya.
 
 
 ========================================================
@@ -442,47 +563,97 @@ B. DASHBOARD DINKOP (agregat, sudut pandang dinas)
 ========================================================
 APAKAH ADA YANG BENERAN AI?
 ========================================================
-Jawaban jujur: YA, tapi HANYA SATU bagian kecil dari seluruh sistem.
+Jawaban jujur (per update terbaru): YA, di 5 titik — 1 titik OCR
+(Tesseract.js, sudah ada sejak awal) dan 4 titik LLM (Groq, model
+llama-3.3-70b-versatile). Semua 4 titik LLM PUNYA FALLBACK otomatis ke
+logic rule-based lama, jadi tidak satupun fitur berhenti total kalau
+Groq lambat/down/API key belum diisi.
 
-BUKAN AI (murni aturan/matematika, dan kode sumbernya sendiri memang
-berkomentar demikian):
+BUKAN AI SAMA SEKALI (murni aturan/matematika, tidak berubah):
 - Skor kelayakan & simulasi KUR (compute_score/get_kur_offer) — rumus
-  SQL biasa (rata-rata berbobot, tabel pengganda).
+  SQL biasa (rata-rata berbobot, tabel pengganda). SENGAJA tidak pernah
+  disentuh LLM sedikit pun, supaya angka yang jadi dasar pengajuan KUR
+  tetap 100% bisa diaudit/dijelaskan asal-usulnya — LLM hanya boleh
+  menuliskan ULANG angka ini jadi kalimat (lihat "Narasi Skor" di
+  bawah) atau menjawab pertanyaan tentangnya (lihat "Mas Sido" di
+  bawah), tidak pernah menghitungnya.
 - Sistem quest & lencana — katalog tetap dengan syarat deteksi
   otomatis, bukan model apa pun.
-- Mas Sido (chatbot) — pencocokan kata kunci (regex) + template
-  kalimat berisi angka asli.
-- Parser Tempel Chat & parser hasil OCR foto — regex/heuristik, bukan
-  machine learning.
 
-BENERAN AI:
-- Tesseract.js, dipakai saat unggah foto bukti transfer di fitur
-  Pembukuan. ini adalah mesin OCR (pengenalan karakter dari gambar)
-  yang di dalamnya memakai model jaringan saraf terlatih (LSTM) untuk
-  membaca teks dari foto. Ini teknologi pihak ketiga yang sudah jadi
-  (bukan dilatih sendiri oleh tim WIRABUMI), dan hasilnya (teks
-  mentah) langsung diproses lagi oleh regex biasa di atas — jadi AI-
-  nya hanya sebatas "membaca huruf dari gambar", bukan "memahami"
-  transaksinya.
+SEKARANG BENERAN AI, DENGAN FALLBACK RULE-BASED (Groq LLM,
+llama-3.3-70b-versatile, lewat server/lib/groqClient.js — timeout 8
+detik per panggilan):
+1. Parser Tempel Chat (server/lib/llmChatParser.js, endpoint
+   POST /api/parse/chat) — LLM membaca chat penjualan informal dan
+   mengekstrak semua transaksi jadi JSON. Fallback: regex lama di
+   src/lib/chatParser.js (src/lib/chatParser.js sendiri TIDAK dihapus,
+   masih dipakai persis sebagai fallback).
+2. Narasi Skor (server/lib/llmScoreNarrative.js) — LLM menulis 2-3
+   kalimat penjelasan dari angka skor yang SUDAH dihitung SQL (lihat
+   catatan di atas — LLM tidak pernah menghitung skornya sendiri).
+   Fallback: kalimat statis sederhana yang tetap disusun dari angka
+   asli (total_score & status), bukan LLM.
+3. Parser hasil OCR foto (server/lib/llmReceiptParser.js, endpoint
+   POST /api/parse/receipt) — Tesseract.js tetap yang membaca teks dari
+   foto (tidak berubah), tapi teks mentahnya sekarang diekstrak jadi
+   data terstruktur oleh LLM (lebih toleran ke noise/typo OCR
+   dibanding regex kaku). Fallback: regex lama di
+   src/lib/receiptParser.js (juga tidak dihapus).
+4. Mas Sido, chatbot (server/lib/llmChatbotAnswer.js, endpoint
+   POST /api/chat-messages/ask) — LLM menjawab pertanyaan bebas
+   berbahasa natural, diberi data konteks usaha yang sama seperti versi
+   lama (skor, KUR, omzet, produk terlaris, legalitas) dan diinstruksi
+   tegas untuk HANYA memakai angka itu, tidak mengarang, dan jujur
+   bilang "tidak tahu" kalau datanya tidak cukup. Fallback: mesin
+   jawaban kata-kunci lama, dipindah ke src/lib/chatbotAnswer.js (logika
+   IDENTIK dengan sebelumnya, cuma pindah lokasi file).
 
-Jadi kalau ditanya "ini aplikasi AI?" — jawaban akuratnya: hanya
-bagian pembacaan foto bukti transfer yang benar-benar AI (dan itu pun
-model pihak ketiga, bukan buatan sendiri). Semua fitur lain yang
-terasa "pintar" (Mas Sido, Tempel Chat, skor, quest) sengaja dibangun
-berbasis aturan yang bisa dijelaskan dan dipertanggungjawabkan, bukan
-tebakan model yang tidak bisa dijelaskan alasannya.
+Di 3 titik yang menghasilkan data terstruktur (parser Tempel Chat, OCR
+foto, dan — kalau kamu tambahkan tampilannya — Mas Sido), badge kecil
+"✨ Diproses AI (Groq)" atau "⚙️ Mode cadangan (aturan)" bisa dipakai
+untuk menunjukkan jalur mana yang sebenarnya memproses input; saat ini
+badge itu sudah tampil di tabel review Tempel Chat & Unggah Foto.
+
+Tesseract.js (OCR, dari awal sudah ada, tidak diubah):
+- Mesin OCR (pengenalan karakter dari gambar) yang di dalamnya memakai
+  model jaringan saraf terlatih (LSTM). Teknologi pihak ketiga yang
+  sudah jadi (bukan dilatih sendiri oleh tim WIRABUMI), berjalan 100%
+  di browser — foto tidak pernah dikirim ke server manapun.
+
+CATATAN PENTING soal "tanpa cloud": sebelum perubahan ini, WIRABUMI
+benar-benar tidak memanggil layanan pihak ketiga apa pun. Sekarang, 3
+fitur di atas memanggil Groq API (cloud, di luar komputer sendiri) —
+jadi klaim "100% lokal" itu SUDAH TIDAK SEPENUHNYA BENAR LAGI untuk 3
+fitur tersebut. Yang masih 100% lokal: database, autentikasi, OCR
+Tesseract, dan semua fitur rule-based lainnya. GROQ_API_KEY di .env
+bersifat opsional — kalau dikosongkan, aplikasi tetap jalan penuh
+lewat fallback, hanya tanpa bagian yang benar-benar AI.
+
+Jadi kalau ditanya "ini aplikasi AI?" — jawaban akuratnya: skor, KUR,
+dan quest tetap murni rule-based (sengaja, supaya bisa
+dipertanggungjawabkan); 4 titik yang berhubungan dengan membaca input
+tidak terstruktur (chat, hasil OCR), menjelaskan skor, dan menjawab
+pertanyaan bebas (Mas Sido) sekarang benar-benar memakai LLM Groq,
+dengan jaring pengaman otomatis ke logic lama kalau LLM-nya bermasalah.
 
 
 ========================================================
 KETERBATASAN YANG PERLU DIKETAHUI
 ========================================================
-1. Mas Sido bukan AI — hanya pencocokan kata kunci, tidak akan paham
-   pertanyaan yang rumit/berbelit.
-2. Parser Tempel Chat bukan AI — bisa salah menebak produk untuk chat
-   yang tidak lazim, karena itu selalu ada langkah review.
-3. Fitur unggah foto: OCR hanya membaca teks, tidak memahami isinya.
-   Foto buram/miring/gelap bisa gagal/salah baca. Belum bisa membedakan
-   transfer masuk (penjualan) vs keluar (pengeluaran).
+1. Mas Sido sekarang coba LLM lebih dulu (bisa paham pertanyaan bebas/
+   berbelit), tapi tetap punya fallback ke pencocokan kata kunci lama
+   kalau Groq gagal — di jalur fallback itu, keterbatasan lama masih
+   berlaku (tidak akan paham pertanyaan yang rumit/berbelit).
+2. Parser Tempel Chat sekarang coba LLM lebih dulu, tapi tetap bisa
+   salah menebak (baik lewat LLM maupun fallback regex) untuk chat
+   yang sangat tidak lazim — karena itu selalu ada langkah review
+   sebelum disimpan, di kedua jalur.
+3. Fitur unggah foto: OCR (Tesseract) hanya membaca teks, tidak
+   memahami isinya — foto buram/miring/gelap bisa gagal/salah baca.
+   Tahap ekstraksi setelahnya (LLM atau fallback regex) bisa membaca
+   noise OCR lebih baik dari sebelumnya, tapi tetap tidak sempurna.
+   Belum bisa membedakan transfer masuk (penjualan) vs keluar
+   (pengeluaran).
 4. Tidak ada verifikasi legalitas ke instansi resmi (OSS/BPJPH) —
    checklist murni pencatatan internal.
 5. Tidak ada pengajuan KUR sungguhan ke bank — PDF adalah bahan yang
@@ -501,6 +672,15 @@ KETERBATASAN YANG PERLU DIKETAHUI
     kebutuhan resmi tetap konsultasikan ke akuntan/konsultan pajak.
 11. "Poin" di sistem quest adalah label ilustratif, bukan angka yang
     ditambahkan langsung ke skor lewat pembukuan poin terpisah.
+12. 4 fitur LLM (parser Tempel Chat, narasi Skor, parser OCR foto, Mas
+    Sido) butuh koneksi internet & GROQ_API_KEY yang valid di .env
+    untuk benar-benar aktif memakai AI. Kalau salah satu tidak
+    terpenuhi (offline, key kosong/salah, API Groq sedang down/
+    timeout), keempat fitur itu otomatis jalan di "mode cadangan"
+    (logic rule-based lama) tanpa error — untuk Tempel Chat & Unggah
+    Foto, badge di tabel review menunjukkan mode mana yang aktif; untuk
+    Mas Sido & narasi Skor, cek log terminal backend untuk memastikan
+    (baris "Groq gagal..." muncul kalau sedang di mode cadangan).
 
 
 ========================================================
@@ -509,8 +689,9 @@ RINGKASAN: MANA YANG NYATA, MANA YANG SEDERHANA, MANA YANG AI
 NYATA (dihitung/tersimpan sungguhan dari database):
 - Akun & login, isolasi data per pengguna
 - Semua data pembukuan (manual, tempel-chat, unggah-foto) & pengeluaran
-- Laporan Laba Rugi + PDF, Skor Kelayakan (4 faktor), Plafon & cicilan
-  KUR (rumus anuitas asli), PDF berkas KUR
+- Laporan Laba Rugi + PDF, Skor Kelayakan (4 faktor, murni SQL, tidak
+  pernah disentuh LLM), Plafon & cicilan KUR (rumus anuitas asli), PDF
+  berkas KUR
 - Statistik Beranda & Dashboard Dinkop (agregat asli)
 - Riwayat chat Mas Sido (tersimpan, dibatasi 5 percakapan)
 - Sistem quest & lencana (status dideteksi dari data asli, simulasi
@@ -518,14 +699,24 @@ NYATA (dihitung/tersimpan sungguhan dari database):
 - Notifikasi in-app (5 jenis, semua dihitung dari data asli)
 - Foto profil (avatar), mode gelap, ulasan pengguna
 
-SEDERHANA / BUKAN AI (aturan & pencocokan kata kunci):
-- Mas Sido (chatbot) — jawaban berdasar kata kunci + data asli
-- Parser Tempel Chat & parser hasil OCR foto — ekstraksi berbasis pola
-  teks (regex)
+HYBRID: LLM DULU, FALLBACK RULE-BASED KALAU GAGAL (baru):
+- Parser Tempel Chat — Groq LLM (llama-3.3-70b-versatile) lebih dulu,
+  fallback ke regex src/lib/chatParser.js
+- Parser hasil OCR foto — Groq LLM lebih dulu (baca teks OCR yang
+  berantakan), fallback ke regex src/lib/receiptParser.js
+- Narasi Skor — Groq LLM menuliskan ulang angka skor (yang tetap
+  murni SQL) jadi kalimat, fallback ke kalimat statis sederhana
+- Mas Sido (chatbot) — Groq LLM menjawab pertanyaan bebas dari data
+  konteks usaha, fallback ke pencocokan kata kunci di
+  src/lib/chatbotAnswer.js (logika identik dengan versi lama)
 
-AI SUNGGUHAN (satu-satunya):
+AI SUNGGUHAN:
 - Tesseract.js — OCR (model jaringan saraf pihak ketiga) untuk membaca
-  teks dari foto bukti transfer, berjalan lokal di browser.
+  teks dari foto bukti transfer, berjalan lokal di browser (tidak
+  diubah oleh pekerjaan ini).
+- Groq API (llama-3.3-70b-versatile) — satu-satunya panggilan ke
+  layanan cloud pihak ketiga di seluruh aplikasi, dipakai di 4 fitur
+  hybrid di atas, opsional lewat GROQ_API_KEY di .env.
 
 Dokumen ini ditulis ulang supaya siapa pun yang membaca tahu persis
 apa yang sungguhan berjalan di WIRABUMI, apa yang masih sederhana, dan

@@ -4,8 +4,6 @@ import TopNav from '../components/TopNav';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../lib/apiClient';
 import { rupiah, formatDateID, todayISO, formatThousands, parseThousands } from '../lib/format';
-import { parseChatToTransactions } from '../lib/chatParser';
-import { parseReceiptText } from '../lib/receiptParser';
 
 const STATUS_OPTIONS = ['Lunas', 'DP 50%', 'Belum Lunas'];
 const SATUAN_OPTIONS = ['pcs', 'lusin', 'gros', 'kodi', 'pack', 'box', 'dus', 'kg', 'liter'];
@@ -25,6 +23,8 @@ export default function PembukuanTambah() {
   const [chatText, setChatText] = useState('');
   const [draft, setDraft] = useState(null); // array of parsed rows pending review
   const [draftSource, setDraftSource] = useState('chat_parse');
+  const [parseSource, setParseSource] = useState(null); // 'llm' | 'rule-based-fallback'
+  const [parsing, setParsing] = useState(false);
   const [importDate, setImportDate] = useState(todayISO());
   const [importing, setImporting] = useState(false);
 
@@ -80,10 +80,19 @@ export default function PembukuanTambah() {
     setRows((r) => r.filter((x) => x.id !== id));
   }
 
-  function runParse() {
-    const parsed = parseChatToTransactions(chatText);
-    setDraftSource('chat_parse');
-    setDraft(parsed.map((p) => ({ ...p, pelanggan: '', include: true })));
+  async function runParse() {
+    setParsing(true);
+    setError('');
+    try {
+      const res = await api.post('/parse/chat', { text: chatText });
+      setDraftSource('chat_parse');
+      setParseSource(res.source);
+      setDraft(res.rows.map((p) => ({ ...p, pelanggan: p.pelanggan || '', include: true })));
+    } catch (err) {
+      setError('Gagal memproses chat: ' + err.message);
+    } finally {
+      setParsing(false);
+    }
   }
 
   function handlePhotoSelect(e) {
@@ -113,7 +122,10 @@ export default function PembukuanTambah() {
       });
       const text = data.text || '';
       setOcrRawText(text);
-      const parsed = parseReceiptText(text);
+      setOcrStatus('Menganalisis hasil bacaan…');
+      const res = await api.post('/parse/receipt', { text });
+      const parsed = res.result;
+      setParseSource(res.source);
       setDraftSource('photo_ocr');
       setDraft([{
         produk: parsed.produk,
@@ -274,7 +286,9 @@ export default function PembukuanTambah() {
                 />
                 <div className="flex between mt-16" style={{ flexWrap: 'wrap', gap: 12 }}>
                   <button className="btn btn-secondary btn-md" onClick={() => setChatText(SAMPLE_CHAT)}>Isi contoh chat</button>
-                  <button className="btn btn-primary btn-lg" disabled={!chatText.trim()} onClick={runParse}>Proses dengan WIRABUMI →</button>
+                  <button className="btn btn-primary btn-lg" disabled={!chatText.trim() || parsing} onClick={runParse}>
+                    {parsing ? 'Memproses…' : 'Proses dengan WIRABUMI →'}
+                  </button>
                 </div>
               </div>
             ) : (
@@ -284,6 +298,7 @@ export default function PembukuanTambah() {
                 importing={importing} saveDraft={saveDraft}
                 onBack={() => setDraft(null)}
                 emptyHint='Coba tempel chat yang berisi harga penjualan (mis. "320rb", "Rp 320.000").'
+                source={parseSource}
               />
             )}
           </div>
@@ -318,6 +333,7 @@ export default function PembukuanTambah() {
                 importing={importing} saveDraft={saveDraft}
                 onBack={() => { setDraft(null); resetPhotoMode(); }}
                 emptyHint="Sistem tidak menemukan nominal transfer pada gambar ini. Coba foto lain yang lebih jelas, atau isi manual."
+                source={parseSource}
                 extra={ocrRawText && (
                   <details style={{ marginTop: 12, fontSize: 12.5, color: 'var(--text-faint)' }}>
                     <summary style={{ cursor: 'pointer', fontWeight: 600 }}>Lihat teks hasil OCR (untuk verifikasi)</summary>
@@ -333,10 +349,21 @@ export default function PembukuanTambah() {
   );
 }
 
-function DraftReview({ draft, updateDraftRow, importDate, setImportDate, importing, saveDraft, onBack, emptyHint, extra }) {
+function DraftReview({ draft, updateDraftRow, importDate, setImportDate, importing, saveDraft, onBack, emptyHint, extra, source }) {
   return (
     <div style={{ animation: 'wbFade .4s ease' }}>
-      <div className="done-flag">{draft.length === 0 ? 'Tidak ada transaksi terdeteksi' : `${draft.length} transaksi terdeteksi, periksa & koreksi sebelum disimpan`}</div>
+      <div className="flex" style={{ alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+        <div className="done-flag">{draft.length === 0 ? 'Tidak ada transaksi terdeteksi' : `${draft.length} transaksi terdeteksi, periksa & koreksi sebelum disimpan`}</div>
+        {source && (
+          <span style={{
+            fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 999,
+            background: source === 'llm' ? 'var(--green-bg)' : 'var(--amber-bg)',
+            color: source === 'llm' ? 'var(--green)' : 'var(--amber)',
+          }}>
+            {source === 'llm' ? '✨ Diproses AI (Groq)' : '⚙️ Mode cadangan (aturan)'}
+          </span>
+        )}
+      </div>
       {draft.length === 0 ? (
         <div className="empty-state">{emptyHint}</div>
       ) : (

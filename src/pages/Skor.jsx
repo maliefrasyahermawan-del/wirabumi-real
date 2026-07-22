@@ -57,6 +57,18 @@ export default function Skor() {
           </div>
         </div>
 
+        {score.narrative && (
+          <div className="card-lg" style={{ marginTop: 20, background: 'var(--blue-lighter)', display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+            <span style={{ fontSize: 20, lineHeight: 1 }}>✨</span>
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.05em', color: 'var(--blue-dark)', textTransform: 'uppercase' }}>
+                Penjelasan Skor {score.narrative_source === 'llm' ? '· Groq AI' : '· ringkasan otomatis'}
+              </div>
+              <p style={{ fontSize: 14.5, lineHeight: 1.6, margin: '6px 0 0', color: 'var(--text)' }}>{score.narrative}</p>
+            </div>
+          </div>
+        )}
+
         <h2 className="serif" style={{ fontWeight: 600, fontSize: 22, margin: '34px 0 16px', letterSpacing: '-0.3px' }}>Apa yang membentuk skormu</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {score.factors.map((f) => (
