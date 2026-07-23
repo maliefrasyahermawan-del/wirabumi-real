@@ -1,0 +1,104 @@
+========================================================
+AKUN MOCKUP / TEST WIRABUMI — SEMUA PERAN
+(hanya untuk testing lokal, bukan data produksi)
+========================================================
+File ini: akun_mockup.txt (di root folder proyek, sejajar dengan
+fitur_wirabumi.txt dan README.md).
+
+Semua akun ini ada di database lokal kamu sendiri (Postgres, database
+"wirabumi"). Password akun yang tadinya tidak diketahui (dibuat di sesi
+kerja sebelumnya) sudah di-reset ke "password123" tanggal 2026-07-23
+supaya file ini benar-benar bisa dipakai login. Akun yang sudah punya
+password dikenal (demo-pajak, banktest) TIDAK diubah.
+
+CATATAN: maliefrasyahermawan@gmail.com ("Wayang") SENGAJA TIDAK
+dimasukkan ke daftar di bawah — itu kelihatannya akun pribadimu sendiri
+(pakai email gmail asli), bukan akun mockup, jadi passwordnya tidak
+saya sentuh/reset.
+
+
+========================================================
+1. UMKM OWNER (peran default, dashboard pribadi di /dashboard)
+========================================================
+
+- Email    : batikkliwonjaya@local.test
+  Password : password123
+  Usaha    : Batik Kliwon Jaya (Tekstil & Batik, Pasar Kliwon)
+  Catatan  : akun demo lama, sudah ada data pembukuan lengkap.
+
+- Email    : testkosong@local.test
+  Password : password123
+  Usaha    : Uji Coba Kosong (Umum, Laweyan)
+  Catatan  : akun kosong — bagus buat tes tampilan "belum ada data".
+
+- Email    : angkringan.joyo@local.test
+  Password : password123
+  Usaha    : Angkringan Mas Joyo (Kuliner & Angkringan, Jebres)
+  Catatan  : akun demo lama, ada banyak transaksi.
+
+- Email    : rbactest@example.com
+  Password : password123
+  Usaha    : Toko RBAC Test (Umum)
+  Catatan  : SUDAH mengizinkan "bank_consent" (nyala) dan sudah punya
+             status pengajuan "Disetujui" di Dashboard Bank — bagus
+             buat langsung lihat fitur consent + review Bank tanpa
+             setup ulang.
+
+- Email    : demo-pajak@local.test
+  Password : demo1234
+  Usaha    : Demo Estimasi Pajak (Demo, Pasar Kliwon)
+  Catatan  : diisi transaksi khusus buat demo Estimasi Kewajiban Pajak
+             PPh Final UMKM — coba ganti Bulan di Laporan Laba Rugi ke
+             Juli/Agustus/September/Oktober 2026 buat lihat 4 status
+             pajak yang berbeda (lihat catatan lengkap di percakapan
+             soal fitur pajak).
+
+
+========================================================
+2. GOVERNMENT / PEMERINTAH DINKOP (dashboard agregat di /dinkop)
+========================================================
+
+- Email    : resettest@example.com
+  Password : password123
+  Usaha    : Toko Reset Test
+  Akses    : /dinkop (dashboard agregat), /admin/monitoring (log
+             aktivitas), /admin/impact (dashboard dampak/prioritas
+             UMKM binaan).
+
+
+========================================================
+3. BANK / MITRA PENYALUR KUR (dashboard di /bank)
+========================================================
+
+- Email    : banktest@example.com
+  Password : password123
+  Usaha    : Bank Test Officer
+  Akses    : /bank — hanya melihat UMKM yang mengizinkan (bank_consent
+             = true). Saat ini yang tampil di listnya: Toko RBAC Test
+             (rbactest@example.com), status "Disetujui".
+
+
+========================================================
+4. SUPER ADMIN (akses penuh + /admin/system)
+========================================================
+
+- Email    : llmtest@example.com
+  Password : password123
+  Usaha    : Toko Uji LLM
+  Akses    : SEMUANYA — /dinkop, /admin/monitoring, /admin/impact,
+             /bank, /admin/pengguna (kelola pengguna, ubah peran akun
+             lain), /admin/system (storage, pemakaian LLM, error log).
+  Catatan  : peran "Super Admin" hanya bisa didapat lewat database
+             langsung, tidak lewat aplikasi manapun — akun ini contoh
+             satu-satunya yang sudah di-set begitu.
+
+
+========================================================
+CARA CEK CEPAT
+========================================================
+1. Jalankan aplikasi (start.bat, atau npm run server + npm run dev).
+2. Buka http://localhost:5173/masuk
+3. Login pakai salah satu email + password di atas.
+4. Navbar & dashboard yang muncul akan otomatis berbeda sesuai peran
+   akun itu (lihat fitur_wirabumi.txt bagian 17 untuk detail lengkap
+   siapa boleh lihat apa).

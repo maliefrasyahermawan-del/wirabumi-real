@@ -177,6 +177,43 @@ input, textarea, select { font-family: inherit; }
 .nav-dropdown-item.current .nav-dropdown-label { color: var(--blue-dark); }
 .nav-dropdown-desc { font-size: 11.5px; color: var(--text-faint); }
 .nav-dropdown-divider { height: 1px; background: var(--border); margin: 6px 2px; }
+
+/* Admin/Staff sidebar shell (Government, Bank, Super Admin) — deliberately a fixed
+   dark palette, not tied to the light/dark theme toggle, so it reads as a distinct
+   "staff mode" versus the light UMKM Owner top-nav experience. */
+.admin-shell { min-height: 100vh; background: var(--bg); }
+.admin-sidebar {
+  position: fixed; top: 0; left: 0; bottom: 0; width: 246px; z-index: 40;
+  background: #101826; color: #cbd5e1; display: flex; flex-direction: column;
+  transition: transform .2s ease; overflow-y: auto;
+}
+.admin-shell.sidebar-collapsed .admin-sidebar { transform: translateX(-100%); }
+.admin-main { margin-left: 246px; min-height: 100vh; display: flex; flex-direction: column; transition: margin-left .2s ease; }
+.admin-shell.sidebar-collapsed .admin-main { margin-left: 0; }
+
+.admin-sidebar-brand { display: flex; align-items: center; gap: 12px; padding: 20px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,.08); flex: none; }
+.admin-sidebar-brand-name { font-weight: 800; font-size: 16.5px; letter-spacing: -0.2px; color: #fff; }
+
+.admin-sidebar-user { display: flex; align-items: center; gap: 12px; padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,.08); flex: none; }
+.admin-sidebar-user-name { font-weight: 700; font-size: 13.5px; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 150px; }
+.admin-sidebar-user-role { font-size: 11.5px; color: #8a99ad; margin-top: 1px; }
+
+.admin-sidebar-nav { display: flex; flex-direction: column; gap: 3px; padding: 14px 12px; }
+.admin-nav-item { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 10px; background: none; border: none; cursor: pointer; color: #b6c2d1; font-size: 14px; font-weight: 600; text-align: left; width: 100%; }
+.admin-nav-item:hover { background: rgba(255,255,255,.06); color: #fff; }
+.admin-nav-item.active { background: var(--blue); color: #fff; }
+.admin-nav-item svg { flex: none; }
+
+.admin-topbar { display: flex; align-items: center; gap: 18px; padding: 14px 32px; border-bottom: 1px solid var(--border); background: var(--surface); flex: none; }
+.admin-hamburger { width: 34px; height: 34px; flex: none; border-radius: 9px; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); }
+.admin-hamburger:hover { background: var(--blue-lighter); color: var(--blue-dark); }
+.admin-topbar-link { background: none; border: none; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text-muted); }
+.admin-topbar-link:hover { color: var(--blue-dark); }
+.admin-content { flex: 1; min-width: 0; }
+
+@media (max-width: 720px) {
+  .admin-sidebar { box-shadow: 8px 0 30px rgba(0,0,0,.25); }
+}
 .nav-dropdown-user { display: flex; align-items: center; gap: 10px; padding: 6px 10px 10px; }
 .nav-dropdown-user-name { font-size: 13.5px; font-weight: 700; color: var(--text); }
 .nav-dropdown-user-email { font-size: 11.5px; color: var(--text-faint); }
