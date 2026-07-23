@@ -4,13 +4,6 @@ import TopNav from '../components/TopNav';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../lib/apiClient';
 
-const STEPS = [
-  { num: '1', title: 'Tempel', desc: 'Salin chat WhatsApp atau caption jualanmu ke WIRABUMI.' },
-  { num: '2', title: 'Rapi Otomatis', desc: 'Sistem menyusun jadi pembukuan rapi tanpa kamu catat manual.' },
-  { num: '3', title: 'Lihat Skor', desc: 'Dapat skor kelayakan usaha dan cara menaikkannya.' },
-  { num: '4', title: 'Ajukan KUR', desc: 'Berkas pinjaman KUR tersusun otomatis, siap kamu bawa.' },
-];
-
 export default function Landing() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -64,24 +57,6 @@ export default function Landing() {
           </div>
         </div>
       </main>
-
-      <section className="steps-strip">
-        <div className="wrap-1240 steps-strip-inner">
-          <div>
-            <div className="steps-strip-label">EMPAT LANGKAH</div>
-            <div className="steps-strip-title">Chat → KUR</div>
-          </div>
-          {STEPS.map((s) => (
-            <div className="step-card" key={s.num}>
-              <div className="step-num">{s.num}</div>
-              <div style={{ minWidth: 0 }}>
-                <div className="step-title">{s.title}</div>
-                <div className="step-desc">{s.desc}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
     </div>
   );
 }
