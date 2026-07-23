@@ -10,7 +10,7 @@ import { logActivity } from '../lib/activityLog.js';
 const router = Router();
 router.use(requireAuth);
 
-const EDITABLE_FIELDS = ['business_name', 'business_category', 'business_address', 'kecamatan', 'phone', 'legal_nib', 'legal_pirt', 'legal_halal'];
+const EDITABLE_FIELDS = ['business_name', 'business_category', 'business_address', 'kecamatan', 'phone', 'kategori_wajib_pajak', 'legal_nib', 'legal_pirt', 'legal_halal'];
 
 const AVATAR_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'uploads', 'avatars');
 const AVATAR_MIME_EXT = { 'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '.webp' };

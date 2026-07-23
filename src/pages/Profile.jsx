@@ -6,6 +6,10 @@ import { api } from '../lib/apiClient';
 import { formatDateID } from '../lib/format';
 
 const KECAMATAN_OPTIONS = ['Pasar Kliwon', 'Serengan', 'Laweyan', 'Jebres', 'Banjarsari'];
+const KATEGORI_PAJAK_OPTIONS = [
+  { value: 'orang_pribadi', label: 'Orang Pribadi' },
+  { value: 'badan_usaha', label: 'Badan Usaha (CV/PT/Firma/Koperasi)' },
+];
 const AVATAR_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const SECTIONS = [
   { key: 'profil', label: 'Profil Usaha' },
@@ -24,6 +28,7 @@ export default function Profile() {
     business_address: user.business_address || '',
     kecamatan: user.kecamatan || KECAMATAN_OPTIONS[0],
     phone: user.phone || '',
+    kategori_wajib_pajak: user.kategori_wajib_pajak || 'orang_pribadi',
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -175,6 +180,15 @@ export default function Profile() {
                     <div className="field">
                       <label>Nomor telepon</label>
                       <input value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="mis. 0812xxxxxxx" />
+                    </div>
+                    <div className="field">
+                      <label>Kategori Wajib Pajak</label>
+                      <select value={form.kategori_wajib_pajak} onChange={(e) => set('kategori_wajib_pajak', e.target.value)}>
+                        {KATEGORI_PAJAK_OPTIONS.map((k) => <option key={k.value} value={k.value}>{k.label}</option>)}
+                      </select>
+                      <p className="page-sub" style={{ marginTop: 6, marginBottom: 0 }}>
+                        Menentukan apakah ambang bebas pajak Rp500 juta/tahun berlaku di estimasi pajak Laporan Laba Rugi. Hanya Orang Pribadi yang mendapat ambang ini.
+                      </p>
                     </div>
                     <button className="btn btn-primary btn-lg" style={{ alignSelf: 'flex-start' }} disabled={saving} type="submit">
                       {saving ? 'Menyimpan…' : 'Simpan Perubahan'}

@@ -26,6 +26,11 @@ create table if not exists profiles (
   business_address text,
   kecamatan text,
   phone text,
+  -- Menentukan apakah ambang bebas pajak Rp500 juta/tahun (PPh Final UMKM)
+  -- berlaku atau tidak — lihat compute_tax_estimate() di bawah. Hanya
+  -- 'orang_pribadi' yang dapat fasilitas ini; 'badan_usaha' kena 0,5% dari
+  -- rupiah pertama.
+  kategori_wajib_pajak text not null default 'orang_pribadi' check (kategori_wajib_pajak in ('orang_pribadi', 'badan_usaha')),
   legal_nib boolean not null default false,
   legal_pirt boolean not null default false,
   legal_halal boolean not null default false,
@@ -265,6 +270,97 @@ begin
     'cicilan_bulanan', round(cicilan),
     'rasio_cicilan_omzet', case when rata > 0 then round(cicilan / rata * 100, 1) else 0 end,
     'skor_saat_ini', total_score
+  );
+end;
+$$;
+
+-- ============ Estimasi PPh Final UMKM (PP 55/2022 jo. PP 20/2026) ============
+-- Murni SQL/matematika seperti compute_score/get_kur_offer di atas — TIDAK
+-- pernah memanggil LLM, dan TIDAK memengaruhi compute_score()/get_kur_offer()
+-- sama sekali (fitur pajak ini berdiri sendiri). Tarif final 0,5% dari omzet
+-- bruto (bukan laba). Ambang bebas pajak Rp500 juta/tahun pajak HANYA
+-- berlaku untuk kategori 'orang_pribadi'; 'badan_usaha' kena 0,5% sejak
+-- rupiah pertama, tanpa ambang.
+--
+-- Perhitungan MARGINAL: karena omzet kumulatif tahun berjalan monoton naik
+-- (transaksi baru hanya menambah, tidak pernah mengurangi), total omzet
+-- yang PERNAH kena pajak sampai bulan manapun selalu sama dengan
+-- GREATEST(0, omzet_kumulatif - ambang) — jadi dasar pengenaan pajak bulan
+-- tertentu cukup dihitung sebagai selisih nilai itu sebelum vs sesudah
+-- bulan tersebut, tanpa perlu iterasi/looping per bulan.
+create or replace function compute_tax_estimate(
+  p_user_id uuid,
+  p_year int default null,
+  p_month int default null
+)
+returns jsonb
+language plpgsql
+as $$
+declare
+  ambang constant numeric := 500000000;
+  batas_atas constant numeric := 4800000000;
+  batas_warning constant numeric := batas_atas * 0.8;
+  tarif constant numeric := 0.005;
+  y int := coalesce(p_year, extract(year from current_date)::int);
+  m int := coalesce(p_month, extract(month from current_date)::int);
+  kategori text;
+  period_start date;
+  month_start date;
+  month_end date;
+  omzet_sebelum_bulan_ini numeric;
+  omzet_bulan_ini numeric;
+  omzet_kumulatif numeric;
+  taxed_sebelum numeric;
+  taxed_kumulatif numeric;
+  dasar_bulan_ini numeric;
+  status text;
+begin
+  if m < 1 or m > 12 then raise exception 'month must be between 1 and 12'; end if;
+
+  select coalesce(kategori_wajib_pajak, 'orang_pribadi') into kategori
+    from profiles where user_id = p_user_id;
+  if kategori is null then kategori := 'orang_pribadi'; end if;
+
+  period_start := make_date(y, 1, 1);
+  month_start := make_date(y, m, 1);
+  month_end := (month_start + interval '1 month' - interval '1 day')::date;
+
+  select coalesce(sum(harga), 0) into omzet_sebelum_bulan_ini
+    from transactions where user_id = p_user_id and tanggal >= period_start and tanggal < month_start;
+  select coalesce(sum(harga), 0) into omzet_bulan_ini
+    from transactions where user_id = p_user_id and tanggal >= month_start and tanggal <= month_end;
+  omzet_kumulatif := omzet_sebelum_bulan_ini + omzet_bulan_ini;
+
+  if kategori = 'badan_usaha' then
+    taxed_sebelum := omzet_sebelum_bulan_ini;
+    taxed_kumulatif := omzet_kumulatif;
+  else
+    taxed_sebelum := greatest(0, omzet_sebelum_bulan_ini - ambang);
+    taxed_kumulatif := greatest(0, omzet_kumulatif - ambang);
+  end if;
+
+  dasar_bulan_ini := taxed_kumulatif - taxed_sebelum;
+
+  if omzet_kumulatif >= batas_atas then
+    status := 'melebihi_batas_4_8m';
+  elsif omzet_kumulatif >= batas_warning then
+    status := 'mendekati_batas_4_8m';
+  elsif kategori = 'orang_pribadi' and omzet_kumulatif <= ambang then
+    status := 'di_bawah_ambang';
+  else
+    status := 'kena_pajak';
+  end if;
+
+  return jsonb_build_object(
+    'kategori_wajib_pajak', kategori,
+    'tahun_pajak', y,
+    'bulan', m,
+    'omzet_kumulatif_tahun_ini', omzet_kumulatif,
+    'omzet_bulan_ini', omzet_bulan_ini,
+    'status_ambang', status,
+    'dasar_pengenaan_pajak_bulan_ini', dasar_bulan_ini,
+    'estimasi_pajak_bulan_ini', round(dasar_bulan_ini * tarif),
+    'estimasi_pajak_kumulatif_tahun_ini', round(taxed_kumulatif * tarif)
   );
 end;
 $$;

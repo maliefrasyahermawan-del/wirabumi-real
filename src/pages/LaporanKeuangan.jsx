@@ -8,6 +8,15 @@ import { rupiah, formatDateID } from '../lib/format';
 
 const BULAN_NAMA = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 
+const TAX_STATUS_CONFIG = {
+  di_bawah_ambang: { label: 'Di bawah ambang bebas pajak', color: 'var(--green)', bg: 'var(--green-bg)' },
+  kena_pajak: { label: 'Kena PPh Final 0,5%', color: 'var(--blue-dark)', bg: 'var(--blue-light)' },
+  mendekati_batas_4_8m: { label: 'Mendekati batas Rp4,8 miliar', color: 'var(--amber)', bg: 'var(--amber-bg)' },
+  melebihi_batas_4_8m: { label: 'Melebihi batas Rp4,8 miliar — konsultasikan ke konsultan pajak', color: 'var(--red)', bg: 'var(--red-bg)' },
+};
+
+const TAX_DISCLAIMER = 'Estimasi ini dihitung otomatis dari data pembukuanmu berdasarkan skema PPh Final UMKM (PP 55/2022 jo. PP 20/2026) dan bersifat perkiraan, bukan perhitungan resmi. Aturan pajak dapat berubah dan setiap usaha punya kondisi berbeda (mis. jenis usaha, masa berlaku fasilitas). Untuk kewajiban pajak resmi, konsultasikan ke akuntan atau konsultan pajak terdaftar, atau cek langsung ke pajak.go.id / Coretax.';
+
 function monthRange(year, month) {
   const since = `${year}-${String(month + 1).padStart(2, '0')}-01`;
   const lastDay = new Date(year, month + 1, 0).getDate();
@@ -23,6 +32,7 @@ export default function LaporanKeuangan() {
   const [report, setReport] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [expenses, setExpenses] = useState([]);
+  const [taxEstimate, setTaxEstimate] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -33,11 +43,13 @@ export default function LaporanKeuangan() {
       api.get(`/report/laba-rugi?since=${since}&until=${until}`),
       api.get(`/transactions?since=${since}&until=${until}`),
       api.get(`/expenses?since=${since}&until=${until}`),
+      api.get(`/report/tax-estimate?year=${year}&month=${month + 1}`),
     ])
-      .then(([reportData, txnData, expData]) => {
+      .then(([reportData, txnData, expData, taxData]) => {
         setReport(reportData);
         setTransactions(txnData || []);
         setExpenses(expData || []);
+        setTaxEstimate(taxData);
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
@@ -153,12 +165,44 @@ export default function LaporanKeuangan() {
     });
     y = doc.lastAutoTable.finalY + 12;
 
+    // ---- Estimasi Kewajiban Pajak (PPh Final UMKM) ----
+    if (taxEstimate) {
+      if (y > 240) { doc.addPage(); y = 20; }
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.text('ESTIMASI KEWAJIBAN PAJAK (PPh FINAL UMKM)', 14, y);
+      y += 2;
+
+      autoTable(doc, {
+        startY: y + 2,
+        body: [
+          ['Kategori Wajib Pajak', taxEstimate.kategori_wajib_pajak === 'badan_usaha' ? 'Badan Usaha' : 'Orang Pribadi'],
+          ['Omzet Kumulatif Tahun Ini', rupiah(taxEstimate.omzet_kumulatif_tahun_ini)],
+          ['Status', TAX_STATUS_CONFIG[taxEstimate.status_ambang]?.label || taxEstimate.status_ambang],
+          ['Estimasi PPh Final Bulan Ini', rupiah(taxEstimate.estimasi_pajak_bulan_ini)],
+          ['Estimasi PPh Final Kumulatif Tahun Ini', rupiah(taxEstimate.estimasi_pajak_kumulatif_tahun_ini)],
+        ],
+        theme: 'grid',
+        styles: { fontSize: 10, cellPadding: 4, textColor: [0, 0, 0], lineColor: [0, 0, 0], lineWidth: 0.1 },
+        columnStyles: { 1: { halign: 'right' } },
+        margin: { left: 14, right: 14 },
+        tableWidth: 140,
+      });
+      y = doc.lastAutoTable.finalY + 8;
+    }
+
     doc.setFont('helvetica', 'italic');
     doc.setFontSize(8);
     doc.setTextColor(140);
     doc.text('Dibuat otomatis oleh WIRABUMI dari data pembukuan (penjualan) dan pengeluaran yang dicatat pengguna.', 14, y);
     y += 4;
     doc.text('Format mengacu pada struktur Laporan Laba Rugi SAK EMKM — bukan laporan yang diaudit/diverifikasi akuntan.', 14, y);
+    if (taxEstimate) {
+      y += 4;
+      const disclaimerLines = doc.splitTextToSize(TAX_DISCLAIMER, 182);
+      doc.text(disclaimerLines, 14, y);
+    }
+    doc.setTextColor(0);
 
     doc.save(`Laporan-Laba-Rugi-${businessName.replace(/\s+/g, '-')}-${periodeLabel.replace(' ', '-')}.pdf`);
   }
@@ -260,6 +304,37 @@ export default function LaporanKeuangan() {
                 <div>{rupiah(Math.abs(report.laba_bersih))}</div>
               </div>
             </div>
+
+            {taxEstimate && (
+              <div className="card-lg">
+                <div className="flex between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 14 }}>
+                  <div style={{ fontWeight: 800, fontSize: 13, letterSpacing: '0.4px', color: 'var(--text-faint)' }}>ESTIMASI KEWAJIBAN PAJAK</div>
+                  <span
+                    className="status-badge"
+                    style={{
+                      color: TAX_STATUS_CONFIG[taxEstimate.status_ambang]?.color,
+                      background: TAX_STATUS_CONFIG[taxEstimate.status_ambang]?.bg,
+                    }}
+                  >
+                    {TAX_STATUS_CONFIG[taxEstimate.status_ambang]?.label || taxEstimate.status_ambang}
+                  </span>
+                </div>
+
+                <div className="muted" style={{ fontSize: 13, marginBottom: 4 }}>Omzet kumulatif tahun {year}</div>
+                <div className="serif" style={{ fontWeight: 700, fontSize: 20, marginBottom: 14 }}>{rupiah(taxEstimate.omzet_kumulatif_tahun_ini)}</div>
+
+                <div className="flex between" style={{ padding: '8px 0', borderTop: '1px solid var(--border)', fontSize: 13.5 }}>
+                  <div>Estimasi PPh Final bulan ini</div>
+                  <div style={{ fontWeight: 700 }}>{rupiah(taxEstimate.estimasi_pajak_bulan_ini)}</div>
+                </div>
+                <div className="flex between" style={{ padding: '8px 0', borderTop: '1px solid var(--border)', fontSize: 13.5 }}>
+                  <div>Estimasi kumulatif tahun ini</div>
+                  <div style={{ fontWeight: 700 }}>{rupiah(taxEstimate.estimasi_pajak_kumulatif_tahun_ini)}</div>
+                </div>
+
+                <p className="muted" style={{ fontSize: 11.5, marginTop: 14, marginBottom: 0, lineHeight: 1.5 }}>{TAX_DISCLAIMER}</p>
+              </div>
+            )}
           </div>
         )}
       </div>

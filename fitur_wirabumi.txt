@@ -243,6 +243,9 @@ A. PROFIL USAHA
    - Nama usaha, kategori usaha (teks bebas), kecamatan (pilihan
      tetap: Pasar Kliwon, Serengan, Laweyan, Jebres, Banjarsari),
      alamat usaha, nomor telepon.
+   - Kategori Wajib Pajak (Orang Pribadi/default, atau Badan Usaha) —
+     menentukan apakah ambang bebas pajak Rp500 juta/tahun berlaku di
+     Estimasi Kewajiban Pajak (lihat bagian Laporan Laba Rugi).
    - Data ini dipakai di berkas PDF KUR dan agregat per-kecamatan di
      Dashboard Dinkop.
 
@@ -358,6 +361,38 @@ C. UNGGAH FOTO BUKTI TRANSFER
   Laporan ini juga tidak melalui jurnal umum/buku besar debit-kredit
   formal — dihitung langsung dari penjumlahan SQL. Untuk kebutuhan
   resmi (pajak, audit), tetap konsultasikan ke akuntan/konsultan pajak.
+
+ESTIMASI KEWAJIBAN PAJAK (PPh Final UMKM) — kartu tambahan di halaman
+yang sama, di bawah Ringkasan Laba Rugi:
+- MURNI SQL/MATEMATIKA seperti Skor & KUR — TIDAK melibatkan LLM sama
+  sekali, dan TIDAK memengaruhi compute_score()/get_kur_offer(). Dasar
+  hukum: skema PPh Final UMKM 0,5% dari omzet bruto (PP 55/2022 jo.
+  PP 20/2026), dihitung oleh fungsi SQL compute_tax_estimate().
+- Bergantung pada "Kategori Wajib Pajak" yang diisi di Profil Usaha
+  (Orang Pribadi/default, atau Badan Usaha). HANYA Orang Pribadi yang
+  dapat ambang bebas pajak Rp500 juta/tahun pajak — Badan Usaha kena
+  0,5% sejak rupiah pertama, tanpa ambang.
+- PERHITUNGAN MARGINAL: kalau omzet kumulatif tahun berjalan baru
+  melewati Rp500 juta di TENGAH bulan, hanya bagian yang melebihi
+  Rp500 juta itu yang kena pajak bulan tersebut — bukan seluruh omzet
+  bulan itu, apalagi omzet setahun penuh.
+- 4 status (badge warna): "Di bawah ambang bebas pajak" (hijau, hanya
+  Orang Pribadi di bawah Rp500jt), "Kena PPh Final 0,5%" (biru, kondisi
+  normal), "Mendekati batas Rp4,8 miliar" (kuning, begitu omzet
+  kumulatif tahun berjalan lewat 80% dari Rp4,8 miliar), "Melebihi
+  batas Rp4,8 miliar" (merah — di luar skema ini, disarankan konsultasi
+  ke konsultan pajak; WIRABUMI tidak menghitung pajak normal Pasal 17).
+- Muncul juga sebagai section tambahan di PDF Laporan Laba Rugi, dan
+  sebagai satu baris "sinyal kepatuhan pajak tambahan" (bukan kewajiban
+  terpisah) di PDF Berkas KUR — keduanya memakai compute_tax_estimate()
+  yang sama, tidak dihitung ulang dengan logic berbeda.
+- KETERBATASAN JUJUR (WAJIB dibaca sebelum dipakai serius): ini murni
+  ESTIMASI dari data pembukuan sendiri, bukan perhitungan resmi. Tidak
+  melacak masa berlaku 7 tahun skema PPh Final untuk Orang Pribadi
+  (asumsi masih berlaku). Tidak mengganti lapor pajak/SPT/Coretax sama
+  sekali — disclaimer ini selalu tampil di kartu maupun di PDF. Untuk
+  kewajiban pajak resmi, tetap konsultasikan ke akuntan/konsultan pajak
+  terdaftar atau cek pajak.go.id / Coretax.
 
 
 ========================================================
@@ -831,6 +866,10 @@ NYATA (dihitung/tersimpan sungguhan dari database):
 - Laporan Laba Rugi + PDF, Skor Kelayakan (4 faktor, murni SQL, tidak
   pernah disentuh LLM), Plafon & cicilan KUR (rumus anuitas asli), PDF
   berkas KUR
+- Estimasi Kewajiban Pajak PPh Final UMKM (compute_tax_estimate(), murni
+  SQL, ambang Rp500jt/tahun untuk Orang Pribadi, perhitungan marginal
+  saat lintas ambang, muncul di Laporan Laba Rugi + PDF-nya + 1 baris di
+  PDF Berkas KUR)
 - Statistik Beranda & Dashboard Dinkop (agregat asli)
 - Riwayat chat Mas Sido (tersimpan, dibatasi 5 percakapan)
 - Sistem quest & lencana (status dideteksi dari data asli, simulasi

@@ -7,6 +7,13 @@ import { useAuth } from '../context/AuthContext';
 import { api } from '../lib/apiClient';
 import { rupiah, formatDateID } from '../lib/format';
 
+const TAX_STATUS_LABEL = {
+  di_bawah_ambang: 'Di bawah ambang bebas pajak',
+  kena_pajak: 'Kena PPh Final 0,5%',
+  mendekati_batas_4_8m: 'Mendekati batas Rp4,8 miliar',
+  melebihi_batas_4_8m: 'Melebihi batas Rp4,8 miliar',
+};
+
 const LEGAL_ITEMS = [
   {
     key: 'legal_nib', title: 'NIB: Nomor Induk Berusaha', shortLabel: 'NIB',
@@ -37,6 +44,7 @@ export default function Kur() {
   const [generating, setGenerating] = useState(false);
   const [generated, setGenerated] = useState(false);
   const [transactions, setTransactions] = useState([]);
+  const [taxEstimate, setTaxEstimate] = useState(null);
 
   async function loadOffer(t) {
     setLoading(true);
@@ -50,6 +58,13 @@ export default function Kur() {
   useEffect(() => {
     const since = new Date(Date.now() - 180 * 86400000).toISOString().slice(0, 10);
     api.get(`/transactions?since=${since}`).then((rows) => setTransactions([...rows].reverse()));
+  }, [user.id]);
+
+  useEffect(() => {
+    const now = new Date();
+    api.get(`/report/tax-estimate?year=${now.getFullYear()}&month=${now.getMonth() + 1}`)
+      .then(setTaxEstimate)
+      .catch(() => {}); // sinyal tambahan opsional di PDF — jangan sampai memblokir halaman KUR kalau gagal
   }, [user.id]);
 
   async function toggleLegal(key) {
@@ -111,9 +126,22 @@ export default function Kur() {
     doc.text(`Tenor: ${offer.tenor_bulan} bulan · Bunga ${(offer.suku_bunga_tahunan * 100).toFixed(0)}% efektif/tahun`, 14, 132);
     doc.text(`Angsuran per bulan: ${rupiah(offer.cicilan_bulanan)} (${offer.rasio_cicilan_omzet}% dari omzet bulanan)`, 14, 139);
 
+    let tableStartY = 150;
+    if (taxEstimate) {
+      doc.setFont('helvetica', 'italic');
+      doc.setFontSize(9.5);
+      doc.setTextColor(90);
+      doc.text(
+        `Sinyal kepatuhan pajak tambahan (estimasi, bukan kewajiban terpisah): ${TAX_STATUS_LABEL[taxEstimate.status_ambang] || taxEstimate.status_ambang}.`,
+        14, 146
+      );
+      doc.setTextColor(0);
+      tableStartY = 156;
+    }
+
     if (transactions.length > 0) {
       autoTable(doc, {
-        startY: 150,
+        startY: tableStartY,
         head: [['Tanggal', 'Produk', 'Jumlah', 'Harga', 'Status']],
         body: transactions.map((t) => [formatDateID(t.tanggal), t.produk, `${t.qty} ${t.satuan}`, rupiah(t.harga), t.status]),
         styles: { fontSize: 9 },

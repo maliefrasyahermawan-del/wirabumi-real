@@ -39,4 +39,17 @@ router.get('/laba-rugi', async (req, res) => {
   });
 });
 
+// Estimasi PPh Final UMKM (PP 55/2022 jo. PP 20/2026) — murni SQL lewat
+// compute_tax_estimate(), tidak melibatkan LLM sama sekali. month: 1-12.
+router.get('/tax-estimate', async (req, res) => {
+  const year = req.query.year ? Number(req.query.year) : null;
+  const month = req.query.month ? Number(req.query.month) : null;
+  if (month !== null && (month < 1 || month > 12)) {
+    return res.status(400).json({ error: 'Parameter month harus antara 1 dan 12.' });
+  }
+
+  const result = await pool.query('select compute_tax_estimate($1, $2, $3) as data', [req.userId, year, month]);
+  res.json(result.rows[0].data);
+});
+
 export default router;
