@@ -121,6 +121,20 @@ Langkah-langkah:
 6. Di browser, klik "Daftar Gratis" untuk membuat akun pertama, lalu
    mulai pakai aplikasinya (isi Pembukuan, cek halaman Skor, dst).
 
+CARA LEBIH CEPAT (setelah setup pertama di atas selesai sekali): dobel
+klik start.bat di folder utama proyek. Ini membuka terminal interaktif
+(wirabumi-launcher.ps1) dengan menu navigasi panah atas/bawah — pilih
+"Nyalakan Website Wirabumi" untuk menyalakan backend+frontend otomatis
+(skip kalau portnya sudah kepakai/sudah nyala), tunggu sampai keduanya
+benar-benar bisa diakses, lalu link lokal muncul dan otomatis kebuka di
+browser. Pilih "Matikan Website Wirabumi" untuk mematikan proses backend
++ frontend dengan rapi (berdasar port, bukan asal taskkill semua node),
+atau "Keluar" untuk menutup terminalnya saja tanpa mematikan apa pun.
+Log proses tersimpan di folder .wirabumi-run/ (di-gitignore, bukan
+bagian dari kode aplikasi). start.bat ini murni alat menjalankan lokal
+untuk memudahkan — bukan pengganti langkah 1-5 di atas untuk instalasi
+pertama kali.
+
 Mengaktifkan 3 fitur AI (opsional, bisa menyusul kapan saja):
    a. Ambil API key gratis di https://console.groq.com/keys
    b. Isi GROQ_API_KEY=key_kamu di .env
@@ -147,6 +161,11 @@ Navbar atas (komponen TopNav) berisi:
 - Tombol ganti tema terang/gelap
 - Avatar/foto profil → dropdown: Lihat Profil, Pengaturan Akun,
   Tentang, Berikan Ulasan, Keluar
+- Dropdown "Admin" — HANYA muncul untuk akun berperan Admin atau Super
+  Admin (akun User biasa tidak melihat menu ini sama sekali, bukan
+  cuma disembunyikan lewat CSS): Monitoring Aktivitas, Dashboard
+  Dampak, dan (khusus Super Admin) Kelola Pengguna. Lihat bagian 17
+  untuk detail lengkap peran & hak akses.
 
 Catatan penamaan: menu "Pembukuan" itulah sisi PEMASUKAN (setiap
 transaksi yang dicatat = penjualan/uang masuk). Tidak ada menu terpisah
