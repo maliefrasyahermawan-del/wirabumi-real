@@ -4,7 +4,7 @@ import { requireAuth, requireRole } from '../auth.js';
 import { logActivity } from '../lib/activityLog.js';
 
 const router = Router();
-router.use(requireAuth, requireRole('government', 'super_admin'));
+router.use(requireAuth, requireRole('government', 'bank_officer', 'super_admin'));
 
 // Constraint 1: Multi-Role Collaboration & Activity Monitoring.
 // "Active user" = distinct user_id with an activity_log row in the last 24h,

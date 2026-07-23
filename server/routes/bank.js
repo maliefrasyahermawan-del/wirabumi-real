@@ -4,7 +4,7 @@ import { requireAuth, requireRole } from '../auth.js';
 import { logActivity } from '../lib/activityLog.js';
 
 const router = Router();
-router.use(requireAuth, requireRole('bank_officer', 'super_admin'));
+router.use(requireAuth, requireRole('bank_officer', 'government', 'super_admin'));
 
 const REVIEW_STATUSES = ['pending', 'approved', 'rejected'];
 

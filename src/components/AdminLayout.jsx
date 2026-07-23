@@ -66,18 +66,18 @@ function MonitoringIcon() {
   );
 }
 
+const ADMIN_COMMON_NAV = [
+  { to: '/admin/dashboard', label: 'Dashboard Utama', Icon: DashboardIcon },
+  { to: '/admin/monitoring', label: 'Monitoring', Icon: MonitoringIcon },
+  { to: '/admin/impact', label: 'Dashboard Dampak', Icon: ImpactIcon },
+  { to: '/bank', label: 'Dashboard Bank', Icon: BankIcon },
+];
+
 const NAV_ITEMS = {
-  government: [
-    { to: '/admin/monitoring', label: 'Dashboard', Icon: MonitoringIcon },
-    { to: '/admin/impact', label: 'Dashboard Dampak', Icon: ImpactIcon },
-  ],
-  bank_officer: [
-    { to: '/bank', label: 'Dashboard', Icon: BankIcon },
-  ],
+  government: ADMIN_COMMON_NAV,
+  bank_officer: ADMIN_COMMON_NAV,
   super_admin: [
-    { to: '/admin/monitoring', label: 'Dashboard', Icon: MonitoringIcon },
-    { to: '/admin/impact', label: 'Dashboard Dampak', Icon: ImpactIcon },
-    { to: '/bank', label: 'Dashboard Bank', Icon: BankIcon },
+    ...ADMIN_COMMON_NAV,
     { to: '/admin/pengguna', label: 'Kelola Pengguna', Icon: UsersIcon },
     { to: '/admin/system', label: 'System', Icon: SystemIcon },
   ],

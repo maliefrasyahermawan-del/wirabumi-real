@@ -7,7 +7,10 @@ export const ROLE_LABELS = {
 
 export const ROLE_HOME = {
   umkm_owner: '/dashboard/umkm',
-  government: '/admin/monitoring',
-  bank_officer: '/bank',
-  super_admin: '/admin/monitoring',
+  government: '/admin/dashboard',
+  bank_officer: '/admin/dashboard',
+  super_admin: '/admin/dashboard',
 };
+
+// Semua role yang diperlakukan sebagai "admin" di frontend
+export const ADMIN_ROLES = ['government', 'bank_officer', 'super_admin'];

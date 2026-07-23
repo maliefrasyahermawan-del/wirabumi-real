@@ -19,10 +19,8 @@ export default function Dashboard() {
   useEffect(() => {
     if (loading) return;
     const role = profile?.role;
-    if (role === 'government' || role === 'super_admin') {
-      navigate('/admin/monitoring', { replace: true });
-    } else if (role === 'bank_officer') {
-      navigate('/bank', { replace: true });
+    if (role === 'government' || role === 'bank_officer' || role === 'super_admin') {
+      navigate('/admin/dashboard', { replace: true });
     } else {
       // umkm_owner atau role null/undefined → personal UMKM dashboard
       navigate('/dashboard/umkm', { replace: true });

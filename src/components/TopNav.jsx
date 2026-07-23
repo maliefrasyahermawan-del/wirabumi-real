@@ -13,23 +13,19 @@ const KEUANGAN_LINKS = [
   { to: '/kur', label: 'Ajukan KUR', desc: 'Simulasi plafon & unduh berkas' },
 ];
 
+const ADMIN_COMMON_NAV = [
+  { to: '/admin/dashboard', label: 'Dashboard Utama', icon: '⊞' },
+  { to: '/dinkop', label: 'Dashboard Agregat', icon: '◫' },
+  { to: '/admin/monitoring', label: 'Monitoring Aktivitas', icon: '▣' },
+  { to: '/admin/impact', label: 'Dashboard Dampak', icon: '◎' },
+  { to: '/bank', label: 'Dashboard Bank', icon: '⬛' },
+];
+
 const ADMIN_NAV = {
-  government: [
-    { to: '/admin/dashboards', label: 'Semua Dashboard', icon: '⊞' },
-    { to: '/dinkop', label: 'Dashboard Agregat', icon: '◫' },
-    { to: '/admin/monitoring', label: 'Monitoring Aktivitas', icon: '▣' },
-    { to: '/admin/impact', label: 'Dashboard Dampak', icon: '◎' },
-  ],
-  bank_officer: [
-    { to: '/admin/dashboards', label: 'Semua Dashboard', icon: '⊞' },
-    { to: '/bank', label: 'Dashboard Bank', icon: '⬛' },
-  ],
+  government: ADMIN_COMMON_NAV,
+  bank_officer: ADMIN_COMMON_NAV,
   super_admin: [
-    { to: '/admin/dashboards', label: 'Semua Dashboard', icon: '⊞' },
-    { to: '/dinkop', label: 'Dashboard Agregat', icon: '◫' },
-    { to: '/admin/monitoring', label: 'Monitoring Aktivitas', icon: '▣' },
-    { to: '/admin/impact', label: 'Dashboard Dampak', icon: '◎' },
-    { to: '/bank', label: 'Dashboard Bank', icon: '⬛' },
+    ...ADMIN_COMMON_NAV,
     { to: '/admin/pengguna', label: 'Kelola Pengguna', icon: '◉' },
     { to: '/admin/system', label: 'System', icon: '⚙' },
   ],
