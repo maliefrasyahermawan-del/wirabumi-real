@@ -9,7 +9,7 @@ export default function Register() {
   const { signUp } = useAuth();
   const [form, setForm] = useState({
     businessName: '', businessCategory: '', kecamatan: KECAMATAN_OPTIONS[0],
-    email: '', password: '',
+    email: '', password: '', securityFood: '', securityBand: '',
   });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -23,6 +23,10 @@ export default function Register() {
       setError('Kata sandi minimal 6 karakter.');
       return;
     }
+    if (!form.securityFood.trim() || !form.securityBand.trim()) {
+      setError('Makanan favorit dan band favorit wajib diisi — dipakai untuk reset kata sandi kalau lupa nanti.');
+      return;
+    }
     setSubmitting(true);
     const { error: signUpError } = await signUp({
       email: form.email,
@@ -30,6 +34,8 @@ export default function Register() {
       businessName: form.businessName,
       businessCategory: form.businessCategory || 'Umum',
       kecamatan: form.kecamatan,
+      securityFood: form.securityFood,
+      securityBand: form.securityBand,
     });
     setSubmitting(false);
     if (signUpError) {
@@ -76,6 +82,23 @@ export default function Register() {
               <label>Kata sandi</label>
               <input required type="password" value={form.password} onChange={(e) => set('password', e.target.value)} placeholder="Minimal 6 karakter" />
             </div>
+
+            <div style={{ borderTop: '1px dashed var(--border)', paddingTop: 14, marginTop: 2 }}>
+              <p className="muted" style={{ fontSize: 12.5, margin: '0 0 12px' }}>
+                Dipakai untuk reset kata sandi kalau lupa nanti — jawabanmu tidak perlu formal, yang penting kamu ingat.
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <div className="field">
+                  <label>Makanan favorit</label>
+                  <input required value={form.securityFood} onChange={(e) => set('securityFood', e.target.value)} placeholder="mis. Nasi Goreng" />
+                </div>
+                <div className="field">
+                  <label>Band/musisi favorit</label>
+                  <input required value={form.securityBand} onChange={(e) => set('securityBand', e.target.value)} placeholder="mis. Sheila On 7" />
+                </div>
+              </div>
+            </div>
+
             <button className="btn btn-primary btn-lg btn-block mt-16" disabled={submitting} type="submit">
               {submitting ? 'Memproses…' : 'Daftar & Mulai'}
             </button>

@@ -6,6 +6,12 @@ create table if not exists users (
   id uuid primary key default gen_random_uuid(),
   email text unique not null,
   password_hash text not null,
+  -- Security-question answers for password reset (no email provider wired
+  -- up yet). Hashed with bcrypt exactly like password_hash, never stored
+  -- plain. Nullable so existing rows from before this feature don't break;
+  -- the register route enforces both as required for new signups.
+  security_food_hash text,
+  security_band_hash text,
   created_at timestamptz not null default now()
 );
 

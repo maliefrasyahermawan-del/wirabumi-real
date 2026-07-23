@@ -189,7 +189,27 @@ sama; "Pengeluaran" adalah pasangannya untuk uang keluar.
 - Tidak ada verifikasi email/OTP — begitu daftar, langsung bisa
   dipakai. Ini disengaja untuk kemudahan lokal, BUKAN standar
   keamanan aplikasi publik/produksi.
-- Belum ada fitur "lupa kata sandi" (reset password).
+- LUPA KATA SANDI (reset password) — sekarang ADA, lewat 2 pertanyaan
+  keamanan (bukan email/OTP, karena belum ada penyedia email/SMS yang
+  disambungkan). Saat daftar, pengguna WAJIB mengisi jawaban "makanan
+  favorit" dan "band/musisi favorit" selain email & kata sandi.
+  Jawaban itu di-hash dengan bcrypt persis seperti kata sandi (tidak
+  disimpan polos), dan dicocokkan tanpa peduli huruf besar/kecil atau
+  spasi berlebih (jadi "Nasi Goreng" saat daftar tetap cocok dengan
+  "nasi goreng" saat reset).
+  Alur reset: buka halaman "Lupa kata sandi?" di halaman Masuk → isi
+  email + kedua jawaban + kata sandi baru dalam SATU form → kalau
+  email & kedua jawaban cocok, kata sandi langsung diganti (satu
+  langkah, tidak ada token/link email terpisah). Kalau salah satu
+  tidak cocok (email tidak terdaftar ATAU salah satu jawaban salah),
+  pesan errornya SENGAJA generik ("Email atau jawaban tidak cocok")
+  supaya tidak membocorkan mana yang sebenarnya salah atau apakah
+  emailnya terdaftar.
+  KETERBATASAN JUJUR: akun yang didaftarkan SEBELUM fitur ini ada
+  tidak punya jawaban keamanan tersimpan (kolomnya kosong), jadi akun
+  lama tidak bisa pakai reset ini sampai datanya diisi ulang secara
+  manual di database — ini bukan celah keamanan, hanya konsekuensi
+  wajar dari menambahkan fitur baru ke data yang sudah ada.
 
 
 ========================================================
@@ -377,6 +397,28 @@ Skor tidak akan pernah error hanya karena Groq bermasalah.
 - Checklist legalitas (NIB, P-IRT, Sertifikasi Halal) — mencentang di
   sini HANYA MENANDAI di sistem sendiri bahwa dokumen itu sudah
   dipunya. WIRABUMI TIDAK memverifikasi ke OSS/BPJPH sungguhan.
+  Setiap item menampilkan badge "Belum Punya" (amber) atau "Lengkap"
+  (hijau), dan kalau belum punya, ada tombol "Daftar [X] →" yang
+  membuka situs resmi pemerintahnya langsung di tab baru:
+  NIB → oss.go.id, P-IRT → sppirt.pom.go.id, Halal → ptsp.halal.go.id.
+  KHUSUS P-IRT: karena pendaftaran P-IRT di dunia nyata memang
+  mensyaratkan NIB sudah terbit lebih dulu, tombol daftarnya SENGAJA
+  disembunyikan selama NIB belum dicentang — yang tampil malah pesan
+  "Urus NIB dulu sebelum bisa daftar P-IRT", supaya pengguna tidak
+  diarahkan ke formulir yang memang belum bisa mereka selesaikan.
+  Tombol centang (menandai selesai) dan tombol link keluar ini adalah
+  dua area klik yang terpisah — membuka link tidak otomatis
+  menandainya selesai, pengguna tetap harus mencentang sendiri setelah
+  benar-benar menyelesaikannya di situs resmi.
+- Ada juga tautan "Belum tahu cara daftarnya?" di bawah checklist yang
+  membuka halaman baru /panduan-sertifikat — ringkasan langkah demi
+  langkah (dokumen yang dibutuhkan, urutan langkah, estimasi waktu)
+  untuk NIB, P-IRT, dan Sertifikasi Halal (jalur Self Declare untuk
+  UMK, gratis tanpa audit), dirangkum dari panduan publik yang tersedia
+  saat pembuatan fitur ini. JUJUR: halaman ini bukan sumber resmi —
+  proses pemerintah bisa berubah, jadi selalu anggap situs resminya
+  (oss.go.id, sppirt.pom.go.id, ptsp.halal.go.id) sebagai rujukan
+  utama, halaman ini cuma peta kasar biar tidak bingung di awal.
 - Tombol "Buat & Unduh Paket Dokumen (PDF)" benar-benar membuat file
   PDF sungguhan (jsPDF) berisi profil usaha, ringkasan transaksi, dan
   simulasi cicilan, lalu diunduh ke komputer. Setiap PDF yang dibuat
@@ -660,8 +702,10 @@ KETERBATASAN YANG PERLU DIKETAHUI
    dibawa sendiri.
 6. Aplikasi jalan LOKAL di satu komputer (Postgres lokal) — belum
    di-deploy ke internet.
-7. Tidak ada reset password, verifikasi email, atau notifikasi
-   email/WhatsApp otomatis (notifikasi murni in-app).
+7. Reset kata sandi SUDAH ada (lewat 2 pertanyaan keamanan, bukan
+   email — lihat bagian "Daftar & Masuk"), tapi tetap tidak ada
+   verifikasi email/OTP atau notifikasi email/WhatsApp otomatis
+   (notifikasi murni in-app).
 8. Suku bunga KUR (6% efektif/tahun) dan formula pengganda plafon
    adalah ASUMSI simulasi, bukan angka resmi bank/pemerintah yang
    mengikat.

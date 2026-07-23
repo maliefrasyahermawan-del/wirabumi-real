@@ -22,11 +22,20 @@ export function AuthProvider({ children }) {
 
   useEffect(() => { loadMe(); }, [loadMe]);
 
-  async function signUp({ email, password, businessName, businessCategory, kecamatan }) {
+  async function signUp({ email, password, businessName, businessCategory, kecamatan, securityFood, securityBand }) {
     try {
-      const { token } = await api.post('/auth/register', { email, password, businessName, businessCategory, kecamatan });
+      const { token } = await api.post('/auth/register', { email, password, businessName, businessCategory, kecamatan, securityFood, securityBand });
       setToken(token);
       await loadMe();
+      return { error: null };
+    } catch (err) {
+      return { error: { message: err.message } };
+    }
+  }
+
+  async function resetPassword({ email, securityFood, securityBand, newPassword }) {
+    try {
+      await api.post('/auth/reset-password', { email, securityFood, securityBand, newPassword });
       return { error: null };
     } catch (err) {
       return { error: { message: err.message } };
@@ -60,6 +69,7 @@ export function AuthProvider({ children }) {
     signUp,
     signIn,
     signOut,
+    resetPassword,
     refreshProfile,
   };
 

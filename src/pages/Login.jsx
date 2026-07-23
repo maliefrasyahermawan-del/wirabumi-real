@@ -43,7 +43,10 @@ export default function Login() {
               <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="nama@email.com" />
             </div>
             <div className="field">
-              <label>Kata sandi</label>
+              <div className="flex between" style={{ alignItems: 'baseline' }}>
+                <label>Kata sandi</label>
+                <Link to="/lupa-password" style={{ fontSize: 12.5, color: 'var(--blue-dark)', fontWeight: 600 }}>Lupa kata sandi?</Link>
+              </div>
               <input required type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
             </div>
             <button className="btn btn-primary btn-lg btn-block mt-16" disabled={submitting} type="submit">

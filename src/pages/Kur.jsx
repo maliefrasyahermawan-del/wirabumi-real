@@ -8,9 +8,24 @@ import { api } from '../lib/apiClient';
 import { rupiah, formatDateID } from '../lib/format';
 
 const LEGAL_ITEMS = [
-  { key: 'legal_nib', title: 'NIB: Nomor Induk Berusaha', desc: 'Gratis via OSS. Dasar semua izin usaha.' },
-  { key: 'legal_pirt', title: 'Sertifikat P-IRT / merek', desc: 'Perkuat kredibilitas produk di mata bank.' },
-  { key: 'legal_halal', title: 'Sertifikasi Halal', desc: 'Nilai tambah untuk pasar lebih luas & ekspor.' },
+  {
+    key: 'legal_nib', title: 'NIB: Nomor Induk Berusaha', shortLabel: 'NIB',
+    desc: 'Gratis via OSS. Dasar semua izin usaha.',
+    url: 'https://oss.go.id/id', linkLabel: 'Daftar NIB lewat OSS →',
+  },
+  {
+    key: 'legal_pirt', title: 'Sertifikat P-IRT / merek', shortLabel: 'P-IRT',
+    desc: 'Perkuat kredibilitas produk di mata bank.',
+    url: 'https://sppirt.pom.go.id/', linkLabel: 'Daftar P-IRT →',
+    // P-IRT registration requires an NIB first — steer the user there instead
+    // of sending them to a form they can't actually complete yet.
+    requires: 'legal_nib',
+  },
+  {
+    key: 'legal_halal', title: 'Sertifikasi Halal', shortLabel: 'Sertifikasi Halal',
+    desc: 'Nilai tambah untuk pasar lebih luas & ekspor.',
+    url: 'https://ptsp.halal.go.id/login', linkLabel: 'Daftar Sertifikasi Halal →',
+  },
 ];
 
 export default function Kur() {
@@ -204,17 +219,68 @@ export default function Kur() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 20 }}>
               {LEGAL_ITEMS.map((it) => {
                 const done = !!profile?.[it.key];
+                const blockedByNib = it.requires && !profile?.[it.requires];
                 return (
-                  <button key={it.key} className="legal-item" onClick={() => toggleLegal(it.key)}>
-                    <div className={`legal-check ${done ? 'done' : 'pending'}`}>{done ? '✓' : ''}</div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 700, fontSize: 15 }}>{it.title}</div>
+                  <div key={it.key} className="legal-item" style={{ cursor: 'default' }}>
+                    <button
+                      type="button"
+                      className={`legal-check ${done ? 'done' : 'pending'}`}
+                      style={{ cursor: 'pointer', border: 'none' }}
+                      onClick={() => toggleLegal(it.key)}
+                      title={done ? 'Tandai belum punya' : 'Tandai sudah punya'}
+                    >
+                      {done ? '✓' : ''}
+                    </button>
+                    <div style={{ flex: 1, minWidth: 200 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                        <div style={{ fontWeight: 700, fontSize: 15 }}>{it.title}</div>
+                        <span style={{
+                          fontSize: 10.5, fontWeight: 700, padding: '2px 9px', borderRadius: 999,
+                          background: done ? 'var(--green-bg)' : 'var(--amber-bg)',
+                          color: done ? 'var(--green)' : 'var(--amber)',
+                        }}>
+                          {done ? 'Lengkap' : 'Belum Punya'}
+                        </span>
+                      </div>
                       <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{it.desc}</div>
+                      {!done && (
+                        blockedByNib ? (
+                          <div style={{ fontSize: 12.5, color: 'var(--amber)', marginTop: 6, fontWeight: 600 }}>
+                            Urus NIB dulu sebelum bisa daftar {it.shortLabel}
+                          </div>
+                        ) : (
+                          <a
+                            href={it.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ display: 'inline-block', marginTop: 6, fontSize: 12.5, fontWeight: 700, color: 'var(--blue-dark)' }}
+                          >
+                            {it.linkLabel}
+                          </a>
+                        )
+                      )}
                     </div>
-                  </button>
+                  </div>
                 );
               })}
             </div>
+
+            <button
+              type="button"
+              onClick={() => navigate('/panduan-sertifikat')}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 10, width: '100%', marginTop: 14,
+                padding: '12px 16px', borderRadius: 12, border: '1px dashed var(--border)',
+                background: 'var(--blue-lighter)', cursor: 'pointer', textAlign: 'left',
+              }}
+            >
+              <span style={{ fontSize: 18 }}>📖</span>
+              <span style={{ flex: 1 }}>
+                <div style={{ fontWeight: 700, fontSize: 13.5, color: 'var(--blue-dark)' }}>Belum tahu cara daftarnya?</div>
+                <div style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>Lihat Panduan Daftar Sertifikat — langkah demi langkah untuk NIB, P-IRT, dan Halal.</div>
+              </span>
+              <span style={{ color: 'var(--blue-dark)', fontWeight: 700 }}>→</span>
+            </button>
           </div>
 
           <div className="flex between mt-26">

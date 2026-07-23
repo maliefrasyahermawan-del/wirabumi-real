@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# start.bat / wirabumi-launcher.ps1 runtime output
+.wirabumi-run/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
