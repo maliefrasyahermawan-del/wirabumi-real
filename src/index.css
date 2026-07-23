@@ -551,3 +551,26 @@ textarea.capture-input:focus { border-color: var(--blue); }
   .hero-grid, .doc-grid, .dinkop-grid, .score-panel { grid-template-columns: 1fr !important; }
   .kpi-grid, .steps-strip-inner { grid-template-columns: repeat(2, 1fr) !important; }
 }
+
+/* Mobile (phone-width): additive only - desktop rules above are untouched.
+   Tables keep their real column layout but scroll sideways instead of being
+   crushed; multi-column grids collapse to 1 column; wrap-* containers lose
+   their wide desktop side padding. */
+@media (max-width: 640px) {
+  .wrap-1240, .wrap-1180, .wrap-900, .wrap-940 { padding-left: 16px; padding-right: 16px; }
+  .wrap-480 { padding-left: 16px; padding-right: 16px; }
+
+  .hero-fields, .doc-stats, .kec-row { grid-template-columns: 1fr !important; }
+  .badge-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important; }
+
+  .table-card { overflow-x: auto; }
+  .table-head, .table-row { min-width: 560px; }
+
+  .topnav-inner { padding: 0 16px; }
+  .brand-badge { display: none; }
+  .navlinks { gap: 2px; }
+  .navlink { padding: 6px 10px; font-size: 12.5px; }
+
+  .steps-strip-inner { grid-template-columns: 1fr !important; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr) !important; }
+}
