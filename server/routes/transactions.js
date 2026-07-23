@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { pool } from '../db.js';
 import { requireAuth } from '../auth.js';
+import { logActivity } from '../lib/activityLog.js';
 
 const router = Router();
 router.use(requireAuth);
@@ -27,6 +28,7 @@ router.post('/', async (req, res) => {
      returning *`,
     [req.userId, tanggal || null, produk, qty || null, satuan || null, harga, pelanggan || null, status || null, source || null]
   );
+  logActivity(req.userId, 'transaction_create', `Mencatat transaksi: ${produk}`);
   res.status(201).json(result.rows[0]);
 });
 
@@ -51,6 +53,7 @@ router.post('/bulk', async (req, res) => {
       inserted.push(result.rows[0]);
     }
     await client.query('commit');
+    if (inserted.length > 0) logActivity(req.userId, 'transaction_bulk', `Mencatat ${inserted.length} transaksi via ${source}`);
     res.status(201).json(inserted);
   } catch (err) {
     await client.query('rollback');

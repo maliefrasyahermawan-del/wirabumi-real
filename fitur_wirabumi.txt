@@ -603,6 +603,82 @@ B. DASHBOARD DINKOP (agregat, sudut pandang dinas)
 
 
 ========================================================
+17. PERAN & HAK AKSES (Role-Based Access Control)
+========================================================
+Ada 3 peran akun: User (pemilik UMKM, default semua akun baru),
+Admin (staf Dinkop/pembina UMKM), dan Super Admin (developer/pengelola
+sistem). Setiap peran punya dashboard & menu navbar yang BENAR-BENAR
+berbeda, bukan halaman yang sama dengan tombol disembunyikan — User
+tidak pernah melihat menu "Admin" sama sekali di navbar-nya.
+
+PEMBATASAN AKSES INI NYATA, BUKAN KOSMETIK: setiap endpoint di
+/api/admin/* dijaga oleh middleware requireRole di server (server/auth.js)
+yang mengecek peran pengguna LANGSUNG dari database di setiap request
+(bukan dari isi token JWT, supaya perubahan peran langsung berlaku,
+tidak perlu tunggu token lama kedaluwarsa). Kalau peran tidak sesuai,
+server membalas HTTP 403 — bisa dibuktikan langsung lewat panggilan API
+manual (curl), bukan cuma "link-nya disembunyikan di tampilan".
+ProtectedRoute di frontend juga mengecek peran untuk pengalaman
+pengguna yang mulus (langsung tampil "Akses ditolak" tanpa perlu
+menunggu API menolak), tapi pengecekan itu HANYA kosmetik/UX — kalaupun
+seseorang mengakalinya di sisi frontend, permintaan ke server tetap
+akan ditolak dengan 403.
+
+A. HALAMAN MONITORING AKTIVITAS (/admin/monitoring — Admin & Super Admin)
+   - Setiap tindakan penting (daftar, masuk, catat transaksi, catat
+     pengeluaran, buat berkas KUR, ubah status legalitas, ubah peran
+     pengguna) TERCATAT NYATA ke tabel activity_log di database —
+     bukan data contoh/statis. Kalau pencatatan aktivitas gagal karena
+     alasan apapun, itu tidak pernah menggagalkan permintaan utama
+     pengguna (mis. transaksi tetap tersimpan walau logging gagal).
+   - "Pengguna Aktif" = jumlah akun berbeda yang punya aktivitas dalam
+     24 jam terakhir. "Aktivitas Hari Ini" = jumlah baris activity_log
+     sejak tengah malam. Keduanya dihitung ulang setiap halaman dibuka.
+   - "Distribusi Aktivitas per Peran" = jumlah aktivitas 30 hari
+     terakhir dikelompokkan per peran SAAT aktivitas itu terjadi
+     (role_at_time) — kalau seseorang naik jabatan jadi Admin, riwayat
+     aktivitasnya SEBELUM naik jabatan tetap tercatat sebagai "User",
+     tidak ditulis ulang.
+   - "Aktivitas Terbaru" menampilkan 20 aktivitas terakhir dari SELURUH
+     pengguna, bukan cuma milik yang sedang login.
+
+B. DASHBOARD DAMPAK (/admin/impact — Admin & Super Admin)
+   - 4 metrik nyata: Total UMKM, Skor Rata-rata, % Layak KUR, dan
+     Berkas KUR Dibuat — dihitung dari compute_score() yang sama
+     persis dipakai di halaman Skor (bukan angka terpisah/karangan).
+   - 2 filter NYATA (bukan kosmetik): Kecamatan dan Status kelayakan.
+     Mengubah salah satunya BENAR-BENAR menghitung ulang keempat metrik
+     DAN daftar UMKM di bawahnya dari data yang sudah difilter — bukan
+     cuma menyaring tabel sementara metrik tetap sama.
+   - Tabel detail per-UMKM: nama usaha, kategori, status (Layak
+     Diajukan/Perlu Peningkatan), prioritas (Tinggi jika skor <40,
+     Sedang 40-69, Rendah >=70 — makin rendah skor, makin perlu
+     didampingi duluan), waktu (transaksi terakhir), dan tombol "Detail"
+     yang membuka panel berisi kecamatan & skor lengkap.
+   - JUJUR — beda dengan Dashboard Dinkop yang publik (menu "Dashboard"
+     di navbar, bisa diakses tanpa login): halaman itu SENGAJA hanya
+     menampilkan angka gabungan, tanpa identitas per-UMKM, untuk
+     menjaga privasi publik. Dashboard Dampak ini BEDA — khusus staf
+     yang benar-benar login sebagai Admin/Super Admin, jadi boleh
+     melihat nama usaha per baris (sama seperti petugas bank yang perlu
+     tahu nama nasabahnya, bukan cuma angka agregat). Detail transaksi
+     mentah pelanggan tetap TIDAK ditampilkan di sini, hanya data level
+     profil & skor.
+
+C. KELOLA PENGGUNA (/admin/pengguna — KHUSUS Super Admin)
+   - Mengubah peran akun lain antara "User" dan "Admin" lewat tombol,
+     memanggil endpoint yang juga dijaga requireRole('super_admin') di
+     server, bukan cuma disembunyikan di tampilan untuk role lain.
+   - JUJUR — KETERBATASAN SENGAJA: peran "Super Admin" TIDAK BISA
+     diberikan lewat halaman ini atau API manapun, hanya lewat akses
+     database langsung (satu kali, saat setup awal). Ini pembatasan
+     yang disengaja untuk memperkecil risiko privilege-escalation
+     (kalau lewat API bisa, satu Super Admin yang disusupi bisa
+     membuat Super Admin baru tanpa batas) — bukan keterbatasan teknis
+     yang kelupaan.
+
+
+========================================================
 APAKAH ADA YANG BENERAN AI?
 ========================================================
 Jawaban jujur (per update terbaru): YA, di 5 titik — 1 titik OCR
@@ -742,6 +818,11 @@ NYATA (dihitung/tersimpan sungguhan dari database):
   dampak skor/plafon pakai rumus asli, lencana tersimpan permanen)
 - Notifikasi in-app (5 jenis, semua dihitung dari data asli)
 - Foto profil (avatar), mode gelap, ulasan pengguna
+- Peran & hak akses (User/Admin/Super Admin) — pembatasan ditegakkan di
+  server (requireRole, 403 nyata), bukan disembunyikan di tampilan saja
+- Log aktivitas nyata (activity_log) + halaman Monitoring & Dashboard
+  Dampak untuk Admin/Super Admin — 2 filter yang benar-benar mengubah
+  metrik & tabel, bukan kosmetik
 
 HYBRID: LLM DULU, FALLBACK RULE-BASED KALAU GAGAL (baru):
 - Parser Tempel Chat — Groq LLM (llama-3.3-70b-versatile) lebih dulu,

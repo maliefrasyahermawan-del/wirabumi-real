@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { pool } from '../db.js';
 import { requireAuth } from '../auth.js';
+import { logActivity } from '../lib/activityLog.js';
 
 const router = Router();
 router.use(requireAuth);
@@ -19,6 +20,7 @@ router.post('/documents', async (req, res) => {
      values ($1, $2, $3, $4, $5) returning *`,
     [req.userId, plafon, tenor_bulan, cicilan_bulanan, skor_saat_itu]
   );
+  logActivity(req.userId, 'kur_document_create', `Membuat berkas KUR (plafon Rp${Math.round(plafon).toLocaleString('id-ID')})`);
   res.status(201).json(result.rows[0]);
 });
 

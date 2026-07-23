@@ -12,6 +12,10 @@ create table if not exists users (
   -- the register route enforces both as required for new signups.
   security_food_hash text,
   security_band_hash text,
+  -- Access-control role. No self-serve path to 'admin'/'super_admin' — only a
+  -- super_admin can promote a user to 'admin' via the app (server/routes/admin.js),
+  -- and 'super_admin' itself is only ever granted via a direct DB update.
+  role text not null default 'user' check (role in ('user','admin','super_admin')),
   created_at timestamptz not null default now()
 );
 
@@ -125,6 +129,20 @@ create table if not exists score_snapshots (
   last_score int not null,
   updated_at timestamptz not null default now()
 );
+
+-- Real activity log for the admin Monitoring page (server/routes/admin.js).
+-- role_at_time is captured at insert time (not looked up live later) so a
+-- later promotion/demotion doesn't rewrite history.
+create table if not exists activity_log (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references users(id) on delete cascade,
+  role_at_time text not null,
+  action_type text not null,
+  description text not null,
+  created_at timestamptz not null default now()
+);
+create index if not exists activity_log_created_idx on activity_log (created_at desc);
+create index if not exists activity_log_user_idx on activity_log (user_id);
 
 -- ============ Scoring (same formula as before) ============
 create or replace function compute_score(p_user_id uuid)

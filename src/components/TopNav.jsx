@@ -207,6 +207,51 @@ function KeuanganDropdown({ current }) {
   );
 }
 
+function AdminDropdown({ current, role }) {
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  const links = [
+    { to: '/admin/monitoring', label: 'Monitoring Aktivitas', desc: 'Pengguna aktif & log aktivitas' },
+    { to: '/admin/impact', label: 'Dashboard Dampak', desc: 'Metrik & daftar UMKM binaan' },
+    ...(role === 'super_admin' ? [{ to: '/admin/pengguna', label: 'Kelola Pengguna', desc: 'Atur peran Admin/User' }] : []),
+  ];
+  const isActive = links.some((l) => l.to === current);
+
+  useEffect(() => {
+    function onClickOutside(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    }
+    document.addEventListener('mousedown', onClickOutside);
+    return () => document.removeEventListener('mousedown', onClickOutside);
+  }, []);
+
+  return (
+    <div ref={ref} style={{ position: 'relative' }}>
+      <button
+        className={`navlink ${isActive ? 'current' : ''}`}
+        onClick={() => setOpen((o) => !o)}
+      >
+        Admin {open ? '▴' : '▾'}
+      </button>
+      {open && (
+        <div className="nav-dropdown">
+          {links.map((l) => (
+            <button
+              key={l.to}
+              className={`nav-dropdown-item ${current === l.to ? 'current' : ''}`}
+              onClick={() => { navigate(l.to); setOpen(false); }}
+            >
+              <span className="nav-dropdown-label">{l.label}</span>
+              <span className="nav-dropdown-desc">{l.desc}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ProfileDropdown() {
   const navigate = useNavigate();
   const { profile, signOut } = useAuth();
@@ -269,7 +314,7 @@ function ProfileDropdown() {
 export default function TopNav({ variant = 'full' }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
 
   return (
     <header className="topnav">
@@ -289,6 +334,9 @@ export default function TopNav({ variant = 'full' }) {
             {TAIL_LINKS.map((l) => (
               <button key={l.to} className={`navlink ${location.pathname === l.to ? 'current' : ''}`} onClick={() => navigate(l.to)}>{l.label}</button>
             ))}
+            {profile?.role && profile.role !== 'user' && (
+              <AdminDropdown current={location.pathname} role={profile.role} />
+            )}
           </nav>
         )}
 

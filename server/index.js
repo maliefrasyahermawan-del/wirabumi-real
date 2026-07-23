@@ -17,6 +17,7 @@ import notificationsRoutes from './routes/notifications.js';
 import questsRoutes from './routes/quests.js';
 import publicRoutes from './routes/public.js';
 import parseRoutes from './routes/parse.js';
+import adminRoutes from './routes/admin.js';
 
 dotenv.config();
 
@@ -37,6 +38,7 @@ app.use('/api/feedback', feedbackRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/quests', questsRoutes);
 app.use('/api/parse', parseRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api', publicRoutes);
 
 app.use((err, _req, res, _next) => {

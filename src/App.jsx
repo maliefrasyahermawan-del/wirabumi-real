@@ -20,6 +20,9 @@ import Dinkop from './pages/Dinkop';
 import Profile from './pages/Profile';
 import Pengeluaran from './pages/Pengeluaran';
 import LaporanKeuangan from './pages/LaporanKeuangan';
+import Monitoring from './pages/admin/Monitoring';
+import Impact from './pages/admin/Impact';
+import KelolaPengguna from './pages/admin/KelolaPengguna';
 
 export default function App() {
   return (
@@ -44,6 +47,9 @@ export default function App() {
             <Route path="/pengeluaran" element={<ProtectedRoute><Pengeluaran /></ProtectedRoute>} />
             <Route path="/laporan" element={<ProtectedRoute><LaporanKeuangan /></ProtectedRoute>} />
             <Route path="/ulasan" element={<ProtectedRoute><Ulasan /></ProtectedRoute>} />
+            <Route path="/admin/monitoring" element={<ProtectedRoute roles={['admin', 'super_admin']}><Monitoring /></ProtectedRoute>} />
+            <Route path="/admin/impact" element={<ProtectedRoute roles={['admin', 'super_admin']}><Impact /></ProtectedRoute>} />
+            <Route path="/admin/pengguna" element={<ProtectedRoute roles={['super_admin']}><KelolaPengguna /></ProtectedRoute>} />
           </Routes>
         </AuthProvider>
       </ThemeProvider>

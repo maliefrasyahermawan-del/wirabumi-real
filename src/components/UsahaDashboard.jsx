@@ -217,43 +217,51 @@ export default function UsahaDashboard() {
         </div>
       </div>
 
-      {quests && (
-        <div className="card-lg" style={{ marginTop: 16 }}>
-          <div style={{ fontWeight: 800, fontSize: 13, color: 'var(--text-faint)', letterSpacing: '0.3px', marginBottom: 4 }}>
-            LANGKAH YANG DIREKOMENDASIKAN ({quests.active_quests.length})
-          </div>
-          <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: '2px 0 16px' }}>
-            Langkah berikutnya yang paling berdampak buat skormu, dipilih otomatis dari faktor yang paling lemah.
-          </p>
-          {quests.active_quests.length === 0 ? (
-            <div className="empty-state">Semua langkah yang tersedia sudah kamu selesaikan. Mantap!</div>
-          ) : (
-            <div className="quest-grid">
-              {quests.active_quests.map((q) => (
-                <QuestCard key={q.key} quest={q} onStart={(quest) => navigate(quest.target)} />
-              ))}
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2.2fr) minmax(220px, 1fr)', gap: 16, marginTop: 16, alignItems: 'start' }}>
+        {quests && (
+          <div className="card-lg">
+            <div style={{ fontWeight: 800, fontSize: 13, color: 'var(--text-faint)', letterSpacing: '0.3px', marginBottom: 4 }}>
+              LANGKAH YANG DIREKOMENDASIKAN ({quests.active_quests.length})
             </div>
-          )}
-
-          <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid var(--border)' }}>
-            <span onClick={() => setShowCompleted((s) => !s)} style={{ cursor: 'pointer', fontSize: 13, fontWeight: 700, color: 'var(--green)' }}>
-              ✓ Langkah Selesai ({quests.completed_quests.length}) {showCompleted ? '▴' : '▾'}
-            </span>
-            {showCompleted && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 12 }}>
-                {quests.completed_quests.length === 0 ? (
-                  <div className="empty-state">Belum ada langkah yang selesai.</div>
-                ) : quests.completed_quests.map((q) => (
-                  <div key={q.key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, fontSize: 13.5 }}>
-                    <span>{q.title}</span>
-                    <span className="muted" style={{ fontWeight: 700 }}>+{q.poin} poin</span>
-                  </div>
+            <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: '2px 0 16px' }}>
+              Langkah berikutnya yang paling berdampak buat skormu, dipilih otomatis dari faktor yang paling lemah.
+            </p>
+            {quests.active_quests.length === 0 ? (
+              <div className="empty-state">Semua langkah yang tersedia sudah kamu selesaikan. Mantap!</div>
+            ) : (
+              <div className="quest-grid">
+                {quests.active_quests.map((q) => (
+                  <QuestCard key={q.key} quest={q} onStart={(quest) => navigate(quest.target)} />
                 ))}
               </div>
             )}
+
+            <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid var(--border)' }}>
+              <span onClick={() => setShowCompleted((s) => !s)} style={{ cursor: 'pointer', fontSize: 13, fontWeight: 700, color: 'var(--green)' }}>
+                ✓ Langkah Selesai ({quests.completed_quests.length}) {showCompleted ? '▴' : '▾'}
+              </span>
+              {showCompleted && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 12 }}>
+                  {quests.completed_quests.length === 0 ? (
+                    <div className="empty-state">Belum ada langkah yang selesai.</div>
+                  ) : quests.completed_quests.map((q) => (
+                    <div key={q.key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, fontSize: 13.5 }}>
+                      <span>{q.title}</span>
+                      <span className="muted" style={{ fontWeight: 700 }}>+{q.poin} poin</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
+        )}
+
+        <div className="card-lg" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ fontSize: 13.5, color: 'var(--text)', lineHeight: 1.5 }}>Mau lihat rincian skor, simulasi KUR, atau laporan laba rugi lengkap?</div>
+          <button className="btn btn-secondary" style={{ fontSize: 14, padding: '11px 20px', borderRadius: 10, width: '100%' }} onClick={() => navigate('/skor')}>Skor Kelayakan</button>
+          <button className="btn btn-primary" style={{ fontSize: 14, padding: '11px 20px', borderRadius: 10, width: '100%' }} onClick={() => navigate('/kur')}>Ajukan KUR →</button>
         </div>
-      )}
+      </div>
 
       <div className="card-lg" style={{ marginTop: 16 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
@@ -344,14 +352,6 @@ export default function UsahaDashboard() {
             ))}
           </div>
           <button className="btn btn-secondary btn-sm" style={{ marginTop: 16 }} onClick={() => navigate('/kur')}>Lengkapi di halaman KUR →</button>
-        </div>
-      </div>
-
-      <div className="banner" style={{ marginTop: 18 }}>
-        <div style={{ fontSize: 14, color: 'var(--blue-dark)', lineHeight: 1.5, maxWidth: 480 }}>Mau lihat rincian skor, simulasi KUR, atau laporan laba rugi lengkap?</div>
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-          <button className="btn btn-secondary" style={{ fontSize: 14, padding: '11px 20px', borderRadius: 10 }} onClick={() => navigate('/skor')}>Skor Kelayakan</button>
-          <button className="btn btn-primary" style={{ fontSize: 14, padding: '11px 20px', borderRadius: 10 }} onClick={() => navigate('/kur')}>Ajukan KUR →</button>
         </div>
       </div>
     </div>

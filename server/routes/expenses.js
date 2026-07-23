@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { pool } from '../db.js';
 import { requireAuth } from '../auth.js';
+import { logActivity } from '../lib/activityLog.js';
 
 const router = Router();
 router.use(requireAuth);
@@ -36,6 +37,7 @@ router.post('/', async (req, res) => {
      returning *`,
     [req.userId, tanggal || null, kategori, keterangan, jumlah]
   );
+  logActivity(req.userId, 'expense_create', `Mencatat pengeluaran: ${kategori}`);
   res.status(201).json(result.rows[0]);
 });
 

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import { pool } from '../db.js';
 import { signToken, requireAuth } from '../auth.js';
+import { logActivity } from '../lib/activityLog.js';
 
 const router = Router();
 
@@ -39,6 +40,7 @@ router.post('/register', async (req, res) => {
       [userId, businessName || 'Usaha Saya', businessCategory || 'Umum', kecamatan || null]
     );
     await client.query('commit');
+    logActivity(userId, 'register', `Mendaftar akun baru (${businessName || 'Usaha Saya'})`);
     res.json({ token: signToken(userId) });
   } catch (err) {
     await client.query('rollback');
@@ -57,6 +59,7 @@ router.post('/login', async (req, res) => {
   if (!user || !(await bcrypt.compare(password, user.password_hash))) {
     return res.status(401).json({ error: 'Email atau kata sandi salah.' });
   }
+  logActivity(user.id, 'login', 'Masuk ke akun');
   res.json({ token: signToken(user.id) });
 });
 
@@ -89,7 +92,7 @@ router.post('/reset-password', async (req, res) => {
 
 router.get('/me', requireAuth, async (req, res) => {
   const result = await pool.query(
-    `select u.id, u.email, p.business_name, p.business_category, p.business_address,
+    `select u.id, u.email, u.role, p.business_name, p.business_category, p.business_address,
             p.kecamatan, p.phone, p.legal_nib, p.legal_pirt, p.legal_halal, p.avatar_url
      from users u join profiles p on p.user_id = u.id where u.id = $1`,
     [req.userId]

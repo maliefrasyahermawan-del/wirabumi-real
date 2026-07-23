@@ -5,6 +5,7 @@ import fs from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { pool } from '../db.js';
 import { requireAuth } from '../auth.js';
+import { logActivity } from '../lib/activityLog.js';
 
 const router = Router();
 router.use(requireAuth);
@@ -33,6 +34,9 @@ router.patch('/', async (req, res) => {
     `update profiles set ${setClause} where user_id = $1 returning *`,
     [req.userId, ...values]
   );
+  if (updates.some(([k]) => k.startsWith('legal_'))) {
+    logActivity(req.userId, 'legal_update', 'Memperbarui status legalitas usaha');
+  }
   res.json(result.rows[0]);
 });
 
