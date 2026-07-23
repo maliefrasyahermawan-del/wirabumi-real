@@ -730,8 +730,21 @@ A. HALAMAN MONITORING AKTIVITAS (/admin/monitoring — Government & Super Admin)
      (role_at_time) — kalau seseorang naik jabatan, riwayat
      aktivitasnya SEBELUM naik jabatan tetap tercatat dengan peran
      lama, tidak ditulis ulang (lihat catatan migrasi di atas).
-   - "Aktivitas Terbaru" menampilkan 20 aktivitas terakhir dari SELURUH
-     pengguna, bukan cuma milik yang sedang login.
+   - "Aktivitas Terbaru" ditampilkan sebagai tabel log (waktu, pengguna,
+     peran, aksi) berisi 20 aktivitas terakhir dari SELURUH pengguna,
+     bukan cuma milik yang sedang login.
+   - KHUSUS SUPER ADMIN (BARU) — 3 bagian tambahan yang TIDAK muncul
+     untuk Government (karena membuka identitas akun staf Bank/Super
+     Admin lain, bukan cuma UMKM):
+     * "Pengguna Terdaftar" & "Peran Terdaftar" (kartu KPI) — jumlah
+       akun asli dari tabel users, dihitung ulang tiap halaman dibuka.
+     * "Distribusi Peran Pengguna Terdaftar" — jumlah AKUN per peran
+       saat ini (bukan jumlah aktivitas seperti poin di atas — dua hal
+       yang beda: satu akun bisa punya banyak aktivitas).
+     * "Pengguna Paling Aktif (30 Hari)" — 8 akun dengan jumlah baris
+       activity_log terbanyak 30 hari terakhir, diurutkan dari yang
+       paling aktif, memakai peran akun SAAT INI (bukan role_at_time)
+       karena ini daftar akun aktif sekarang, bukan riwayat historis.
 
 B. DASHBOARD DAMPAK (/admin/impact — Government & Super Admin)
    - 4 metrik nyata: Total UMKM, Skor Rata-rata, % Layak KUR, dan

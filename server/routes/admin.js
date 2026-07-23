@@ -34,13 +34,38 @@ router.get('/monitoring', async (req, res) => {
     ),
   ]);
 
-  res.json({
+  const payload = {
     active_users_count: Number(activeUsers.rows[0].c),
     today_activity_count: Number(todayActivity.rows[0].c),
     recent_activities: recentActivities.rows,
     activity_by_role: activityByRole.rows.map((r) => ({ role: r.role_at_time, count: Number(r.c) })),
     today_activity_by_type: todayByType.rows.map((r) => ({ action_type: r.action_type, count: Number(r.c) })),
-  });
+  };
+
+  // Registered-user counts and per-user activity expose staff identities
+  // (Bank/Government/Super Admin accounts, not just UMKM) — keep this
+  // super_admin-only so Government's view doesn't change.
+  if (req.userRole === 'super_admin') {
+    const [registeredTotal, usersByRole, mostActive] = await Promise.all([
+      pool.query('select count(*) as c from users'),
+      pool.query('select role, count(*) as c from users group by role order by c desc'),
+      pool.query(
+        `select al.user_id, coalesce(p.business_name, u.email) as name, u.role, count(*) as c
+         from activity_log al
+         join users u on u.id = al.user_id
+         left join profiles p on p.user_id = al.user_id
+         where al.created_at >= current_date - interval '30 days'
+         group by al.user_id, u.role, p.business_name, u.email
+         order by c desc
+         limit 8`
+      ),
+    ]);
+    payload.registered_users_count = Number(registeredTotal.rows[0].c);
+    payload.users_by_role = usersByRole.rows.map((r) => ({ role: r.role, count: Number(r.c) }));
+    payload.most_active_users = mostActive.rows.map((r) => ({ user_id: r.user_id, name: r.name, role: r.role, count: Number(r.c) }));
+  }
+
+  res.json(payload);
 });
 
 // Constraint 2: Smart Impact Dashboard & Action Log. `kecamatan` and `status`
