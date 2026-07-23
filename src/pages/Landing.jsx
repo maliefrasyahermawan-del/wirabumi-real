@@ -23,7 +23,7 @@ export default function Landing() {
 
       <main className="hero-main" style={{ backgroundImage: "url('/umkm-hero.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <div className="hero-main-overlay" />
-        <div className="wrap-1240 hero-grid" style={{ position: 'relative', zIndex: 1 }}>
+        <div className="wrap-1240 hero-grid" style={{ position: 'relative', zIndex: 2 }}>
           <div style={{ animation: 'wbFade .5s ease' }}>
             <div className="eyebrow eyebrow-light"><span className="eyebrow-dot"></span>UNTUK UMKM SOLO RAYA</div>
             <h1 className="hero-title hero-title-light">Usahamu laku tiap hari,<br />tapi nggak punya "bukti" buat bank?</h1>

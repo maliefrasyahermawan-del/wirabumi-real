@@ -289,20 +289,20 @@ input, textarea, select { font-family: inherit; }
   content: '';
   position: absolute; inset: 0; z-index: 1;
   background: linear-gradient(135deg,
-    rgba(219, 234, 254, 0.88) 0%,
-    rgba(191, 219, 254, 0.82) 40%,
-    rgba(147, 197, 253, 0.72) 100%
+    rgba(219, 234, 254, 0.45) 0%,
+    rgba(191, 219, 254, 0.38) 40%,
+    rgba(147, 197, 253, 0.28) 100%
   );
 }
 :root[data-theme="dark"] .hero-main::after {
   background: linear-gradient(135deg,
-    rgba(15, 40, 80, 0.90) 0%,
-    rgba(20, 55, 105, 0.85) 40%,
-    rgba(30, 70, 130, 0.78) 100%
+    rgba(15, 40, 80, 0.65) 0%,
+    rgba(20, 55, 105, 0.58) 40%,
+    rgba(30, 70, 130, 0.50) 100%
   );
 }
 .hero-main > * { position: relative; z-index: 2; }
-.hero-main-overlay { position: absolute; inset: 0; pointer-events: none; }
+.hero-main-overlay { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
 .eyebrow-light { background: rgba(255,255,255,0.15) !important; color: #fff !important; backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.2); }
 .eyebrow-light .eyebrow-dot { background: #fff !important; }
 .hero-title-light { color: #fff !important; text-shadow: 0 2px 16px rgba(0,0,0,0.3); }
