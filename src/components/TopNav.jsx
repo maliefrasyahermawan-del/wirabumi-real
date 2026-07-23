@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { ROLE_HOME } from '../lib/roles';
 import ThemeToggle from './ThemeToggle';
 import NotificationBell from './NotificationBell';
 import ProfileDropdown from './ProfileDropdown';

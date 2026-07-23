@@ -1,12 +1,20 @@
 import { useNavigate } from 'react-router-dom';
-import AdminLayout from '../../components/AdminLayout';
+import TopNav from '../../components/TopNav';
+import AiInsightCard from '../../components/AiInsightCard';
 import { useAuth } from '../../context/AuthContext';
 import { ROLE_LABELS } from '../../lib/roles';
+
+const INSIGHT_BY_ROLE = {
+  government: { endpoint: '/insight/government', title: 'AI Insight Dinkop' },
+  bank_officer: { endpoint: '/insight/bank', title: 'AI Insight Bank' },
+  super_admin: { endpoint: '/insight/super-admin', title: 'AI Insight Sistem' },
+};
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const { profile } = useAuth();
   const role = profile?.role || 'government';
+  const insight = INSIGHT_BY_ROLE[role] || INSIGHT_BY_ROLE.government;
 
   // Card navigasi untuk Dashboard Admin terpadu
   const cards = [
@@ -57,11 +65,16 @@ export default function AdminDashboard() {
   const visibleCards = cards.filter(c => c.roles.includes(role));
 
   return (
-    <AdminLayout>
+    <div className="page full-h">
+      <TopNav />
       <div className="wrap-1180" style={{ paddingTop: 30, paddingBottom: 60 }}>
         <div className="eyebrow"><span className="eyebrow-dot"></span>PORTAL ADMIN</div>
         <h1 className="page-title md" style={{ marginTop: 8 }}>Dashboard {ROLE_LABELS[role] || 'Admin'}</h1>
-        <p className="page-sub" style={{ marginBottom: 32 }}>Selamat datang di portal admin Wirabumi. Pilih menu dashboard di bawah ini atau melalui sidebar.</p>
+        <p className="page-sub" style={{ marginBottom: 20 }}>Selamat datang di portal admin Wirabumi. Pilih menu dashboard di bawah ini atau melalui sidebar.</p>
+
+        <div style={{ marginBottom: 24 }}>
+          <AiInsightCard endpoint={insight.endpoint} title={insight.title} />
+        </div>
 
         <div className="grid-responsive" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
           {visibleCards.map((card) => (
@@ -80,6 +93,6 @@ export default function AdminDashboard() {
           ))}
         </div>
       </div>
-    </AdminLayout>
+    </div>
   );
 }

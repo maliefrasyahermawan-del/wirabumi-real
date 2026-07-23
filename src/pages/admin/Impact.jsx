@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import AdminLayout from '../../components/AdminLayout';
+﻿import { useEffect, useState } from 'react';
+import TopNav from '../../components/TopNav';
 import { api } from '../../lib/apiClient';
 import { formatDateID } from '../../lib/format';
 
@@ -29,7 +29,8 @@ export default function Impact() {
   if (error) return <div className="wrap-1180"><div className="alert-error mt-26">{error}</div></div>;
 
   return (
-    <AdminLayout>
+    <div className="page full-h">
+      <TopNav />
       <div className="wrap-1180" style={{ paddingTop: 30, paddingBottom: 60 }}>
         <div className="eyebrow"><span className="eyebrow-dot"></span>KHUSUS ADMIN</div>
         <h1 className="page-title md" style={{ marginTop: 8 }}>Dashboard Dampak</h1>
@@ -106,6 +107,6 @@ export default function Impact() {
           </>
         )}
       </div>
-    </AdminLayout>
+    </div>
   );
 }

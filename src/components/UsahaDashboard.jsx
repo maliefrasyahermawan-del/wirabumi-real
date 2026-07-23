@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../lib/apiClient';
 import { rupiah } from '../lib/format';
+import AiInsightCard from './AiInsightCard';
 
 function monthRangeISO() {
   const now = new Date();
@@ -192,6 +193,10 @@ export default function UsahaDashboard() {
           <h1 className="serif" style={{ fontWeight: 600, fontSize: 28, letterSpacing: '-0.5px', margin: 0 }}>{profile?.business_name || 'Usahaku'}</h1>
         </div>
         <span className="connected-badge"><span className="connected-dot"></span>Data real dari pembukuanmu</span>
+      </div>
+
+      <div style={{ marginBottom: 20 }}>
+        <AiInsightCard endpoint="/insight/umkm" title="AI Insight Usaha" />
       </div>
 
       <div className="kpi-grid">

@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import AdminLayout from '../../components/AdminLayout';
+﻿import { useEffect, useState } from 'react';
+import TopNav from '../../components/TopNav';
 import { api } from '../../lib/apiClient';
 import { useAuth } from '../../context/AuthContext';
 import { ROLE_LABELS } from '../../lib/roles';
@@ -33,7 +33,8 @@ export default function KelolaPengguna() {
   }
 
   return (
-    <AdminLayout>
+    <div className="page full-h">
+      <TopNav />
       <div className="wrap-1180" style={{ paddingTop: 30, paddingBottom: 60 }}>
         <div className="eyebrow"><span className="eyebrow-dot"></span>KHUSUS SUPER ADMIN</div>
         <h1 className="page-title md" style={{ marginTop: 8 }}>Kelola Pengguna</h1>
@@ -77,6 +78,6 @@ export default function KelolaPengguna() {
           </div>
         )}
       </div>
-    </AdminLayout>
+    </div>
   );
 }

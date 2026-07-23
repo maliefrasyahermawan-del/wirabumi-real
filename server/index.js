@@ -21,6 +21,7 @@ import parseRoutes from './routes/parse.js';
 import adminRoutes from './routes/admin.js';
 import dinkopRoutes from './routes/dinkop.js';
 import bankRoutes from './routes/bank.js';
+import insightRoutes from './routes/insight.js';
 
 dotenv.config();
 
@@ -44,6 +45,7 @@ app.use('/api/parse', parseRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/dinkop', dinkopRoutes);
 app.use('/api/bank', bankRoutes);
+app.use('/api/insight', insightRoutes);
 app.use('/api', publicRoutes);
 
 app.use((err, req, res, _next) => {

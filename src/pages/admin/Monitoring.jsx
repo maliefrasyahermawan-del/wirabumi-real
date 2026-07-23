@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import AdminLayout from '../../components/AdminLayout';
+﻿import { useEffect, useState } from 'react';
+import TopNav from '../../components/TopNav';
 import { api } from '../../lib/apiClient';
 import { ROLE_LABELS } from '../../lib/roles';
 
@@ -59,7 +59,8 @@ export default function Monitoring() {
   const maxActiveUser = isSuperAdmin ? Math.max(1, ...data.most_active_users.map((u) => u.count)) : 1;
 
   return (
-    <AdminLayout>
+    <div className="page full-h">
+      <TopNav />
       <div className="wrap-1180" style={{ paddingTop: 30, paddingBottom: 60 }}>
         <div className="eyebrow"><span className="eyebrow-dot"></span>{isSuperAdmin ? 'KHUSUS SUPER ADMIN' : 'KHUSUS ADMIN'}</div>
         <h1 className="page-title md" style={{ marginTop: 8 }}>Monitoring Aktivitas</h1>
@@ -185,6 +186,6 @@ export default function Monitoring() {
           ))}
         </div>
       </div>
-    </AdminLayout>
+    </div>
   );
 }

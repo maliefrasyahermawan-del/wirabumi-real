@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AdminLayout from '../../components/AdminLayout';
+import TopNav from '../../components/TopNav';
 import { api } from '../../lib/apiClient';
 
 const PERMISSION_MATRIX = [
@@ -44,7 +44,8 @@ export default function System() {
   const maxLlm = Math.max(1, ...data.llm_usage_7d.map((l) => l.success + l.failed));
 
   return (
-    <AdminLayout>
+    <div className="page full-h">
+      <TopNav />
       <div className="wrap-1180" style={{ paddingTop: 30, paddingBottom: 60 }}>
         <div className="eyebrow"><span className="eyebrow-dot"></span>KHUSUS SUPER ADMIN</div>
         <h1 className="page-title md" style={{ marginTop: 8 }}>System</h1>
@@ -145,6 +146,6 @@ export default function System() {
           </div>
         </div>
       </div>
-    </AdminLayout>
+    </div>
   );
 }
