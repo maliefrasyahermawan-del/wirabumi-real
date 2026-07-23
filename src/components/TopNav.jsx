@@ -157,40 +157,35 @@ export default function TopNav({ variant = 'full' }) {
     <>
       <header className="topnav">
         <div className="topnav-inner">
-          {/* Hamburger — hanya untuk admin/super_admin */}
-          {user && isAdmin && (
-            <button
-              type="button"
-              className="admin-hamburger"
-              style={{ marginRight: 4 }}
-              onClick={() => setSidebarOpen((o) => !o)}
-              aria-label="Buka menu dashboard"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/>
-              </svg>
-            </button>
-          )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            {/* Hamburger — hanya untuk admin/super_admin */}
+            {user && isAdmin && (
+              <button
+                type="button"
+                className="admin-hamburger"
+                onClick={() => setSidebarOpen((o) => !o)}
+                aria-label="Buka menu dashboard"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/>
+                </svg>
+              </button>
+            )}
 
-          <div className="brand" onClick={() => navigate('/')}>
-            <div className={variant === 'compact' ? 'brand-mark small' : 'brand-mark'}>W</div>
-            <span className={variant === 'compact' ? 'brand-name small' : 'brand-name'}>WIRABUMI</span>
-            {variant === 'full' && <span className="brand-badge">SOLO RAYA</span>}
+            <div className="brand" onClick={() => navigate('/')}>
+              <div className={variant === 'compact' ? 'brand-mark small' : 'brand-mark'}>W</div>
+              <span className={variant === 'compact' ? 'brand-name small' : 'brand-name'}>WIRABUMI</span>
+              {variant === 'full' && <span className="brand-badge">SOLO RAYA</span>}
+            </div>
           </div>
 
-          {variant === 'full' && user && (
+          {variant === 'full' && user && role === 'umkm_owner' && (
             <nav className="navlinks">
-              {role === 'umkm_owner' && (
-                <button className={`navlink ${location.pathname === '/dashboard' ? 'current' : ''}`} onClick={() => navigate('/dashboard')}>Dashboard</button>
-              )}
+              <button className={`navlink ${location.pathname === '/dashboard' ? 'current' : ''}`} onClick={() => navigate('/dashboard')}>Dashboard</button>
               <button className={`navlink ${location.pathname === '/' ? 'current' : ''}`} onClick={() => navigate('/')}>Beranda</button>
-              {role === 'umkm_owner' && (
-                <>
-                  <button className={`navlink ${location.pathname === '/cara-kerja' ? 'current' : ''}`} onClick={() => navigate('/cara-kerja')}>Cara Kerja</button>
-                  <KeuanganDropdown current={location.pathname} />
-                  <button className={`navlink ${location.pathname === '/asisten' ? 'current' : ''}`} onClick={() => navigate('/asisten')}>Mas Sido</button>
-                </>
-              )}
+              <button className={`navlink ${location.pathname === '/cara-kerja' ? 'current' : ''}`} onClick={() => navigate('/cara-kerja')}>Cara Kerja</button>
+              <KeuanganDropdown current={location.pathname} />
+              <button className={`navlink ${location.pathname === '/asisten' ? 'current' : ''}`} onClick={() => navigate('/asisten')}>Mas Sido</button>
             </nav>
           )}
 

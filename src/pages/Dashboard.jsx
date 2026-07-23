@@ -20,7 +20,7 @@ export default function Dashboard() {
     if (loading) return;
     const role = profile?.role;
     if (role === 'government' || role === 'bank_officer' || role === 'super_admin') {
-      navigate('/admin/dashboard', { replace: true });
+      navigate('/', { replace: true });
     } else {
       // umkm_owner atau role null/undefined → personal UMKM dashboard
       navigate('/dashboard/umkm', { replace: true });

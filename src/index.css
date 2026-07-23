@@ -191,7 +191,8 @@ input, textarea, select { font-family: inherit; }
   transition: transform .25s cubic-bezier(.4,0,.2,1), box-shadow .25s ease;
   overflow-y: auto; box-shadow: none;
 }
-.admin-shell.sidebar-open .admin-sidebar {
+.admin-shell.sidebar-open .admin-sidebar,
+.admin-sidebar.sidebar-active {
   transform: translateX(0);
   box-shadow: 6px 0 40px rgba(0,0,0,.35);
 }
