@@ -68,16 +68,14 @@ function MonitoringIcon() {
 
 const NAV_ITEMS = {
   government: [
-    { to: '/dinkop', label: 'Dashboard', Icon: DashboardIcon },
-    { to: '/admin/monitoring', label: 'Monitoring Aktivitas', Icon: MonitoringIcon },
+    { to: '/admin/monitoring', label: 'Dashboard', Icon: MonitoringIcon },
     { to: '/admin/impact', label: 'Dashboard Dampak', Icon: ImpactIcon },
   ],
   bank_officer: [
     { to: '/bank', label: 'Dashboard', Icon: BankIcon },
   ],
   super_admin: [
-    { to: '/dinkop', label: 'Dashboard', Icon: DashboardIcon },
-    { to: '/admin/monitoring', label: 'Monitoring Aktivitas', Icon: MonitoringIcon },
+    { to: '/admin/monitoring', label: 'Dashboard', Icon: MonitoringIcon },
     { to: '/admin/impact', label: 'Dashboard Dampak', Icon: ImpactIcon },
     { to: '/bank', label: 'Dashboard Bank', Icon: BankIcon },
     { to: '/admin/pengguna', label: 'Kelola Pengguna', Icon: UsersIcon },

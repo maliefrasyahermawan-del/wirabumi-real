@@ -6,8 +6,8 @@ export const ROLE_LABELS = {
 };
 
 export const ROLE_HOME = {
-  umkm_owner: '/dashboard',
-  government: '/dinkop',
+  umkm_owner: '/dashboard/umkm',
+  government: '/admin/monitoring',
   bank_officer: '/bank',
-  super_admin: '/dinkop',
+  super_admin: '/admin/monitoring',
 };

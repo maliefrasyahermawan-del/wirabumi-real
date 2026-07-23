@@ -18,6 +18,7 @@ import PanduanSertifikat from './pages/PanduanSertifikat';
 import Chatbot from './pages/Chatbot';
 import Dinkop from './pages/Dinkop';
 import DinkopAggregate from './pages/DinkopAggregate';
+import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import Pengeluaran from './pages/Pengeluaran';
 import LaporanKeuangan from './pages/LaporanKeuangan';
@@ -39,18 +40,32 @@ export default function App() {
             <Route path="/lupa-password" element={<LupaPassword />} />
             <Route path="/cara-kerja" element={<CaraKerja />} />
             <Route path="/tentang" element={<Tentang />} />
-            <Route path="/dashboard" element={<ProtectedRoute roles={['umkm_owner']}><Dinkop /></ProtectedRoute>} />
-            <Route path="/dinkop" element={<ProtectedRoute roles={['government', 'bank_officer', 'super_admin']}><DinkopAggregate /></ProtectedRoute>} />
-            <Route path="/pembukuan" element={<ProtectedRoute><Pembukuan /></ProtectedRoute>} />
-            <Route path="/pembukuan/tambah" element={<ProtectedRoute><PembukuanTambah /></ProtectedRoute>} />
-            <Route path="/skor" element={<ProtectedRoute><Skor /></ProtectedRoute>} />
-            <Route path="/kur" element={<ProtectedRoute><Kur /></ProtectedRoute>} />
-            <Route path="/panduan-sertifikat" element={<ProtectedRoute><PanduanSertifikat /></ProtectedRoute>} />
-            <Route path="/asisten" element={<ProtectedRoute><Chatbot /></ProtectedRoute>} />
+
+            {/* Smart dashboard router — semua role yang sudah login bisa masuk,
+                lalu diarahkan otomatis ke dashboard yang sesuai rolenya */}
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+
+            {/* Dashboard personal UMKM — hanya umkm_owner (dan super_admin untuk keperluan debug) */}
+            <Route path="/dashboard/umkm" element={<ProtectedRoute roles={['umkm_owner', 'super_admin']}><Dinkop /></ProtectedRoute>} />
+
+            {/* Dashboard agregat Dinkop — hanya government & super_admin */}
+            <Route path="/dinkop" element={<ProtectedRoute roles={['government', 'super_admin']}><DinkopAggregate /></ProtectedRoute>} />
+
+            {/* Fitur UMKM — umkm_owner saja */}
+            <Route path="/pembukuan" element={<ProtectedRoute roles={['umkm_owner']}><Pembukuan /></ProtectedRoute>} />
+            <Route path="/pembukuan/tambah" element={<ProtectedRoute roles={['umkm_owner']}><PembukuanTambah /></ProtectedRoute>} />
+            <Route path="/skor" element={<ProtectedRoute roles={['umkm_owner']}><Skor /></ProtectedRoute>} />
+            <Route path="/kur" element={<ProtectedRoute roles={['umkm_owner']}><Kur /></ProtectedRoute>} />
+            <Route path="/panduan-sertifikat" element={<ProtectedRoute roles={['umkm_owner']}><PanduanSertifikat /></ProtectedRoute>} />
+            <Route path="/asisten" element={<ProtectedRoute roles={['umkm_owner']}><Chatbot /></ProtectedRoute>} />
+            <Route path="/pengeluaran" element={<ProtectedRoute roles={['umkm_owner']}><Pengeluaran /></ProtectedRoute>} />
+            <Route path="/laporan" element={<ProtectedRoute roles={['umkm_owner']}><LaporanKeuangan /></ProtectedRoute>} />
+            <Route path="/ulasan" element={<ProtectedRoute roles={['umkm_owner']}><Ulasan /></ProtectedRoute>} />
+
+            {/* Profil — semua role yang sudah login */}
             <Route path="/profil" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-            <Route path="/pengeluaran" element={<ProtectedRoute><Pengeluaran /></ProtectedRoute>} />
-            <Route path="/laporan" element={<ProtectedRoute><LaporanKeuangan /></ProtectedRoute>} />
-            <Route path="/ulasan" element={<ProtectedRoute><Ulasan /></ProtectedRoute>} />
+
+            {/* Admin & pemerintah */}
             <Route path="/bank" element={<ProtectedRoute roles={['bank_officer', 'super_admin']}><Bank /></ProtectedRoute>} />
             <Route path="/admin/monitoring" element={<ProtectedRoute roles={['government', 'super_admin']}><Monitoring /></ProtectedRoute>} />
             <Route path="/admin/impact" element={<ProtectedRoute roles={['government', 'super_admin']}><Impact /></ProtectedRoute>} />
