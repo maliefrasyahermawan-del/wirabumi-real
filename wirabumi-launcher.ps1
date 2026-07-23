@@ -1,4 +1,4 @@
-﻿$ErrorActionPreference = 'SilentlyContinue'
+$ErrorActionPreference = 'SilentlyContinue'
 $ProjectRoot = $PSScriptRoot
 $LogDir = Join-Path $ProjectRoot '.wirabumi-run'
 if (-not (Test-Path $LogDir)) { New-Item -ItemType Directory -Path $LogDir | Out-Null }
@@ -77,6 +77,10 @@ function Start-Wirabumi {
   Write-Host "  -> Memeriksa PostgreSQL (port $PgPort)..." -ForegroundColor DarkGray
   if (Get-PortOwner $PgPort) {
     Write-Host "     PostgreSQL aktif." -ForegroundColor Green
+    
+    Write-Host "  -> Memeriksa / Membuat Akun Testing di Database..." -ForegroundColor DarkGray
+    Start-Process -FilePath "npm.cmd" -ArgumentList "run","db:seed" -WorkingDirectory $ProjectRoot -WindowStyle Hidden -Wait
+    Write-Host "     Akun testing (Mockup) siap digunakan." -ForegroundColor Green
   } else {
     Write-Host "     PostgreSQL TIDAK terdeteksi. Pastikan service Postgres menyala." -ForegroundColor Red
   }
