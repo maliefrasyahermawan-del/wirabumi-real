@@ -150,7 +150,7 @@ const umkmData = [
   //    Hanya punya 2-3 transaksi percobaan di awal.
   // ════════════════════════════════════════════════════════════════════════════
   {
-    email: 'testkosong@local.test',
+    email: 'kelontong@gmail.com',
     profile: {
       legal_nib: false, legal_pirt: false, legal_halal: false,
       bank_consent: false,
@@ -258,7 +258,7 @@ const umkmData = [
   //    Data disesuaikan agar omzet kumulatif tahun ini ~Rp430-470 juta.
   // ════════════════════════════════════════════════════════════════════════════
   {
-    email: 'demo-pajak@local.test',
+    email: 'pajak@email.com',
     profile: {
       legal_nib: true, legal_pirt: true, legal_halal: true,
       bank_consent: false,
@@ -315,7 +315,7 @@ const mockUsers = [
     kecamatan: 'Pasar Kliwon',
   },
   {
-    email: 'testkosong@local.test',
+    email: 'kelontong@gmail.com',
     password: 'password123',
     role: 'umkm_owner',
     business_name: 'Uji Coba Kosong',
@@ -339,7 +339,7 @@ const mockUsers = [
     kur_review_status: 'approved',
   },
   {
-    email: 'demo-pajak@local.test',
+    email: 'pajak@email.com',
     password: 'demo1234',
     role: 'umkm_owner',
     business_name: 'Dapur Katering Bu Sari',
@@ -348,19 +348,19 @@ const mockUsers = [
   },
   // ── Staff / Non-UMKM ──
   {
-    email: 'resettest@example.com',
+    email: 'pemerintah@gmail.com',
     password: 'password123',
     role: 'government',
     business_name: 'Dinkop UKM Kota Surakarta',
   },
   {
-    email: 'banktest@example.com',
+    email: 'bank@gmail.com',
     password: 'password123',
     role: 'bank_officer',
     business_name: 'BRI KCP Pasar Kliwon',
   },
   {
-    email: 'llmtest@example.com',
+    email: 'superadmin@gmail.com',
     password: 'password123',
     role: 'super_admin',
     business_name: 'Admin WIRABUMI',
@@ -494,16 +494,16 @@ async function seed() {
     console.log('════════════════════════════════════════');
     console.log('\n📦 UMKM Owner:');
     console.log('  batikkliwonjaya@local.test   → password123  (Batik Kliwon Jaya, ~2.5 th)');
-    console.log('  testkosong@local.test         → password123  (Kosong, baru daftar)');
+    console.log('  kelontong@gmail.com           → password123  (Kosong, baru daftar)');
     console.log('  angkringan.joyo@local.test    → password123  (Angkringan Mas Joyo, ~14 bln)');
     console.log('  rbactest@example.com          → password123  (Sembako, ~18 bln, consent Bank ✓)');
-    console.log('  demo-pajak@local.test         → demo1234     (Katering, ~7 bln, demo pajak)');
+    console.log('  pajak@email.com               → demo1234     (Katering, ~7 bln, demo pajak)');
     console.log('\n🏛️  Pemerintah (Dinkop):');
-    console.log('  resettest@example.com         → password123');
+    console.log('  pemerintah@gmail.com          → password123');
     console.log('\n🏦 Bank Officer:');
-    console.log('  banktest@example.com          → password123');
+    console.log('  bank@gmail.com                → password123');
     console.log('\n🔑 Super Admin:');
-    console.log('  llmtest@example.com           → password123');
+    console.log('  superadmin@gmail.com          → password123');
     console.log('════════════════════════════════════════\n');
 
   } catch (e) {

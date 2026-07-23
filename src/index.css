@@ -147,6 +147,14 @@ input, textarea, select { font-family: inherit; }
 .theme-toggle-btn { width: 32px; height: 32px; flex: none; border-radius: 999px; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: background .15s ease, color .15s ease; }
 .theme-toggle-btn:hover { background: var(--blue-light); color: var(--blue-dark); }
 
+.icon-nav-btn { width: 32px; height: 32px; flex: none; border-radius: 999px; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: background .15s ease, color .15s ease; }
+.icon-nav-btn:hover { background: var(--blue-lighter); color: var(--blue-dark); }
+.icon-nav-btn.active { color: var(--blue-dark); background: var(--blue-light); }
+
+.jawa-toggle-pill { display: inline-flex; align-items: center; gap: 6px; flex: none; font-size: 12.5px; font-weight: 700; color: var(--text-muted); background: var(--surface); border: 1.5px solid var(--border); padding: 7px 14px; border-radius: 999px; cursor: pointer; white-space: nowrap; transition: background .15s ease, color .15s ease, border-color .15s ease; }
+.jawa-toggle-pill:hover { border-color: var(--blue); color: var(--blue-dark); }
+.jawa-toggle-pill.active { color: var(--blue-dark); background: var(--blue-light); border-color: var(--blue); }
+
 .notif-bell-btn { position: relative; width: 32px; height: 32px; flex: none; border-radius: 999px; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: background .15s ease, color .15s ease; }
 .notif-bell-btn:hover { background: var(--blue-light); color: var(--blue-dark); }
 .notif-badge { position: absolute; top: 2px; right: 2px; min-width: 15px; height: 15px; padding: 0 3px; border-radius: 999px; background: var(--red); color: var(--white); font-size: 9.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; line-height: 1; }

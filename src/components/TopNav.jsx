@@ -188,13 +188,6 @@ export default function TopNav({ variant = 'full' }) {
             </nav>
           )}
 
-          {variant === 'full' && !user && (
-            <nav className="navlinks">
-              <button className={`navlink ${location.pathname === '/' ? 'current' : ''}`} onClick={() => navigate('/')}>Beranda</button>
-              <button className={`navlink ${location.pathname === '/cara-kerja' ? 'current' : ''}`} onClick={() => navigate('/cara-kerja')}>Cara Kerja</button>
-            </nav>
-          )}
-
           <div className="flex-center gap-12 topnav-actions">
             {user ? (
               <div className="topnav-toolbar">
@@ -205,6 +198,33 @@ export default function TopNav({ variant = 'full' }) {
               </div>
             ) : (
               <>
+                {variant === 'full' && (
+                  <>
+                    <button
+                      type="button"
+                      className={`icon-nav-btn ${location.pathname === '/' ? 'active' : ''}`}
+                      onClick={() => navigate('/')}
+                      title="Beranda"
+                    >
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      className={`icon-nav-btn ${location.pathname === '/cara-kerja' ? 'active' : ''}`}
+                      onClick={() => navigate('/cara-kerja')}
+                      title="Cara Kerja"
+                    >
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                      </svg>
+                    </button>
+                  </>
+                )}
                 <ThemeToggle />
                 <button className="navlink" onClick={() => navigate('/masuk')}>Masuk</button>
                 <button className="btn btn-primary btn-sm" onClick={() => navigate('/daftar')}>Daftar Gratis</button>

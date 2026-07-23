@@ -48,6 +48,10 @@ app.use('/api/bank', bankRoutes);
 app.use('/api/insight', insightRoutes);
 app.use('/api', publicRoutes);
 
+const distPath = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'dist');
+app.use(express.static(distPath));
+app.get(/^\/(?!api|uploads).*/, (req, res) => res.sendFile(path.join(distPath, 'index.html')));
+
 app.use((err, req, res, _next) => {
   console.error(err);
   // Fire-and-forget: real server errors feed the Super Admin System page's

@@ -13,10 +13,11 @@ router.use(requireAuth);
 router.post('/ask', async (req, res) => {
   const question = (req.body?.question || '').trim();
   const ctx = req.body?.ctx;
+  const bahasa = req.body?.bahasa;
   if (!question) return res.status(400).json({ error: 'Pertanyaan tidak boleh kosong.' });
   if (!ctx || typeof ctx !== 'object') return res.status(400).json({ error: 'Konteks data tidak ada.' });
 
-  const llmResult = await answerWithLLM(question, ctx);
+  const llmResult = await answerWithLLM(question, ctx, bahasa);
   if (llmResult.success) {
     return res.json({ answer: llmResult.answer, source: 'llm' });
   }

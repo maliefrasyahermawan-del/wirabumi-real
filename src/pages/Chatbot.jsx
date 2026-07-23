@@ -18,7 +18,16 @@ export default function Chatbot() {
   const [typing, setTyping] = useState(false);
   const [ctx, setCtx] = useState(null);
   const [txnCount, setTxnCount] = useState(0);
+  const [javaMode, setJavaMode] = useState(() => localStorage.getItem('wirabumi_mas_sido_jawa') === '1');
   const scrollRef = useRef(null);
+
+  function toggleJavaMode() {
+    setJavaMode((prev) => {
+      const next = !prev;
+      localStorage.setItem('wirabumi_mas_sido_jawa', next ? '1' : '0');
+      return next;
+    });
+  }
 
   useEffect(() => {
     async function load() {
@@ -79,7 +88,7 @@ export default function Chatbot() {
     setTyping(true);
     await api.post('/chat-messages', { role: 'user', text: t });
     try {
-      const res = await api.post('/chat-messages/ask', { question: t, ctx });
+      const res = await api.post('/chat-messages/ask', { question: t, ctx, bahasa: javaMode ? 'jawa' : 'id' });
       setMessages((m) => [...m, { role: 'bot', text: res.answer }]);
       await api.post('/chat-messages', { role: 'bot', text: res.answer });
     } catch {
@@ -95,13 +104,26 @@ export default function Chatbot() {
       <div className="wrap-1240" style={{ padding: '26px 40px 32px', flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
         <div className="flex-center gap-12" style={{ gap: 13, marginBottom: 16 }}>
           <div style={{ width: 46, height: 46, borderRadius: 13, background: 'var(--blue)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--white)', fontSize: 22 }}>◍</div>
-          <div>
+          <div style={{ flex: 1 }}>
             <div className="flex-center gap-8" style={{ gap: 9 }}>
               <h1 className="serif" style={{ fontWeight: 600, fontSize: 22, margin: 0 }}>Mas Sido</h1>
               <span className="connected-badge"><span className="connected-dot"></span>Terhubung ke data usahamu</span>
             </div>
             <div className="muted" style={{ fontSize: 13, marginTop: 2 }}>Asisten Keuangan WIRABUMI · Menjawab dari {txnCount} transaksi · {profile?.business_name}</div>
           </div>
+          <button
+            type="button"
+            className={`jawa-toggle-pill ${javaMode ? 'active' : ''}`}
+            onClick={toggleJavaMode}
+            title={javaMode ? 'Mode Bahasa Jawa aktif - klik untuk kembali ke Bahasa Indonesia' : 'Aktifkan mode Bahasa Jawa'}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="2" y1="12" x2="22" y2="12"/>
+              <path d="M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"/>
+            </svg>
+            Mode Jawa
+          </button>
         </div>
 
         <div className="chat-window" ref={scrollRef}>

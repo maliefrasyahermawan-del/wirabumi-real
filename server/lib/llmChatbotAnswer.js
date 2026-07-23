@@ -14,14 +14,23 @@ Aturan:
 - Jawab singkat (1-3 kalimat), bahasa Indonesia santai/ramah seperti bicara ke teman pemilik usaha, boleh sesekali emoji tapi jangan berlebihan.
 - Balas HANYA jawabannya saja - tanpa embel-embel seperti "Jawaban:", tanpa tanda kutip di awal/akhir, tanpa markdown.`;
 
+// Ditambahkan ke SYSTEM_PROMPT kalau pengguna menyalakan toggle "Mode Bahasa
+// Jawa" di UI (lihat Chatbot.jsx) - tetap pakai data/aturan yang sama di atas,
+// cuma bahasa jawabannya yang berubah.
+const JAWA_INSTRUCTION = `
+
+PENTING - mode bahasa: jawab SELURUHNYA dalam Bahasa Jawa krama alus/sedang yang sopan dan formal, tapi tetap wajar dan tidak kaku (jangan krama inggil yang terlalu njlimet). Istilah keuangan modern yang belum ada padanan Jawa yang umum (skor kelayakan, KUR, plafon, cicilan, dsb) boleh tetap pakai istilah Indonesia/Inggrisnya.`;
+
 /**
  * @param {string} question
  * @param {object} ctx - same shape Chatbot.jsx already assembles: {score, offer, monthTotal, monthCount, topProducts, legal}
+ * @param {string} [bahasa] - 'jawa' untuk mode Bahasa Jawa, selain itu default Bahasa Indonesia
  * @returns {Promise<{success: true, answer: string} | {success: false, error: string}>}
  */
-export async function answerWithLLM(question, ctx) {
+export async function answerWithLLM(question, ctx, bahasa) {
+  const system = bahasa === 'jawa' ? SYSTEM_PROMPT + JAWA_INSTRUCTION : SYSTEM_PROMPT;
   const result = await callGroq({
-    system: SYSTEM_PROMPT,
+    system,
     user: JSON.stringify({ pertanyaan: question, data: ctx }),
     feature: 'chatbot',
     temperature: 0.4,

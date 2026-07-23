@@ -41,7 +41,7 @@ seed.js, jadi tidak ikut ter-reset kalau db:seed dijalankan.
   Profil   : usaha batik berjalan ~2.5 tahun, omzet menengah-atas,
              konsisten, banyak pelanggan tetap, NIB sudah ada.
 
-- Email    : testkosong@local.test
+- Email    : kelontong@gmail.com
   Password : password123
   Usaha    : Uji Coba Kosong (Umum, Laweyan)
   Profil   : akun baru daftar, cuma 3 transaksi kecil - bagus buat tes
@@ -62,7 +62,7 @@ seed.js, jadi tidak ikut ter-reset kalau db:seed dijalankan.
              buat langsung lihat fitur consent + review Bank tanpa
              setup ulang.
 
-- Email    : demo-pajak@local.test
+- Email    : pajak@email.com
   Password : demo1234
   Usaha    : Dapur Katering Bu Sari (Katering & Kuliner, Pasar Kliwon)
   Profil   : usaha katering ~7 bulan jalan, NIB + P-IRT + Halal lengkap,
@@ -82,7 +82,7 @@ seed.js, jadi tidak ikut ter-reset kalau db:seed dijalankan.
 2. GOVERNMENT / PEMERINTAH DINKOP (dashboard agregat di /dinkop)
 ========================================================
 
-- Email    : resettest@example.com
+- Email    : pemerintah@gmail.com
   Password : password123
   Usaha    : Dinkop UKM Kota Surakarta
   Akses    : /dinkop (dashboard agregat), /admin/monitoring (log
@@ -94,7 +94,7 @@ seed.js, jadi tidak ikut ter-reset kalau db:seed dijalankan.
 3. BANK / MITRA PENYALUR KUR (dashboard di /bank)
 ========================================================
 
-- Email    : banktest@example.com
+- Email    : bank@gmail.com
   Password : password123
   Usaha    : BRI KCP Pasar Kliwon
   Akses    : /bank - hanya melihat UMKM yang mengizinkan (bank_consent
@@ -106,7 +106,7 @@ seed.js, jadi tidak ikut ter-reset kalau db:seed dijalankan.
 4. SUPER ADMIN (akses penuh + /admin/system)
 ========================================================
 
-- Email    : llmtest@example.com
+- Email    : superadmin@gmail.com
   Password : password123
   Usaha    : Admin WIRABUMI
   Akses    : SEMUANYA - /dinkop, /admin/monitoring, /admin/impact,
