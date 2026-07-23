@@ -46,8 +46,10 @@ export function AuthProvider({ children }) {
     try {
       const { token } = await api.post('/auth/login', { email, password });
       setToken(token);
-      await loadMe();
-      return { error: null };
+      // Panggil api.get langsung agar kita bisa me-return user untuk keperluan cek role saat login
+      const me = await api.get('/auth/me');
+      setUser(me);
+      return { error: null, user: me };
     } catch (err) {
       return { error: { message: err.message } };
     }

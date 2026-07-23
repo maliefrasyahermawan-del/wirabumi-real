@@ -15,13 +15,23 @@ export default function Login() {
     e.preventDefault();
     setError('');
     setSubmitting(true);
-    const { error: signInError } = await signIn({ email, password });
+    const { error: signInError, user } = await signIn({ email, password });
     setSubmitting(false);
     if (signInError) {
       setError(signInError.message);
       return;
     }
-    const dest = location.state?.from || '/pembukuan';
+    
+    let dest = location.state?.from;
+    if (!dest) {
+      // Jika role adalah admin, government, atau bank_officer, arahkan ke /admin
+      if (['super_admin', 'admin', 'bank_officer', 'government'].includes(user?.role)) {
+        dest = '/admin';
+      } else {
+        // Jika umkm_owner, arahkan ke /umkm
+        dest = '/umkm';
+      }
+    }
     navigate(dest, { replace: true });
   }
 

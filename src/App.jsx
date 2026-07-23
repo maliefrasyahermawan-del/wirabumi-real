@@ -10,6 +10,8 @@ import LupaPassword from './pages/LupaPassword';
 import CaraKerja from './pages/CaraKerja';
 import Tentang from './pages/Tentang';
 import Ulasan from './pages/Ulasan';
+import LandingAdmin from './pages/LandingAdmin';
+import LandingUmkm from './pages/LandingUmkm';
 import Pembukuan from './pages/Pembukuan';
 import PembukuanTambah from './pages/PembukuanTambah';
 import Skor from './pages/Skor';
@@ -36,6 +38,8 @@ export default function App() {
         <AuthProvider>
           <Routes>
             <Route path="/" element={<Landing />} />
+            <Route path="/admin" element={<LandingAdmin />} />
+            <Route path="/umkm" element={<LandingUmkm />} />
             <Route path="/masuk" element={<Login />} />
             <Route path="/daftar" element={<Register />} />
             <Route path="/lupa-password" element={<LupaPassword />} />
