@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { pool } from '../db.js';
 import { requireAuth } from '../auth.js';
+import { personalizeQuests } from '../lib/llmQuests.js';
 
 const router = Router();
 router.use(requireAuth);
@@ -224,7 +225,7 @@ function computeStreak(datesDesc) {
 async function gatherMetrics(userId) {
   const [profRes, scoreRes, activeDaysRes, streakDatesRes, monthOmzetRes, last30Res, prev30Res,
     filledRes, repeatSumRes, repeatCustomersRes, chatRes, omzet6Res] = await Promise.all([
-    pool.query('select legal_nib, legal_pirt, legal_halal from profiles where user_id = $1', [userId]),
+    pool.query('select business_name, business_category, legal_nib, legal_pirt, legal_halal from profiles where user_id = $1', [userId]),
     pool.query('select compute_score($1) as s', [userId]),
     pool.query(`select count(distinct tanggal) c from transactions where user_id=$1 and tanggal >= current_date - interval '90 days'`, [userId]),
     pool.query(`select distinct tanggal from transactions where user_id=$1 and tanggal >= current_date - interval '120 days' order by tanggal desc`, [userId]),
@@ -244,6 +245,10 @@ async function gatherMetrics(userId) {
 
   return {
     score,
+    profile: {
+      business_name: prof.business_name,
+      business_category: prof.business_category,
+    },
     legalNib: !!prof.legal_nib,
     legalPirt: !!prof.legal_pirt,
     legalHalal: !!prof.legal_halal,
@@ -368,7 +373,11 @@ async function evaluateBadges(userId, m) {
 router.get('/', async (req, res) => {
   const m = await gatherMetrics(req.userId);
   const quests = buildQuestList(m);
-  const active_quests = pickActiveQuests(quests, m.score.factors);
+  let active_quests = pickActiveQuests(quests, m.score.factors);
+  
+  // Personalisasi judul dan syarat quest menggunakan AI API
+  active_quests = await personalizeQuests(m.profile, active_quests);
+
   const completed_quests = quests.filter((q) => q.status === 'selesai');
   const badges = await evaluateBadges(req.userId, m);
 
