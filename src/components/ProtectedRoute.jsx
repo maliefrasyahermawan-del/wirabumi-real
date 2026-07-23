@@ -3,10 +3,10 @@ import { useAuth } from '../context/AuthContext';
 import { ROLE_HOME } from '../lib/roles';
 
 /**
- * ProtectedRoute — melindungi halaman dari akses yang tidak sah.
+ * ProtectedRoute - melindungi halaman dari akses yang tidak sah.
  *
  * Props:
- *   roles (string[]) — opsional. Daftar role yang boleh masuk halaman ini.
+ *   roles (string[]) - opsional. Daftar role yang boleh masuk halaman ini.
  *                      Jika tidak diberikan, semua user yang sudah login boleh masuk.
  *
  * Alur:
@@ -16,7 +16,7 @@ import { ROLE_HOME } from '../lib/roles';
  *   4. Lolos semua   → tampilkan halaman (children).
  *
  * Catatan keamanan: pengecekan ini hanya di sisi UI. Penegakan sesungguhnya
- * ada di server (requireRole di server/auth.js) — setiap API call admin
+ * ada di server (requireRole di server/auth.js) - setiap API call admin
  * sudah diblokir di server dengan HTTP 403 tanpa peduli kondisi UI ini.
  */
 export default function ProtectedRoute({ children, roles }) {
@@ -57,7 +57,7 @@ export default function ProtectedRoute({ children, roles }) {
     );
   }
 
-  // Tahap 4: Semua pengecekan lolos — tampilkan halaman
+  // Tahap 4: Semua pengecekan lolos - tampilkan halaman
   return children;
 }
 

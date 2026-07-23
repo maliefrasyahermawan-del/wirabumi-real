@@ -52,7 +52,7 @@ export default function Bank() {
         <div className="eyebrow"><span className="eyebrow-dot"></span>DASHBOARD BANK</div>
         <h1 className="page-title md" style={{ marginTop: 8 }}>Pengajuan KUR</h1>
         <p className="page-sub" style={{ marginBottom: 24 }}>
-          Hanya UMKM yang sudah memberi izin ("consent") yang tampil di sini — nama usaha, kategori, kecamatan,
+          Hanya UMKM yang sudah memberi izin ("consent") yang tampil di sini - nama usaha, kategori, kecamatan,
           skor kelayakan, dan simulasi KUR terakhir. Transaksi dan chat mentah tidak pernah dibagikan.
         </p>
 
@@ -87,7 +87,7 @@ export default function Bank() {
                 <div style={{ fontWeight: 700 }}>{a.business_name}</div>
                 <div className="muted">{a.business_category}</div>
                 <div style={{ fontWeight: 700, color: a.skor >= 60 ? 'var(--green)' : 'var(--red)' }}>{a.skor}</div>
-                <div className="muted">{a.plafon ? rupiah(a.plafon) : '— belum ada simulasi'}</div>
+                <div className="muted">{a.plafon ? rupiah(a.plafon) : ' - belum ada simulasi'}</div>
                 <div>{statusBadge(a.review_status)}</div>
                 <div>
                   <span
@@ -101,7 +101,7 @@ export default function Bank() {
               {expanded === a.user_id && (
                 <div style={{ padding: '14px 20px', background: 'var(--blue-lighter)', borderTop: '1px solid var(--border)' }}>
                   <div className="muted" style={{ fontSize: 12.5, marginBottom: 8 }}>
-                    Kecamatan: {a.kecamatan || '—'} · Tenor: {a.tenor_bulan ? `${a.tenor_bulan} bulan` : '—'} · Simulasi dibuat: {a.kur_generated_at ? formatDateID(a.kur_generated_at) : '—'}
+                    Kecamatan: {a.kecamatan || ' - '} · Tenor: {a.tenor_bulan ? `${a.tenor_bulan} bulan` : ' - '} · Simulasi dibuat: {a.kur_generated_at ? formatDateID(a.kur_generated_at) : ' - '}
                   </div>
                   <textarea
                     value={notes}

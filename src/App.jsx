@@ -46,17 +46,17 @@ export default function App() {
             <Route path="/cara-kerja" element={<CaraKerja />} />
             <Route path="/tentang" element={<Tentang />} />
 
-            {/* Smart dashboard router — semua role yang sudah login bisa masuk,
+            {/* Smart dashboard router - semua role yang sudah login bisa masuk,
                 lalu diarahkan otomatis ke dashboard yang sesuai rolenya */}
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
 
-            {/* Dashboard personal UMKM — hanya umkm_owner (dan super_admin untuk keperluan debug) */}
+            {/* Dashboard personal UMKM - hanya umkm_owner (dan super_admin untuk keperluan debug) */}
             <Route path="/dashboard/umkm" element={<ProtectedRoute roles={['umkm_owner', 'super_admin']}><Dinkop /></ProtectedRoute>} />
 
             {/* Dashboard agregat Dinkop */}
             <Route path="/dinkop" element={<ProtectedRoute roles={['government', 'bank_officer', 'super_admin']}><DinkopAggregate /></ProtectedRoute>} />
 
-            {/* Fitur UMKM — umkm_owner saja */}
+            {/* Fitur UMKM - umkm_owner saja */}
             <Route path="/pembukuan" element={<ProtectedRoute roles={['umkm_owner']}><Pembukuan /></ProtectedRoute>} />
             <Route path="/pembukuan/tambah" element={<ProtectedRoute roles={['umkm_owner']}><PembukuanTambah /></ProtectedRoute>} />
             <Route path="/skor" element={<ProtectedRoute roles={['umkm_owner']}><Skor /></ProtectedRoute>} />
@@ -67,7 +67,7 @@ export default function App() {
             <Route path="/laporan" element={<ProtectedRoute roles={['umkm_owner']}><LaporanKeuangan /></ProtectedRoute>} />
             <Route path="/ulasan" element={<ProtectedRoute roles={['umkm_owner']}><Ulasan /></ProtectedRoute>} />
 
-            {/* Profil — semua role yang sudah login */}
+            {/* Profil - semua role yang sudah login */}
             <Route path="/profil" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
 
             {/* Admin & pemerintah */}

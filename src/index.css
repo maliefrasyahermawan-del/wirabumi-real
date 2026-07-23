@@ -178,7 +178,7 @@ input, textarea, select { font-family: inherit; }
 .nav-dropdown-desc { font-size: 11.5px; color: var(--text-faint); }
 .nav-dropdown-divider { height: 1px; background: var(--border); margin: 6px 2px; }
 
-/* Admin/Staff sidebar shell (Government, Bank, Super Admin) — deliberately a fixed
+/* Admin/Staff sidebar shell (Government, Bank, Super Admin) - deliberately a fixed
    dark palette, not tied to the light/dark theme toggle, so it reads as a distinct
    "staff mode" versus the light UMKM Owner top-nav experience. */
 .admin-shell { min-height: 100vh; background: var(--bg); }
@@ -206,7 +206,7 @@ input, textarea, select { font-family: inherit; }
 }
 @keyframes overlayFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-/* Main content always full width — sidebar floats on top */
+/* Main content always full width - sidebar floats on top */
 .admin-main { min-height: 100vh; display: flex; flex-direction: column; }
 
 .admin-sidebar-brand { display: flex; align-items: center; gap: 12px; padding: 22px 20px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,.08); flex: none; }

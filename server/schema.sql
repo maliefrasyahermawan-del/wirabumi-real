@@ -1,5 +1,5 @@
 -- WIRABUMI local schema (self-hosted Postgres, replaces the Supabase schema).
--- No RLS here — the Node/Express API is the only thing that talks to this
+-- No RLS here - the Node/Express API is the only thing that talks to this
 -- database, and it scopes every query to the authenticated user itself.
 
 create table if not exists users (
@@ -15,7 +15,7 @@ create table if not exists users (
   -- Access-control role. 4 contrasting roles, each with its own dashboard:
   -- umkm_owner (default, the business owner), government (Dinas Koperasi
   -- staff), bank_officer (KUR partner bank), super_admin (developer/system
-  -- owner). No self-serve path to 'bank_officer'/'super_admin' via the app —
+  -- owner). No self-serve path to 'bank_officer'/'super_admin' via the app -
   -- only a super_admin can assign umkm_owner/government/bank_officer via
   -- server/routes/admin.js, and 'super_admin' itself is only ever granted via
   -- a direct DB update.
@@ -31,7 +31,7 @@ create table if not exists profiles (
   kecamatan text,
   phone text,
   -- Menentukan apakah ambang bebas pajak Rp500 juta/tahun (PPh Final UMKM)
-  -- berlaku atau tidak — lihat compute_tax_estimate() di bawah. Hanya
+  -- berlaku atau tidak - lihat compute_tax_estimate() di bawah. Hanya
   -- 'orang_pribadi' yang dapat fasilitas ini; 'badan_usaha' kena 0,5% dari
   -- rupiah pertama.
   kategori_wajib_pajak text not null default 'orang_pribadi' check (kategori_wajib_pajak in ('orang_pribadi', 'badan_usaha')),
@@ -41,7 +41,7 @@ create table if not exists profiles (
   avatar_url text,
   -- Opt-in: UMKM sendiri yang menyalakan ini di halaman Profil supaya
   -- profil kelayakannya (nama usaha, kategori, kecamatan, skor, simulasi
-  -- KUR) bisa dilihat oleh mitra Bank di /bank. Default MATI — data
+  -- KUR) bisa dilihat oleh mitra Bank di /bank. Default MATI - data
   -- transaksi/chat mentah tetap tidak pernah dibagikan sekalipun consent
   -- ini menyala (lihat server/routes/bank.js).
   bank_consent boolean not null default false,
@@ -64,7 +64,7 @@ create table if not exists transactions (
 );
 create index if not exists transactions_user_tanggal_idx on transactions (user_id, tanggal desc);
 
--- Expense/beban tracking — kept separate from `transactions` (sales) since
+-- Expense/beban tracking - kept separate from `transactions` (sales) since
 -- the two feed a real Laporan Laba Rugi (Pendapatan - Beban) rather than
 -- being the same kind of record with a type flag.
 create table if not exists expenses (
@@ -93,7 +93,7 @@ create table if not exists kur_documents (
   generated_at timestamptz not null default now()
 );
 
--- Bank review status — one row per UMKM (not per KUR document/"surat"), since
+-- Bank review status - one row per UMKM (not per KUR document/"surat"), since
 -- a bank_officer reviews the UMKM's live credit profile/score via /api/bank,
 -- not a specific generated PDF. Only ever shown/editable for UMKM with
 -- profiles.bank_consent = true (server/routes/bank.js enforces this).
@@ -139,7 +139,7 @@ create index if not exists notifications_user_idx on notifications (user_id, cre
 
 -- Quest system: badges are permanent once earned (never revoked even if the
 -- underlying metric later regresses, same as a real achievement). Quest
--- completion itself is NOT stored here — it's always derived live from real
+-- completion itself is NOT stored here - it's always derived live from real
 -- transactions/profile data (see server/routes/quests.js), so there's no
 -- separate ledger that can drift out of sync with reality.
 create table if not exists badges (
@@ -173,7 +173,7 @@ create index if not exists activity_log_created_idx on activity_log (created_at 
 create index if not exists activity_log_user_idx on activity_log (user_id);
 
 -- Real Groq LLM call outcomes (server/lib/groqClient.js), feeding the
--- Super Admin System page's "LLM Usage" metric. Not a fabricated number —
+-- Super Admin System page's "LLM Usage" metric. Not a fabricated number -
 -- one row per actual callGroq() invocation, success true/false.
 create table if not exists llm_usage_log (
   id uuid primary key default gen_random_uuid(),
@@ -185,7 +185,7 @@ create index if not exists llm_usage_log_created_idx on llm_usage_log (created_a
 
 -- Real server errors (caught by the global Express error handler in
 -- server/index.js), feeding the Super Admin System page's "Error Log". Never
--- fabricated — only ever written when something genuinely threw.
+-- fabricated - only ever written when something genuinely threw.
 create table if not exists error_log (
   id uuid primary key default gen_random_uuid(),
   route text,
@@ -320,7 +320,7 @@ end;
 $$;
 
 -- ============ Estimasi PPh Final UMKM (PP 55/2022 jo. PP 20/2026) ============
--- Murni SQL/matematika seperti compute_score/get_kur_offer di atas — TIDAK
+-- Murni SQL/matematika seperti compute_score/get_kur_offer di atas - TIDAK
 -- pernah memanggil LLM, dan TIDAK memengaruhi compute_score()/get_kur_offer()
 -- sama sekali (fitur pajak ini berdiri sendiri). Tarif final 0,5% dari omzet
 -- bruto (bukan laba). Ambang bebas pajak Rp500 juta/tahun pajak HANYA
@@ -330,7 +330,7 @@ $$;
 -- Perhitungan MARGINAL: karena omzet kumulatif tahun berjalan monoton naik
 -- (transaksi baru hanya menambah, tidak pernah mengurangi), total omzet
 -- yang PERNAH kena pajak sampai bulan manapun selalu sama dengan
--- GREATEST(0, omzet_kumulatif - ambang) — jadi dasar pengenaan pajak bulan
+-- GREATEST(0, omzet_kumulatif - ambang) - jadi dasar pengenaan pajak bulan
 -- tertentu cukup dihitung sebagai selisih nilai itu sebelum vs sesudah
 -- bulan tersebut, tanpa perlu iterasi/looping per bulan.
 create or replace function compute_tax_estimate(

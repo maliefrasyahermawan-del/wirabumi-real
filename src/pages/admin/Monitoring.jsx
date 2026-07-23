@@ -64,7 +64,7 @@ export default function Monitoring() {
       <div className="wrap-1180" style={{ paddingTop: 30, paddingBottom: 60 }}>
         <div className="eyebrow"><span className="eyebrow-dot"></span>{isSuperAdmin ? 'KHUSUS SUPER ADMIN' : 'KHUSUS ADMIN'}</div>
         <h1 className="page-title md" style={{ marginTop: 8 }}>Monitoring Aktivitas</h1>
-        <p className="page-sub" style={{ marginBottom: 24 }}>Data real dari log aktivitas seluruh pengguna — bukan tampilan statis.</p>
+        <p className="page-sub" style={{ marginBottom: 24 }}>Data real dari log aktivitas seluruh pengguna - bukan tampilan statis.</p>
 
         <div className="kpi-grid" style={{ marginBottom: 24 }}>
           {isSuperAdmin && (

@@ -1,5 +1,5 @@
 // Heuristic parser for informal Indonesian sales chat (WhatsApp / IG DM text
-// pasted in as-is). No external AI — pure rule-based extraction. Because
+// pasted in as-is). No external AI - pure rule-based extraction. Because
 // heuristics are never perfect, the caller is expected to show the result in
 // an editable review table before anything is saved.
 

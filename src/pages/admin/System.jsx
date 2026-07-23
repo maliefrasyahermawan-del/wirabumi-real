@@ -50,7 +50,7 @@ export default function System() {
         <div className="eyebrow"><span className="eyebrow-dot"></span>KHUSUS SUPER ADMIN</div>
         <h1 className="page-title md" style={{ marginTop: 8 }}>System</h1>
         <p className="page-sub" style={{ marginBottom: 24 }}>
-          Metrik nyata dari database &amp; log server — bukan angka karangan. Kalau belum ada data (mis. belum ada
+          Metrik nyata dari database &amp; log server - bukan angka karangan. Kalau belum ada data (mis. belum ada
           error tercatat), kartunya menampilkan kosong, bukan dipalsukan.
         </p>
 
@@ -113,7 +113,7 @@ export default function System() {
                 {data.recent_errors.map((e) => (
                   <div key={e.id} style={{ fontSize: 12.5, borderBottom: '1px solid var(--border)', paddingBottom: 8 }}>
                     <div style={{ fontWeight: 700, color: 'var(--red)' }}>{e.message}</div>
-                    <div className="muted" style={{ fontSize: 11, marginTop: 2 }}>{e.route || '—'} · {timeAgo(e.created_at)}</div>
+                    <div className="muted" style={{ fontSize: 11, marginTop: 2 }}>{e.route || ' - '} · {timeAgo(e.created_at)}</div>
                   </div>
                 ))}
               </div>

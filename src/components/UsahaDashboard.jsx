@@ -86,7 +86,7 @@ function formatBucketRange(bucket, periodKey) {
     return bucket.start.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
   }
   const fmt = (d) => d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
-  return `${fmt(bucket.start)} – ${fmt(bucket.end)}`;
+  return `${fmt(bucket.start)} - ${fmt(bucket.end)}`;
 }
 
 function topProductsInRange(txns, start, end) {
@@ -351,7 +351,7 @@ export default function UsahaDashboard() {
                   fontSize: 12, fontWeight: 800,
                   background: l.done ? 'var(--green-bg)' : 'var(--blue-lighter)',
                   color: l.done ? 'var(--green)' : 'var(--text-disabled)',
-                }}>{l.done ? '✓' : '–'}</span>
+                }}>{l.done ? '✓' : ' - '}</span>
                 <span style={{ fontSize: 14, fontWeight: 600 }}>{l.label}</span>
               </div>
             ))}

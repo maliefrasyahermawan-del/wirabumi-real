@@ -22,7 +22,7 @@ export default function AiInsightCard({ endpoint, title = 'AI Insight' }) {
       <span style={{ fontSize: 22, lineHeight: 1 }}>✨</span>
       <div style={{ minWidth: 0 }}>
         <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.05em', color: 'var(--blue-dark)', textTransform: 'uppercase' }}>
-          {title} {data && (data.source === 'llm' ? '· Groq AI' : '· ringkasan otomatis')}
+          {title}
         </div>
         {data ? (
           <p style={{ fontSize: 14.5, lineHeight: 1.6, margin: '6px 0 0', color: 'var(--text)' }}>{data.insight}</p>

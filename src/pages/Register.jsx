@@ -24,7 +24,7 @@ export default function Register() {
       return;
     }
     if (!form.securityFood.trim() || !form.securityBand.trim()) {
-      setError('Makanan favorit dan band favorit wajib diisi — dipakai untuk reset kata sandi kalau lupa nanti.');
+      setError('Makanan favorit dan band favorit wajib diisi - dipakai untuk reset kata sandi kalau lupa nanti.');
       return;
     }
     setSubmitting(true);
@@ -85,7 +85,7 @@ export default function Register() {
 
             <div style={{ borderTop: '1px dashed var(--border)', paddingTop: 14, marginTop: 2 }}>
               <p className="muted" style={{ fontSize: 12.5, margin: '0 0 12px' }}>
-                Dipakai untuk reset kata sandi kalau lupa nanti — jawabanmu tidak perlu formal, yang penting kamu ingat.
+                Dipakai untuk reset kata sandi kalau lupa nanti - jawabanmu tidak perlu formal, yang penting kamu ingat.
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                 <div className="field">

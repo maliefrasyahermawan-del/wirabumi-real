@@ -40,7 +40,7 @@ export default function KelolaPengguna() {
         <h1 className="page-title md" style={{ marginTop: 8 }}>Kelola Pengguna</h1>
         <p className="page-sub" style={{ marginBottom: 24 }}>
           Atur peran akun: UMKM, Pemerintah (Dinkop), atau Bank. Peran "Super Admin" sengaja tidak bisa
-          diberikan lewat halaman ini — hanya lewat akses database langsung.
+          diberikan lewat halaman ini - hanya lewat akses database langsung.
         </p>
 
         {error && <div className="alert-error" style={{ marginBottom: 16 }}>{error}</div>}
@@ -54,12 +54,12 @@ export default function KelolaPengguna() {
             </div>
             {users.map((u) => (
               <div className="table-row" style={{ gridTemplateColumns: COLS }} key={u.id}>
-                <div style={{ fontWeight: 700 }}>{u.business_name || '—'}</div>
+                <div style={{ fontWeight: 700 }}>{u.business_name || ' - '}</div>
                 <div className="muted">{u.email}</div>
                 <div><span className="status-badge">{ROLE_LABELS[u.role] || u.role}</span></div>
                 <div>
                   {u.role === 'super_admin' ? (
-                    <span className="muted" style={{ fontSize: 12 }}>— tetap —</span>
+                    <span className="muted" style={{ fontSize: 12 }}> - tetap - </span>
                   ) : u.id === user.id ? (
                     <span className="muted" style={{ fontSize: 12 }}>Akun kamu</span>
                   ) : (

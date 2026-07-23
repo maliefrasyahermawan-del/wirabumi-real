@@ -19,9 +19,9 @@ Setiap elemen array adalah satu transaksi, dengan field PERSIS seperti ini:
   "produk": "string, nama produk dalam Title Case. Kalau benar-benar tidak jelas, isi \\"Produk (tidak terdeteksi)\\"",
   "qty": angka (default 1 kalau jumlah tidak disebut),
   "satuan": "string, mis. pcs/kg/lusin/potong (default \\"pcs\\" kalau tidak disebut)",
-  "harga": angka total harga transaksi ini dalam Rupiah (ubah \\"320rb\\"/\\"320 ribu\\" jadi 320000, \\"1.2jt\\"/\\"1,2 juta\\" jadi 1200000, dst — HARUS angka murni tanpa titik/koma/text),
+  "harga": angka total harga transaksi ini dalam Rupiah (ubah \\"320rb\\"/\\"320 ribu\\" jadi 320000, \\"1.2jt\\"/\\"1,2 juta\\" jadi 1200000, dst - HARUS angka murni tanpa titik/koma/text),
   "status": salah satu dari "Lunas" | "DP 50%" | "Belum Lunas" (Lunas kalau ada kata sudah/udah/transfer/lunas dikonfirmasi; "DP 50%" kalau disebut DP/setengah/uang muka; "Belum Lunas" kalau belum ada konfirmasi pembayaran sama sekali),
-  "pelanggan": nama/panggilan pembeli KALAU disebutkan eksplisit di teks (mis. disapa "Bu Ani"), kalau tidak disebutkan isi null — JANGAN mengarang nama,
+  "pelanggan": nama/panggilan pembeli KALAU disebutkan eksplisit di teks (mis. disapa "Bu Ani"), kalau tidak disebutkan isi null - JANGAN mengarang nama,
   "confidence": "high" kalau qty DAN harga sama-sama jelas disebut dan nama produk tidak ambigu; "medium" kalau sebagian info harus ditebak; "low" kalau sebagian besar field terpaksa ditebak
 }
 

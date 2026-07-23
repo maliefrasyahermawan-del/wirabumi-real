@@ -1,7 +1,7 @@
 import { pool } from '../db.js';
 
 // Fire-and-forget activity logging for the admin Monitoring page
-// (server/routes/admin.js). Never throws — a logging failure must never
+// (server/routes/admin.js). Never throws - a logging failure must never
 // break the primary request it's attached to, same resilience philosophy as
 // the Groq LLM calls in this directory. role_at_time is resolved via a join
 // so callers never need to know/fetch the user's role themselves.

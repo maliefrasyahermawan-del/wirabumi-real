@@ -23,7 +23,7 @@ Balas HANYA dengan JSON object (tanpa markdown, tanpa penjelasan), field PERSIS 
   "statusTerbaca": "berhasil" atau "gagal" atau null kalau tidak jelas
 }
 
-Lakukan yang terbaik untuk tetap menangkap nominal dan tanggal meski teksnya berantakan. JANGAN mengarang nilai yang sama sekali tidak ada petunjuknya — isi null/0/string kosong sesuai jenis fieldnya.`;
+Lakukan yang terbaik untuk tetap menangkap nominal dan tanggal meski teksnya berantakan. JANGAN mengarang nilai yang sama sekali tidak ada petunjuknya - isi null/0/string kosong sesuai jenis fieldnya.`;
 
 function coerceAmount(val) {
   const n = typeof val === 'number' ? val : parseFloat(val);

@@ -1,5 +1,5 @@
 /**
- * seed.js — Mengisi database dengan akun mockup + data keuangan bervariasi.
+ * seed.js - Mengisi database dengan akun mockup + data keuangan bervariasi.
  *
  * Setiap akun UMKM punya:
  * - Profil (nama usaha, kategori, kecamatan, legal, dll.)
@@ -101,7 +101,7 @@ function makeExpenses({ kategori, items, startDay, endDay = 0, expPerMonth, amou
 const umkmData = [
 
   // ════════════════════════════════════════════════════════════════════════════
-  // 1. BATIK KLIWON JAYA — usaha batik yang sudah lama berjalan (±2.5 tahun)
+  // 1. BATIK KLIWON JAYA - usaha batik yang sudah lama berjalan (±2.5 tahun)
   //    Omzet menengah-atas, konsisten, punya pelanggan tetap, legal lengkap.
   // ════════════════════════════════════════════════════════════════════════════
   {
@@ -146,7 +146,7 @@ const umkmData = [
   },
 
   // ════════════════════════════════════════════════════════════════════════════
-  // 2. UJI COBA KOSONG — akun baru, baru daftar, belum ada data (sengaja kosong)
+  // 2. UJI COBA KOSONG - akun baru, baru daftar, belum ada data (sengaja kosong)
   //    Hanya punya 2-3 transaksi percobaan di awal.
   // ════════════════════════════════════════════════════════════════════════════
   {
@@ -166,7 +166,7 @@ const umkmData = [
   },
 
   // ════════════════════════════════════════════════════════════════════════════
-  // 3. ANGKRINGAN MAS JOYO — warung angkringan, usaha berjalan ±14 bulan
+  // 3. ANGKRINGAN MAS JOYO - warung angkringan, usaha berjalan ±14 bulan
   //    Omzet kecil-menengah, harian, banyak item murah, fluktuatif.
   // ════════════════════════════════════════════════════════════════════════════
   {
@@ -209,7 +209,7 @@ const umkmData = [
   },
 
   // ════════════════════════════════════════════════════════════════════════════
-  // 4. TOKO RBAC TEST — toko kelontong/sembako, ±18 bulan, consent bank aktif
+  // 4. TOKO RBAC TEST - toko kelontong/sembako, ±18 bulan, consent bank aktif
   //    Omzet sedang, stabil, sudah disetujui bank untuk KUR.
   // ════════════════════════════════════════════════════════════════════════════
   {
@@ -253,8 +253,8 @@ const umkmData = [
   },
 
   // ════════════════════════════════════════════════════════════════════════════
-  // 5. DEMO ESTIMASI PAJAK — usaha katering, ±8 bulan, omzet mendekati
-  //    ambang PPh Final Rp500jt/tahun — khusus untuk demo fitur pajak.
+  // 5. DEMO ESTIMASI PAJAK - usaha katering, ±8 bulan, omzet mendekati
+  //    ambang PPh Final Rp500jt/tahun - khusus untuk demo fitur pajak.
   //    Data disesuaikan agar omzet kumulatif tahun ini ~Rp430-470 juta.
   // ════════════════════════════════════════════════════════════════════════════
   {
@@ -305,7 +305,7 @@ const umkmData = [
 // ─── Data Akun Lengkap ────────────────────────────────────────────────────────
 
 const mockUsers = [
-  // ── UMKM — punya data keuangan ──
+  // ── UMKM - punya data keuangan ──
   {
     email: 'batikkliwonjaya@local.test',
     password: 'password123',

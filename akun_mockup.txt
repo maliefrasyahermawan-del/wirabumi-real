@@ -1,5 +1,5 @@
 ========================================================
-AKUN MOCKUP / TEST WIRABUMI — SEMUA PERAN
+AKUN MOCKUP / TEST WIRABUMI - SEMUA PERAN
 (hanya untuk testing lokal, bukan data produksi)
 ========================================================
 File ini: akun_mockup.txt (di root folder proyek, sejajar dengan
@@ -12,7 +12,7 @@ supaya file ini benar-benar bisa dipakai login. Akun yang sudah punya
 password dikenal (demo-pajak, banktest) TIDAK diubah.
 
 CATATAN: maliefrasyahermawan@gmail.com ("Wayang") SENGAJA TIDAK
-dimasukkan ke daftar di bawah — itu kelihatannya akun pribadimu sendiri
+dimasukkan ke daftar di bawah - itu kelihatannya akun pribadimu sendiri
 (pakai email gmail asli), bukan akun mockup, jadi passwordnya tidak
 saya sentuh/reset.
 
@@ -29,7 +29,7 @@ saya sentuh/reset.
 - Email    : testkosong@local.test
   Password : password123
   Usaha    : Uji Coba Kosong (Umum, Laweyan)
-  Catatan  : akun kosong — bagus buat tes tampilan "belum ada data".
+  Catatan  : akun kosong - bagus buat tes tampilan "belum ada data".
 
 - Email    : angkringan.joyo@local.test
   Password : password123
@@ -40,7 +40,7 @@ saya sentuh/reset.
   Password : password123
   Usaha    : Toko RBAC Test (Umum)
   Catatan  : SUDAH mengizinkan "bank_consent" (nyala) dan sudah punya
-             status pengajuan "Disetujui" di Dashboard Bank — bagus
+             status pengajuan "Disetujui" di Dashboard Bank - bagus
              buat langsung lihat fitur consent + review Bank tanpa
              setup ulang.
 
@@ -48,7 +48,7 @@ saya sentuh/reset.
   Password : demo1234
   Usaha    : Demo Estimasi Pajak (Demo, Pasar Kliwon)
   Catatan  : diisi transaksi khusus buat demo Estimasi Kewajiban Pajak
-             PPh Final UMKM — coba ganti Bulan di Laporan Laba Rugi ke
+             PPh Final UMKM - coba ganti Bulan di Laporan Laba Rugi ke
              Juli/Agustus/September/Oktober 2026 buat lihat 4 status
              pajak yang berbeda (lihat catatan lengkap di percakapan
              soal fitur pajak).
@@ -73,7 +73,7 @@ saya sentuh/reset.
 - Email    : banktest@example.com
   Password : password123
   Usaha    : Bank Test Officer
-  Akses    : /bank — hanya melihat UMKM yang mengizinkan (bank_consent
+  Akses    : /bank - hanya melihat UMKM yang mengizinkan (bank_consent
              = true). Saat ini yang tampil di listnya: Toko RBAC Test
              (rbactest@example.com), status "Disetujui".
 
@@ -85,11 +85,11 @@ saya sentuh/reset.
 - Email    : llmtest@example.com
   Password : password123
   Usaha    : Toko Uji LLM
-  Akses    : SEMUANYA — /dinkop, /admin/monitoring, /admin/impact,
+  Akses    : SEMUANYA - /dinkop, /admin/monitoring, /admin/impact,
              /bank, /admin/pengguna (kelola pengguna, ubah peran akun
              lain), /admin/system (storage, pemakaian LLM, error log).
   Catatan  : peran "Super Admin" hanya bisa didapat lewat database
-             langsung, tidak lewat aplikasi manapun — akun ini contoh
+             langsung, tidak lewat aplikasi manapun - akun ini contoh
              satu-satunya yang sudah di-set begitu.
 
 

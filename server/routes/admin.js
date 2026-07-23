@@ -9,7 +9,7 @@ router.use(requireAuth, requireRole('government', 'bank_officer', 'super_admin')
 // Constraint 1: Multi-Role Collaboration & Activity Monitoring.
 // "Active user" = distinct user_id with an activity_log row in the last 24h,
 // paired with "today's activity count" so both numbers describe the same
-// rolling window of real, live activity — not a static snapshot.
+// rolling window of real, live activity - not a static snapshot.
 router.get('/monitoring', async (req, res) => {
   const [activeUsers, todayActivity, recentActivities, activityByRole, todayByType] = await Promise.all([
     pool.query(`select count(distinct user_id) as c from activity_log where created_at >= now() - interval '24 hours'`),
@@ -43,7 +43,7 @@ router.get('/monitoring', async (req, res) => {
   };
 
   // Registered-user counts and per-user activity expose staff identities
-  // (Bank/Government/Super Admin accounts, not just UMKM) — keep this
+  // (Bank/Government/Super Admin accounts, not just UMKM) - keep this
   // super_admin-only so Government's view doesn't change.
   if (req.userRole === 'super_admin') {
     const [registeredTotal, usersByRole, mostActive] = await Promise.all([
@@ -69,7 +69,7 @@ router.get('/monitoring', async (req, res) => {
 });
 
 // Constraint 2: Smart Impact Dashboard & Action Log. `kecamatan` and `status`
-// are real filters — both the 4 metrics AND the detail rows are recomputed
+// are real filters - both the 4 metrics AND the detail rows are recomputed
 // from the SAME filtered set, so a judge changing a filter genuinely sees
 // the whole page react, not just the table.
 router.get('/impact', async (req, res) => {

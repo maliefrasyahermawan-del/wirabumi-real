@@ -1,7 +1,7 @@
-// AI Insight per peran — 4 narasi singkat berbahasa Indonesia dibuat dari data
+// AI Insight per peran - 4 narasi singkat berbahasa Indonesia dibuat dari data
 // ASLI yang sudah dihitung SQL (compute_score, dinkop_dashboard, dst). LLM di
 // sini HANYA menuliskan ulang angka yang sudah ada jadi kalimat, sama seperti
-// llmScoreNarrative.js — tidak pernah diminta menghitung atau mengarang angka
+// llmScoreNarrative.js - tidak pernah diminta menghitung atau mengarang angka
 // baru. Setiap fungsi punya fallback rule-based sendiri kalau Groq gagal/API
 // key kosong, supaya kartu AI Insight tidak pernah kosong/error.
 
@@ -17,7 +17,7 @@ const UMKM_SYSTEM_PROMPT = `Kamu menulis 2-3 kalimat insight bisnis berbahasa In
 Kamu akan diberi: skor kelayakan (0-100) & status, omzet 30 hari terakhir vs 30 hari sebelumnya, dan status kelengkapan dokumen legalitas (NIB/P-IRT/Halal).
 
 Tulis insight yang:
-- HANYA merujuk ke angka yang diberikan — JANGAN mengarang angka atau fakta baru.
+- HANYA merujuk ke angka yang diberikan - JANGAN mengarang angka atau fakta baru.
 - Menyebut arah omzet (naik/turun/stabil) dan satu hal paling berdampak untuk difokuskan berikutnya (bisa soal legalitas atau soal menjaga konsistensi transaksi).
 - Bernada menyemangati, seperti bicara ke teman pemilik toko.
 
@@ -57,7 +57,7 @@ const GOVERNMENT_SYSTEM_PROMPT = `Kamu menulis 2-3 kalimat insight berbahasa Ind
 Kamu akan diberi: total UMKM terhubung, skor rata-rata, persentase layak KUR, jumlah berkas KUR dibuat, skor rata-rata per kecamatan, dan jumlah pengguna aktif 24 jam terakhir.
 
 Tulis insight yang:
-- HANYA merujuk ke angka yang diberikan — JANGAN mengarang angka atau fakta baru.
+- HANYA merujuk ke angka yang diberikan - JANGAN mengarang angka atau fakta baru.
 - Menyebut kecamatan dengan skor rata-rata PALING RENDAH sebagai yang paling perlu didampingi (kalau datanya ada).
 - Menyimpulkan kondisi program secara umum (bagus/perlu perhatian) berdasarkan persentase layak KUR.
 - Bernada profesional tapi ringkas, seperti ringkasan untuk atasan.
@@ -100,7 +100,7 @@ const BANK_SYSTEM_PROMPT = `Kamu menulis 2-3 kalimat insight berbahasa Indonesia
 Kamu akan diberi: jumlah UMKM per status pengajuan (Menunggu/Disetujui/Ditolak) beserta skor rata-rata masing-masing status.
 
 Tulis insight yang:
-- HANYA merujuk ke angka yang diberikan — JANGAN mengarang angka atau fakta baru.
+- HANYA merujuk ke angka yang diberikan - JANGAN mengarang angka atau fakta baru.
 - Menyebut berapa banyak pengajuan yang masih menunggu review.
 - Kalau skor rata-rata yang "Menunggu" cukup tinggi, sebut itu sebagai sinyal positif yang layak diprioritaskan direview duluan.
 - Bernada profesional dan ringkas, seperti ringkasan untuk manajer cabang.
@@ -139,7 +139,7 @@ const SUPER_ADMIN_SYSTEM_PROMPT = `Kamu menulis 2-3 kalimat insight teknis berba
 Kamu akan diberi: jumlah pengguna per peran, pemakaian LLM 7 hari terakhir per fitur (jumlah sukses vs gagal), dan jumlah error server 7 hari terakhir.
 
 Tulis insight yang:
-- HANYA merujuk ke angka yang diberikan — JANGAN mengarang angka atau fakta baru.
+- HANYA merujuk ke angka yang diberikan - JANGAN mengarang angka atau fakta baru.
 - Kalau ada fitur LLM dengan tingkat gagal tinggi (gagal >= sukses), sebut itu sebagai hal yang perlu dicek.
 - Kalau jumlah error server 7 hari terakhir nol, sebut sistem dalam kondisi sehat; kalau ada, sebut jumlahnya sebagai hal yang perlu dipantau.
 - Bernada teknis, ringkas, langsung ke intinya.

@@ -21,8 +21,8 @@ const STEPS = [
   {
     title: 'Lihat skor kelayakan', short: 'Tahu posisimu & cara menaikkannya.',
     detailTitle: 'Skor kelayakan usaha dihitung real',
-    detailBody: 'Dari data transaksimu, WIRABUMI menghitung skor 0–100 berdasarkan konsistensi, volume penjualan, rasio pelanggan tetap, dan legalitas, plus saran konkret untuk menaikkannya.',
-    points: ['Skor 0–100 dengan rincian faktornya', 'Saran konkret menaikkan skor', 'Dihitung ulang tiap kali data berubah'],
+    detailBody: 'Dari data transaksimu, WIRABUMI menghitung skor 0 - 100 berdasarkan konsistensi, volume penjualan, rasio pelanggan tetap, dan legalitas, plus saran konkret untuk menaikkannya.',
+    points: ['Skor 0 - 100 dengan rincian faktornya', 'Saran konkret menaikkan skor', 'Dihitung ulang tiap kali data berubah'],
     ctaLabel: 'Lihat skorku', target: '/skor',
   },
   {

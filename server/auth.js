@@ -21,11 +21,11 @@ export function requireAuth(req, res, next) {
   }
 }
 
-// Role is deliberately NOT embedded in the JWT (tokens live 30 days — baking
+// Role is deliberately NOT embedded in the JWT (tokens live 30 days - baking
 // role in would mean a promotion/demotion doesn't take effect until the
 // token expires). Looked up fresh from the DB on every request instead; must
 // run after requireAuth (needs req.userId). Generic error message on
-// mismatch — doesn't reveal which roles would have been allowed.
+// mismatch - doesn't reveal which roles would have been allowed.
 export function requireRole(...allowedRoles) {
   return async function (req, res, next) {
     const result = await pool.query('select role from users where id = $1', [req.userId]);

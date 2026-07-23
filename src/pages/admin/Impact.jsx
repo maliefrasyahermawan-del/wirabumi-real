@@ -87,7 +87,7 @@ export default function Impact() {
                     <div className="muted">{r.kategori}</div>
                     <div><span className={`status-badge ${r.status === 'Layak Diajukan' ? '' : 'dp'}`}>{r.status}</span></div>
                     <div>{prioritasChip(r.prioritas)}</div>
-                    <div className="muted">{r.waktu ? formatDateID(r.waktu) : '—'}</div>
+                    <div className="muted">{r.waktu ? formatDateID(r.waktu) : ' - '}</div>
                     <div>
                       <span onClick={() => setExpanded(expanded === r.user_id ? null : r.user_id)} style={{ cursor: 'pointer', fontWeight: 700, color: 'var(--blue-dark)', fontSize: 12.5 }}>
                         {expanded === r.user_id ? 'Tutup' : 'Detail'}
@@ -96,7 +96,7 @@ export default function Impact() {
                   </div>
                   {expanded === r.user_id && (
                     <div style={{ padding: '12px 20px', background: 'var(--blue-lighter)', borderTop: '1px solid var(--border)', fontSize: 13, display: 'flex', gap: 24, flexWrap: 'wrap' }}>
-                      <div><span className="muted">Kecamatan:</span> {r.kecamatan || '—'}</div>
+                      <div><span className="muted">Kecamatan:</span> {r.kecamatan || ' - '}</div>
                       <div><span className="muted">Skor kelayakan:</span> {r.skor}/100</div>
                       <div><span className="muted">Transaksi terakhir:</span> {r.waktu ? formatDateID(r.waktu) : 'Belum ada'}</div>
                     </div>

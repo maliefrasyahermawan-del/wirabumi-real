@@ -1,5 +1,5 @@
 // Shared Groq API client. Used by llmChatParser.js, llmScoreNarrative.js, and
-// llmReceiptParser.js. Never throws — every caller gets back a plain
+// llmReceiptParser.js. Never throws - every caller gets back a plain
 // {success, ...} object so a Groq outage can never take down the route that
 // calls it; the route just falls back to the existing rule-based logic.
 
@@ -75,7 +75,7 @@ export async function callGroq({ system, user, feature = 'unknown', temperature 
 }
 
 // LLM is instructed to reply with raw JSON, but models sometimes wrap it in a
-// ```json fence anyway — strip that defensively before JSON.parse instead of
+// ```json fence anyway - strip that defensively before JSON.parse instead of
 // letting a cosmetic formatting slip take down the whole parse.
 export function extractJson(content) {
   const cleaned = content.trim().replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '');

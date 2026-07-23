@@ -57,7 +57,7 @@ export default function Chatbot() {
       if (history && history.length > 0) {
         setMessages(history.map((h) => ({ role: h.role, text: h.text })));
       } else {
-        // A session-start nicety only — intentionally not persisted, so there's
+        // A session-start nicety only - intentionally not persisted, so there's
         // no first-load race to double-insert it (StrictMode's double effect
         // invocation would otherwise write it twice).
         const greeting = 'Halo, kenalin aku Mas Sido 👋 Aku asisten keuangan WIRABUMI, tugasku bantu jawab pertanyaan soal usahamu langsung dari data pembukuanmu sendiri: omzet, skor kelayakan, sampai simulasi KUR. Namaku diambil dari kata "sido" pada motif batik Sidomukti, yang dalam bahasa Jawa berarti "jadi" atau "tercapai", doa supaya usahamu jadi dan tercapai. Coba tanya apa saja, atau klik salah satu pertanyaan di bawah.';

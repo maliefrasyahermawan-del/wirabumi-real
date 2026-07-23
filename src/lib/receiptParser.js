@@ -1,13 +1,13 @@
 // Heuristic parser for bank-transfer confirmation screenshots (BCA/BNI/BI-FAST
 // style "m-Transfer: BERHASIL" receipts), run AFTER Tesseract.js OCR has
-// already turned the photo into raw text. No external AI — pure rule-based
+// already turned the photo into raw text. No external AI - pure rule-based
 // text extraction, same philosophy as chatParser.js. OCR is never perfect, so
 // the caller must show the result in an editable review table before saving.
 
 function parseAmount(str) {
   if (!str) return 0;
   let s = str.trim();
-  // Bank apps show amounts as "89,000.00" or "89.000,00" — either way the
+  // Bank apps show amounts as "89,000.00" or "89.000,00" - either way the
   // last separator+two-digits is the cents, everything else is a thousands
   // separator to strip.
   s = s.replace(/[.,]\d{2}$/, '');
@@ -76,7 +76,7 @@ export function parseReceiptText(rawText) {
     const accLine = lines[tujuanIdx + 2] || '';
     const accMatch = accLine.match(/(\d{6,})/);
     if (accMatch) rekeningTujuan = accMatch[1];
-    const nameOnAccLine = accLine.replace(/\d{6,}/, '').replace(/^[\s\-–]+/, '').trim();
+    const nameOnAccLine = accLine.replace(/\d{6,}/, '').replace(/^[\s\- - ]+/, '').trim();
     namaPenerima = nameOnAccLine || (lines[tujuanIdx + 3] || '').trim() || null;
   }
 

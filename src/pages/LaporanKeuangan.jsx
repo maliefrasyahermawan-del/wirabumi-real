@@ -12,7 +12,7 @@ const TAX_STATUS_CONFIG = {
   di_bawah_ambang: { label: 'Di bawah ambang bebas pajak', color: 'var(--green)', bg: 'var(--green-bg)' },
   kena_pajak: { label: 'Kena PPh Final 0,5%', color: 'var(--blue-dark)', bg: 'var(--blue-light)' },
   mendekati_batas_4_8m: { label: 'Mendekati batas Rp4,8 miliar', color: 'var(--amber)', bg: 'var(--amber-bg)' },
-  melebihi_batas_4_8m: { label: 'Melebihi batas Rp4,8 miliar — konsultasikan ke konsultan pajak', color: 'var(--red)', bg: 'var(--red-bg)' },
+  melebihi_batas_4_8m: { label: 'Melebihi batas Rp4,8 miliar - konsultasikan ke konsultan pajak', color: 'var(--red)', bg: 'var(--red-bg)' },
 };
 
 const TAX_DISCLAIMER = 'Estimasi ini dihitung otomatis dari data pembukuanmu berdasarkan skema PPh Final UMKM (PP 55/2022 jo. PP 20/2026) dan bersifat perkiraan, bukan perhitungan resmi. Aturan pajak dapat berubah dan setiap usaha punya kondisi berbeda (mis. jenis usaha, masa berlaku fasilitas). Untuk kewajiban pajak resmi, konsultasikan ke akuntan atau konsultan pajak terdaftar, atau cek langsung ke pajak.go.id / Coretax.';
@@ -196,7 +196,7 @@ export default function LaporanKeuangan() {
     doc.setTextColor(140);
     doc.text('Dibuat otomatis oleh WIRABUMI dari data pembukuan (penjualan) dan pengeluaran yang dicatat pengguna.', 14, y);
     y += 4;
-    doc.text('Format mengacu pada struktur Laporan Laba Rugi SAK EMKM — bukan laporan yang diaudit/diverifikasi akuntan.', 14, y);
+    doc.text('Format mengacu pada struktur Laporan Laba Rugi SAK EMKM - bukan laporan yang diaudit/diverifikasi akuntan.', 14, y);
     if (taxEstimate) {
       y += 4;
       const disclaimerLines = doc.splitTextToSize(TAX_DISCLAIMER, 182);

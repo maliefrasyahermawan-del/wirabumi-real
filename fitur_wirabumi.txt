@@ -1,5 +1,5 @@
 ========================================================
-FITUR WIRABUMI — DOKUMENTASI LENGKAP DAN JUJUR
+FITUR WIRABUMI - DOKUMENTASI LENGKAP DAN JUJUR
 (ditulis ulang dari nol, langsung dari kode yang berjalan saat ini)
 ========================================================
 
@@ -13,13 +13,13 @@ TENTANG WIRABUMI
 --------------------------------------------------------
 WIRABUMI adalah aplikasi pembukuan dan kesiapan pengajuan KUR (Kredit
 Usaha Rakyat) untuk pelaku UMKM di kawasan Solo Raya. Nama WIRABUMI
-sendiri singkatan dari "Wirausaha Bumi Solo Raya" — "Wira" dari kata
+sendiri singkatan dari "Wirausaha Bumi Solo Raya" - "Wira" dari kata
 wirausaha, "Bumi" merujuk pada wilayah/tanah Solo Raya (cerita lengkap
 ada di halaman Tentang di dalam aplikasi).
 
 Aplikasi ini FUNGSIONAL NYATA: database sungguhan, akun pengguna
 sungguhan, dan seluruh perhitungan (skor, plafon, laba rugi) benar-benar
-jalan dari data yang kamu catat sendiri — BUKAN tampilan/mockup statis.
+jalan dari data yang kamu catat sendiri - BUKAN tampilan/mockup statis.
 
 
 ========================================================
@@ -36,30 +36,30 @@ ARSITEKTUR & STACK TEKNIS
   Supabase, bukan cloud database apa pun). Skema lengkap ada di
   server/schema.sql, termasuk 2 fungsi SQL inti (compute_score dan
   get_kur_offer) yang jadi satu-satunya sumber kebenaran skor & plafon
-  — dipanggil dari banyak tempat (halaman Skor, halaman KUR, chatbot,
+  - dipanggil dari banyak tempat (halaman Skor, halaman KUR, chatbot,
   sistem quest, dashboard Dinkop) supaya angkanya selalu konsisten,
   tidak dihitung ulang dengan rumus berbeda-beda di tiap halaman.
 - Autentikasi: token JWT (jsonwebtoken), kata sandi di-hash dengan
   bcryptjs. Middleware requireAuth mewajibkan token valid dan
-  menyaring semua query database berdasar user_id — isolasi data antar
+  menyaring semua query database berdasar user_id - isolasi data antar
   akun dijamin di server, bukan cuma disembunyikan di tampilan.
 - Upload file: multer, dipakai untuk foto profil (avatar) dan foto
   bukti transfer (dibaca di browser, tidak diunggah ke server untuk
-  di-OCR — lihat bagian Pembukuan).
+  di-OCR - lihat bagian Pembukuan).
 - PDF: jsPDF + jspdf-autotable, dipakai untuk berkas KUR dan Laporan
   Laba Rugi.
-- OCR: Tesseract.js, dipakai saat unggah foto bukti transfer — lihat
+- OCR: Tesseract.js, dipakai saat unggah foto bukti transfer - lihat
   penjelasan detail di bagian "APAKAH ADA YANG BENERAN AI" di bawah.
 - LLM: server/lib/groqClient.js adalah modul bersama untuk memanggil
   Groq API (model llama-3.3-70b-versatile), dipakai di 4 titik (parser
-  Tempel Chat, narasi Skor, parser hasil OCR foto, Mas Sido — lihat
+  Tempel Chat, narasi Skor, parser hasil OCR foto, Mas Sido - lihat
   bagian "APAKAH ADA YANG BENERAN AI" untuk detail lengkapnya). Timeout
   8 detik per panggilan, dan KEEMPATNYA otomatis jatuh ke logic
-  rule-based lama kalau panggilan Groq gagal/timeout/API key kosong —
+  rule-based lama kalau panggilan Groq gagal/timeout/API key kosong -
   tidak ada fitur yang bisa mati total hanya karena Groq bermasalah.
 - Database & autentikasi tetap 100% lokal (Postgres sendiri, bukan
   Supabase). Satu-satunya panggilan ke layanan pihak ketiga di luar
-  komputer sendiri adalah ke Groq API untuk 3 fitur LLM di atas —
+  komputer sendiri adalah ke Groq API untuk 3 fitur LLM di atas -
   dan itu pun opsional (lihat GROQ_API_KEY di .env.example): kalau
   kosong, aplikasi tetap jalan penuh lewat fallback rule-based, cuma
   tanpa bagian yang benar-benar AI. Frontend di http://localhost:5173
@@ -80,7 +80,7 @@ Prasyarat:
 
 Langkah-langkah:
 
-1. Install dependency (satu kali saja — backend & frontend jadi satu
+1. Install dependency (satu kali saja - backend & frontend jadi satu
    package.json di root project, tidak ada folder server/node_modules
    terpisah):
      npm install
@@ -101,8 +101,8 @@ Langkah-langkah:
    - DATABASE_URL: ganti CHANGE_ME dengan password dari langkah 2.
    - JWT_SECRET: isi string acak apa saja (bebas, asal tidak kosong).
    - PORT: biarkan 4001 (harus sama dengan proxy target di
-     vite.config.js — kalau diganti, ganti juga di sana).
-   - GROQ_API_KEY: opsional, boleh dikosongkan dulu — aplikasi tetap
+     vite.config.js - kalau diganti, ganti juga di sana).
+   - GROQ_API_KEY: opsional, boleh dikosongkan dulu - aplikasi tetap
      jalan penuh lewat mode cadangan tanpa ini. Isi belakangan kalau
      mau 3 fitur AI-nya benar-benar aktif (lihat "APAKAH ADA YANG
      BENERAN AI" di bawah untuk detail masing-masing fitur).
@@ -116,14 +116,14 @@ Langkah-langkah:
    tetap jalan):
      npm run dev
    Vite akan menampilkan alamat lokalnya (biasanya
-   http://localhost:5173) — buka alamat itu di browser.
+   http://localhost:5173) - buka alamat itu di browser.
 
 6. Di browser, klik "Daftar Gratis" untuk membuat akun pertama, lalu
    mulai pakai aplikasinya (isi Pembukuan, cek halaman Skor, dst).
 
 CARA LEBIH CEPAT (setelah setup pertama di atas selesai sekali): dobel
 klik start.bat di folder utama proyek. Ini membuka terminal interaktif
-(wirabumi-launcher.ps1) dengan menu navigasi panah atas/bawah — pilih
+(wirabumi-launcher.ps1) dengan menu navigasi panah atas/bawah - pilih
 "Nyalakan Website Wirabumi" untuk menyalakan backend+frontend otomatis
 (skip kalau portnya sudah kepakai/sudah nyala), tunggu sampai keduanya
 benar-benar bisa diakses, lalu link lokal muncul dan otomatis kebuka di
@@ -132,19 +132,19 @@ browser. Pilih "Matikan Website Wirabumi" untuk mematikan proses backend
 atau "Keluar" untuk menutup terminalnya saja tanpa mematikan apa pun.
 Log proses tersimpan di folder .wirabumi-run/ (di-gitignore, bukan
 bagian dari kode aplikasi). start.bat ini murni alat menjalankan lokal
-untuk memudahkan — bukan pengganti langkah 1-5 di atas untuk instalasi
+untuk memudahkan - bukan pengganti langkah 1-5 di atas untuk instalasi
 pertama kali.
 
 Mengaktifkan 3 fitur AI (opsional, bisa menyusul kapan saja):
    a. Ambil API key gratis di https://console.groq.com/keys
    b. Isi GROQ_API_KEY=key_kamu di .env
-   c. Matikan proses backend lalu jalankan ulang npm run server —
+   c. Matikan proses backend lalu jalankan ulang npm run server -
       WAJIB restart, karena dotenv cuma dibaca sekali saat proses
       backend baru mulai. Frontend (npm run dev) tidak perlu direstart.
    d. Coba fitur Tempel Chat / halaman Skor / unggah foto bukti
-      transfer — badge "✨ Diproses AI (Groq)" akan muncul di tabel
+      transfer - badge "✨ Diproses AI (Groq)" akan muncul di tabel
       review kalau panggilan ke Groq berhasil. Kalau masih muncul
-      "⚙️ Mode cadangan (aturan)", cek log terminal backend — akan ada
+      "⚙️ Mode cadangan (aturan)", cek log terminal backend - akan ada
       baris yang menjelaskan kenapa (mis. key salah, API timeout).
 
 
@@ -181,7 +181,7 @@ sama; "Pengeluaran" adalah pasangannya untuk uang keluar.
 ========================================================
 - Halaman depan publik, bisa diakses tanpa login.
 - Tiga angka statistik (UMKM Terhubung, Berkas KUR Dibuat, Skor
-  Rata-rata) ASLI — diambil dari fungsi SQL platform_stats(), dihitung
+  Rata-rata) ASLI - diambil dari fungsi SQL platform_stats(), dihitung
   dari seluruh data profiles/kur_documents di database. Kalau belum
   ada yang daftar, angkanya 0.
 - Contoh percakapan "Batik Kliwon Jaya" di kartu sebelah kanan adalah
@@ -206,12 +206,12 @@ sama; "Pengeluaran" adalah pasangannya untuk uang keluar.
   polos). Login mengembalikan JWT yang dipakai untuk semua request
   berikutnya.
 - Setiap akun punya data pembukuan sendiri-sendiri, dijamin lewat
-  requireAuth + filter user_id di setiap query — bukan cuma
+  requireAuth + filter user_id di setiap query - bukan cuma
   disembunyikan di tampilan.
-- Tidak ada verifikasi email/OTP — begitu daftar, langsung bisa
+- Tidak ada verifikasi email/OTP - begitu daftar, langsung bisa
   dipakai. Ini disengaja untuk kemudahan lokal, BUKAN standar
   keamanan aplikasi publik/produksi.
-- LUPA KATA SANDI (reset password) — sekarang ADA, lewat 2 pertanyaan
+- LUPA KATA SANDI (reset password) - sekarang ADA, lewat 2 pertanyaan
   keamanan (bukan email/OTP, karena belum ada penyedia email/SMS yang
   disambungkan). Saat daftar, pengguna WAJIB mengisi jawaban "makanan
   favorit" dan "band/musisi favorit" selain email & kata sandi.
@@ -230,7 +230,7 @@ sama; "Pengeluaran" adalah pasangannya untuk uang keluar.
   KETERBATASAN JUJUR: akun yang didaftarkan SEBELUM fitur ini ada
   tidak punya jawaban keamanan tersimpan (kolomnya kosong), jadi akun
   lama tidak bisa pakai reset ini sampai datanya diisi ulang secara
-  manual di database — ini bukan celah keamanan, hanya konsekuensi
+  manual di database - ini bukan celah keamanan, hanya konsekuensi
   wajar dari menambahkan fitur baru ke data yang sudah ada.
 
 
@@ -246,7 +246,7 @@ A. PROFIL USAHA
    - Nama usaha, kategori usaha (teks bebas), kecamatan (pilihan
      tetap: Pasar Kliwon, Serengan, Laweyan, Jebres, Banjarsari),
      alamat usaha, nomor telepon.
-   - Kategori Wajib Pajak (Orang Pribadi/default, atau Badan Usaha) —
+   - Kategori Wajib Pajak (Orang Pribadi/default, atau Badan Usaha) -
      menentukan apakah ambang bebas pajak Rp500 juta/tahun berlaku di
      Estimasi Kewajiban Pajak (lihat bagian Laporan Laba Rugi).
    - Data ini dipakai di berkas PDF KUR dan agregat per-kecamatan di
@@ -256,7 +256,7 @@ B. AKUN
    - Menampilkan email akun (tidak bisa diubah dari sini).
 
 C. LENCANA
-   - Menampilkan status 5 lencana (badge) — lihat bagian Quest &
+   - Menampilkan status 5 lencana (badge) - lihat bagian Quest &
      Lencana di bawah untuk detail syarat masing-masing.
 
 
@@ -283,29 +283,29 @@ B. TEMPEL CHAT
      dulu untuk membaca chat informal (singkatan, typo, banyak transaksi
      sekaligus) dan mengekstrak semua transaksinya sebagai JSON. Kalau
      panggilan Groq gagal/timeout/API key kosong, backend OTOMATIS jatuh
-     ke parser aturan (regex) lama di src/lib/chatParser.js — jadi fitur
+     ke parser aturan (regex) lama di src/lib/chatParser.js - jadi fitur
      ini tidak akan pernah benar-benar mati hanya karena Groq bermasalah.
    - Hasil parse (dari LLM maupun fallback) SELALU tampil dulu di tabel
      review yang bisa dikoreksi (produk/jumlah/harga/status/pelanggan)
      sebelum disimpan. Tidak ada yang tersimpan otomatis tanpa dilihat
-     dulu — ini berlaku sama untuk kedua jalur.
+     dulu - ini berlaku sama untuk kedua jalur.
    - Ada badge kecil di atas tabel review yang menunjukkan jalur mana
      yang dipakai: "✨ Diproses AI (Groq)" atau "⚙️ Mode cadangan
-     (aturan)" — supaya jujur ke pengguna jalur mana yang sebenarnya
+     (aturan)" - supaya jujur ke pengguna jalur mana yang sebenarnya
      memproses chat itu.
    - Label "yakin" (low/medium/high): kalau lewat LLM, model diminta
      menilai sendiri seberapa lengkap info yang dia baca (qty & harga
      jelas = high, sebagian ditebak = medium/low); kalau lewat fallback
      regex, dihitung dari aturan sederhana seperti sebelumnya (apakah
      harga & jumlah sama-sama ketemu). Bukan angka yang dijamin
-     100% akurat di kedua jalur — tetap perlu dicek di tabel review.
+     100% akurat di kedua jalur - tetap perlu dicek di tabel review.
 
 C. UNGGAH FOTO BUKTI TRANSFER
    - Unggah foto/screenshot konfirmasi transfer bank (mis. layar
      "m-Transfer: BERHASIL"), sistem mencoba membaca nominal, tanggal,
      dan keterangannya.
    - DUA TAHAP (tahap 1 TIDAK diubah sama sekali oleh penambahan LLM):
-     1) OCR (pengenalan teks dari gambar) memakai Tesseract.js — teknologi
+     1) OCR (pengenalan teks dari gambar) memakai Tesseract.js - teknologi
         AI sungguhan (lihat penjelasan di bawah), berjalan 100% di
         browser sendiri; foto TIDAK pernah dikirim ke server WIRABUMI
         atau cloud manapun. Model bahasa Indonesia untuk OCR (~10-20MB)
@@ -315,7 +315,7 @@ C. UNGGAH FOTO BUKTI TRANSFER
         (POST /api/parse/receipt), yang mencoba Groq LLM lebih dulu
         (server/lib/llmReceiptParser.js) untuk membaca teks OCR yang
         sering berantakan/typo dan mengekstraknya jadi data terstruktur
-        (nominal, tanggal, bank, nama penerima, berita, dst) — LLM jauh
+        (nominal, tanggal, bank, nama penerima, berita, dst) - LLM jauh
         lebih toleran terhadap noise OCR dibanding regex kaku. Kalau
         Groq gagal/timeout/API key kosong, backend OTOMATIS jatuh ke
         parser aturan (regex) lama di src/lib/receiptParser.js.
@@ -327,7 +327,7 @@ C. UNGGAH FOTO BUKTI TRANSFER
      yang bisa dikoreksi sebelum disimpan.
    - ASUMSI PENTING: fitur ini dirancang untuk transfer MASUK
      (pelanggan bayar ke usahamu). Belum membedakan transfer masuk vs
-     keluar — semua yang diunggah dicatat sebagai transaksi penjualan.
+     keluar - semua yang diunggah dicatat sebagai transaksi penjualan.
      Kalau fotonya sebenarnya transfer keluar (belanja/bayar orang
      lain), jangan disimpan sebagai penjualan.
 
@@ -340,7 +340,7 @@ C. UNGGAH FOTO BUKTI TRANSFER
   Sewa Tempat, Listrik/Air & Utilitas, Transportasi & BBM,
   Perlengkapan & Peralatan, Pemasaran & Promosi, Lain-lain),
   keterangan, jumlah.
-- Input MANUAL saja — belum ada tempel-chat/unggah-foto untuk
+- Input MANUAL saja - belum ada tempel-chat/unggah-foto untuk
   pengeluaran (baru ada di sisi penjualan).
 - Digabung dengan data penjualan untuk Laporan Laba Rugi.
 
@@ -357,43 +357,43 @@ C. UNGGAH FOTO BUKTI TRANSFER
   Beban Usaha per kategori, lalu Laba/Rugi Bersih.
 - KETERBATASAN JUJUR: ini BUKAN laporan keuangan SAK EMKM yang
   lengkap. SAK EMKM formal punya 3 laporan (Laba Rugi, Posisi
-  Keuangan/Neraca, Catatan atas Laporan Keuangan) — WIRABUMI baru
+  Keuangan/Neraca, Catatan atas Laporan Keuangan) - WIRABUMI baru
   menyediakan yang pertama, karena baru itu yang bisa dihitung dari
   data yang dicatat sekarang (penjualan + pengeluaran). Laporan Posisi
   Keuangan butuh pencatatan aset/utang/modal yang belum ada fiturnya.
   Laporan ini juga tidak melalui jurnal umum/buku besar debit-kredit
-  formal — dihitung langsung dari penjumlahan SQL. Untuk kebutuhan
+  formal - dihitung langsung dari penjumlahan SQL. Untuk kebutuhan
   resmi (pajak, audit), tetap konsultasikan ke akuntan/konsultan pajak.
 
-ESTIMASI KEWAJIBAN PAJAK (PPh Final UMKM) — kartu tambahan di halaman
+ESTIMASI KEWAJIBAN PAJAK (PPh Final UMKM) - kartu tambahan di halaman
 yang sama, di bawah Ringkasan Laba Rugi:
-- MURNI SQL/MATEMATIKA seperti Skor & KUR — TIDAK melibatkan LLM sama
+- MURNI SQL/MATEMATIKA seperti Skor & KUR - TIDAK melibatkan LLM sama
   sekali, dan TIDAK memengaruhi compute_score()/get_kur_offer(). Dasar
   hukum: skema PPh Final UMKM 0,5% dari omzet bruto (PP 55/2022 jo.
   PP 20/2026), dihitung oleh fungsi SQL compute_tax_estimate().
 - Bergantung pada "Kategori Wajib Pajak" yang diisi di Profil Usaha
   (Orang Pribadi/default, atau Badan Usaha). HANYA Orang Pribadi yang
-  dapat ambang bebas pajak Rp500 juta/tahun pajak — Badan Usaha kena
+  dapat ambang bebas pajak Rp500 juta/tahun pajak - Badan Usaha kena
   0,5% sejak rupiah pertama, tanpa ambang.
 - PERHITUNGAN MARGINAL: kalau omzet kumulatif tahun berjalan baru
   melewati Rp500 juta di TENGAH bulan, hanya bagian yang melebihi
-  Rp500 juta itu yang kena pajak bulan tersebut — bukan seluruh omzet
+  Rp500 juta itu yang kena pajak bulan tersebut - bukan seluruh omzet
   bulan itu, apalagi omzet setahun penuh.
 - 4 status (badge warna): "Di bawah ambang bebas pajak" (hijau, hanya
   Orang Pribadi di bawah Rp500jt), "Kena PPh Final 0,5%" (biru, kondisi
   normal), "Mendekati batas Rp4,8 miliar" (kuning, begitu omzet
   kumulatif tahun berjalan lewat 80% dari Rp4,8 miliar), "Melebihi
-  batas Rp4,8 miliar" (merah — di luar skema ini, disarankan konsultasi
+  batas Rp4,8 miliar" (merah - di luar skema ini, disarankan konsultasi
   ke konsultan pajak; WIRABUMI tidak menghitung pajak normal Pasal 17).
 - Muncul juga sebagai section tambahan di PDF Laporan Laba Rugi, dan
   sebagai satu baris "sinyal kepatuhan pajak tambahan" (bukan kewajiban
-  terpisah) di PDF Berkas KUR — keduanya memakai compute_tax_estimate()
+  terpisah) di PDF Berkas KUR - keduanya memakai compute_tax_estimate()
   yang sama, tidak dihitung ulang dengan logic berbeda.
 - KETERBATASAN JUJUR (WAJIB dibaca sebelum dipakai serius): ini murni
   ESTIMASI dari data pembukuan sendiri, bukan perhitungan resmi. Tidak
   melacak masa berlaku 7 tahun skema PPh Final untuk Orang Pribadi
   (asumsi masih berlaku). Tidak mengganti lapor pajak/SPT/Coretax sama
-  sekali — disclaimer ini selalu tampil di kartu maupun di PDF. Untuk
+  sekali - disclaimer ini selalu tampil di kartu maupun di PDF. Untuk
   kewajiban pajak resmi, tetap konsultasikan ke akuntan/konsultan pajak
   terdaftar atau cek pajak.go.id / Coretax.
 
@@ -401,22 +401,22 @@ yang sama, di bawah Ringkasan Laba Rugi:
 ========================================================
 8. SKOR KELAYAKAN
 ========================================================
-Skor 0-100, DIHITUNG SUNGGUHAN oleh fungsi SQL compute_score() —
+Skor 0-100, DIHITUNG SUNGGUHAN oleh fungsi SQL compute_score() -
 bukan angka acak/hardcode, dipanggil ulang otomatis tiap kali data
 transaksi/legalitas berubah. Rumus (bobot sama rata, 25% masing-masing):
 
-1. Konsistensi transaksi harian — jumlah HARI BERBEDA ada transaksi
+1. Konsistensi transaksi harian - jumlah HARI BERBEDA ada transaksi
    dalam 90 hari terakhir, dibagi 30 hari, dikali 100 (maks. 100).
-2. Volume penjualan bulanan — bandingkan total omzet 30 hari terakhir
+2. Volume penjualan bulanan - bandingkan total omzet 30 hari terakhir
    vs 30 hari sebelumnya. Kalau periode sebelumnya nol tapi sekarang
    ada penjualan, dianggap pertumbuhan 100%. Skor = 50 + (persentase
    pertumbuhan × 100), dibatasi 0-100.
-3. Rasio pelanggan tetap — dari kolom "nama pelanggan" di transaksi
+3. Rasio pelanggan tetap - dari kolom "nama pelanggan" di transaksi
    180 hari terakhir. Kalau nama yang sama muncul >1 kali, dianggap
    pelanggan setia. Kalau transaksi berisi nama pelanggan kurang dari
    3, skor bagian ini otomatis diberi nilai netral 50 (bukan 0/100)
    supaya tidak menghukum pengguna yang jarang isi nama pelanggan.
-4. Kelengkapan legalitas — dari 3 dokumen (NIB, P-IRT, Sertifikasi
+4. Kelengkapan legalitas - dari 3 dokumen (NIB, P-IRT, Sertifikasi
    Halal) yang dicentang di halaman KUR, dibagi 3 dikali 100.
 
 Skor >= 60 berstatus "Layak Diajukan", di bawah itu "Perlu
@@ -425,15 +425,15 @@ untuk menaikkan skor.
 
 PENJELASAN NARATIF (LAPISAN AI TAMBAHAN, BUKAN PENGGANTI RUMUS): di
 atas angka-angka hasil compute_score() di atas, halaman Skor sekarang
-juga menampilkan kartu "Penjelasan Skor" — 2-3 kalimat naratif berbahasa
+juga menampilkan kartu "Penjelasan Skor" - 2-3 kalimat naratif berbahasa
 Indonesia santai yang dibuat oleh Groq LLM (server/lib/llmScoreNarrative.js),
 mis. "Konsistensi transaksimu kuat (78/100), tapi legalitas masih jadi
 titik lemah (45/100)...". PENTING: compute_score() SENDIRI TIDAK
-disentuh sama sekali oleh LLM — LLM hanya diberi angka yang SUDAH
+disentuh sama sekali oleh LLM - LLM hanya diberi angka yang SUDAH
 dihitung SQL dan diminta menuliskannya ulang jadi kalimat, tidak pernah
 diminta menghitung atau mengarang angka baru. Kalau Groq gagal/API key
 kosong, kartu ini tetap tampil dengan kalimat fallback statis sederhana
-(disusun dari total_score & status asli, bukan kalimat AI) — halaman
+(disusun dari total_score & status asli, bukan kalimat AI) - halaman
 Skor tidak akan pernah error hanya karena Groq bermasalah.
 
 
@@ -451,7 +451,7 @@ Skor tidak akan pernah error hanya karena Groq bermasalah.
     yang sama dipakai bank), asumsi bunga 6% efektif/tahun.
   * Tenor bisa dipilih 12/24/36 bulan, angka langsung berubah sesuai
     pilihan.
-- Checklist legalitas (NIB, P-IRT, Sertifikasi Halal) — mencentang di
+- Checklist legalitas (NIB, P-IRT, Sertifikasi Halal) - mencentang di
   sini HANYA MENANDAI di sistem sendiri bahwa dokumen itu sudah
   dipunya. WIRABUMI TIDAK memverifikasi ke OSS/BPJPH sungguhan.
   Setiap item menampilkan badge "Belum Punya" (amber) atau "Lengkap"
@@ -460,19 +460,19 @@ Skor tidak akan pernah error hanya karena Groq bermasalah.
   NIB → oss.go.id, P-IRT → sppirt.pom.go.id, Halal → ptsp.halal.go.id.
   KHUSUS P-IRT: karena pendaftaran P-IRT di dunia nyata memang
   mensyaratkan NIB sudah terbit lebih dulu, tombol daftarnya SENGAJA
-  disembunyikan selama NIB belum dicentang — yang tampil malah pesan
+  disembunyikan selama NIB belum dicentang - yang tampil malah pesan
   "Urus NIB dulu sebelum bisa daftar P-IRT", supaya pengguna tidak
   diarahkan ke formulir yang memang belum bisa mereka selesaikan.
   Tombol centang (menandai selesai) dan tombol link keluar ini adalah
-  dua area klik yang terpisah — membuka link tidak otomatis
+  dua area klik yang terpisah - membuka link tidak otomatis
   menandainya selesai, pengguna tetap harus mencentang sendiri setelah
   benar-benar menyelesaikannya di situs resmi.
 - Ada juga tautan "Belum tahu cara daftarnya?" di bawah checklist yang
-  membuka halaman baru /panduan-sertifikat — ringkasan langkah demi
+  membuka halaman baru /panduan-sertifikat - ringkasan langkah demi
   langkah (dokumen yang dibutuhkan, urutan langkah, estimasi waktu)
   untuk NIB, P-IRT, dan Sertifikasi Halal (jalur Self Declare untuk
   UMK, gratis tanpa audit), dirangkum dari panduan publik yang tersedia
-  saat pembuatan fitur ini. JUJUR: halaman ini bukan sumber resmi —
+  saat pembuatan fitur ini. JUJUR: halaman ini bukan sumber resmi -
   proses pemerintah bisa berubah, jadi selalu anggap situs resminya
   (oss.go.id, sppirt.pom.go.id, ptsp.halal.go.id) sebagai rujukan
   utama, halaman ini cuma peta kasar biar tidak bingung di awal.
@@ -481,7 +481,7 @@ Skor tidak akan pernah error hanya karena Groq bermasalah.
   simulasi cicilan, lalu diunduh ke komputer. Setiap PDF yang dibuat
   tercatat ke tabel kur_documents (dipakai untuk hitungan "Berkas KUR
   Dibuat" di Beranda & Dashboard Dinkop).
-- TIDAK ADA pengajuan KUR sungguhan ke bank mana pun — PDF ini adalah
+- TIDAK ADA pengajuan KUR sungguhan ke bank mana pun - PDF ini adalah
   bahan yang dibawa sendiri ke bank/lembaga terkait.
 
 
@@ -489,39 +489,39 @@ Skor tidak akan pernah error hanya karena Groq bermasalah.
 10. MAS SIDO (Chatbot Asisten Keuangan)
 ========================================================
 Nama "Mas Sido" diambil dari kata "sido" pada motif batik Sidomukti,
-bahasa Jawa untuk "jadi"/"tercapai" — doa supaya usaha yang memakai
+bahasa Jawa untuk "jadi"/"tercapai" - doa supaya usaha yang memakai
 WIRABUMI jadi dan tercapai. (Ini beda dengan asal nama WIRABUMI sendiri
-yang dijelaskan di halaman Tentang — "Sido" adalah nama persona
+yang dijelaskan di halaman Tentang - "Sido" adalah nama persona
 chatbot, bukan singkatan nama aplikasi.)
 
-UPDATE: SEKARANG BENERAN AI (LLM), DENGAN FALLBACK — Mas Sido tadinya
+UPDATE: SEKARANG BENERAN AI (LLM), DENGAN FALLBACK - Mas Sido tadinya
 murni pencocokan kata kunci (regex), tapi sekarang jawabannya lewat
 POST /api/chat-messages/ask: frontend mengirim pertanyaan + data konteks
 usaha (skor & 4 faktornya, simulasi KUR, omzet bulan ini, produk
-terlaris, legalitas — data yang SAMA yang sudah ditampilkan di halaman
+terlaris, legalitas - data yang SAMA yang sudah ditampilkan di halaman
 lain, cuma dikumpulkan ulang di sini) ke backend, yang mencoba Groq LLM
 lebih dulu (server/lib/llmChatbotAnswer.js) untuk menjawab pertanyaan
 bebas dalam bahasa natural, BUKAN cuma pertanyaan yang persis cocok
 pola regex. LLM diberi instruksi tegas: jawab HANYA dari data yang
 diberikan, jangan mengarang angka, dan kalau datanya tidak cukup untuk
 menjawab (termasuk pertanyaan di luar topik usaha/keuangan), jawab
-jujur "tidak tahu" sambil menyarankan topik yang bisa dijawab — bukan
+jujur "tidak tahu" sambil menyarankan topik yang bisa dijawab - bukan
 sok tahu menebak-nebak.
 Kalau panggilan Groq gagal/timeout/API key kosong, backend OTOMATIS
 jatuh ke mesin jawaban aturan (regex) lama, yang sekarang dipindah ke
 src/lib/chatbotAnswer.js (logikanya PERSIS sama seperti sebelumnya,
 cuma dipindah lokasi filenya supaya bisa dipakai backend sebagai
-fallback juga) — jadi Mas Sido tidak akan pernah benar-benar diam
+fallback juga) - jadi Mas Sido tidak akan pernah benar-benar diam
 hanya karena Groq bermasalah.
-JUJUR — bedanya dengan versi lama: dulu Mas Sido HANYA bisa menjawab
+JUJUR - bedanya dengan versi lama: dulu Mas Sido HANYA bisa menjawab
 pertanyaan yang persis mengandung salah satu kata kunci di daftar
 tetapnya; kalau tidak, selalu dijawab "belum punya jawaban pasti".
 Sekarang, lewat LLM, dia bisa memahami pertanyaan yang ditulis dengan
 gaya bebas/berbelit (mis. "bisnisku lagi lesu, gimana caranya biar bisa
 dapet pinjaman modal dari bank?") dan tetap menjawab relevan dari data
-asli — sesuatu yang mustahil dilakukan versi keyword-matching murni.
+asli - sesuatu yang mustahil dilakukan versi keyword-matching murni.
 Riwayat chat tersimpan ke database, dibatasi 5 percakapan terakhir (10
-pesan) — lebih dari itu, yang paling lama otomatis dihapus. Ini tidak
+pesan) - lebih dari itu, yang paling lama otomatis dihapus. Ini tidak
 berubah dari sebelumnya.
 
 
@@ -530,7 +530,7 @@ berubah dari sebelumnya.
 ========================================================
 Muncul di Dashboard sebagai "Langkah yang Direkomendasikan": maksimal
 3 langkah aktif sekaligus, dari katalog 10 quest yang dibagi ke 4
-kategori — sama persis dengan 4 faktor skor kelayakan:
+kategori - sama persis dengan 4 faktor skor kelayakan:
 
 - Konsistensi: catat transaksi pertama lewat Tempel Chat (5 poin),
   transaksi 7 hari berturut-turut (3 poin), 30 hari berturut-turut
@@ -544,19 +544,19 @@ kategori — sama persis dengan 4 faktor skor kelayakan:
 
 ALGORITMA PRIORITAS: sistem mengurutkan 4 faktor dari yang paling
 lemah, lalu mengambil 1 quest (effort/waktu paling kecil, poin
-terbesar) dari kategori terlemah lebih dulu — supaya kategori yang
+terbesar) dari kategori terlemah lebih dulu - supaya kategori yang
 sama-sama lemah tidak saling menyingkirkan (mis. kalau Konsistensi dan
 Legalitas sama-sama rendah, keduanya tetap kebagian slot, bukan
 diambil semua dari satu kategori). Sisa slot baru diisi quest kedua
 dari kategori yang sama setelah semua kategori kebagian giliran.
 
-JUJUR — PENTING:
+JUJUR - PENTING:
 - "Poin" di tiap quest adalah LABEL, BUKAN angka yang ditambahkan ke
   skor lewat "buku besar poin" terpisah. Skor kelayakan yang
   sesungguhnya SELALU dihitung ulang dari compute_score() yang sama
-  seperti di halaman Skor — tidak ada cara memompa skor lewat quest.
+  seperti di halaman Skor - tidak ada cara memompa skor lewat quest.
 - Status quest (belum mulai/selesai) 100% dideteksi otomatis dari data
-  pembukuan & profil yang sudah ada — bukan tombol "tandai selesai"
+  pembukuan & profil yang sudah ada - bukan tombol "tandai selesai"
   manual. Tombol di kartu quest cuma mengarahkan ke halaman terkait
   (Pembukuan > Tambah, atau KUR).
 - "Dampak finansial" tiap quest (mis. "Plafon amanmu naik jadi
@@ -569,11 +569,11 @@ JUJUR — PENTING:
 
 LENCANA (halaman Profil > Lencana), permanen begitu diraih (tidak
 hilang meski data berubah lagi):
-- 🌱 UMKM Pemula — selesaikan quest pertama.
-- 🔥 Konsisten — transaksi 30 hari berturut-turut.
-- 📋 Legal Lengkap — NIB + P-IRT + Halal lengkap semua.
-- 🏆 Siap KUR — skor kelayakan di atas 70.
-- 👑 UMKM Unggulan — skor kelayakan di atas 85.
+- 🌱 UMKM Pemula - selesaikan quest pertama.
+- 🔥 Konsisten - transaksi 30 hari berturut-turut.
+- 📋 Legal Lengkap - NIB + P-IRT + Halal lengkap semua.
+- 🏆 Siap KUR - skor kelayakan di atas 70.
+- 👑 UMKM Unggulan - skor kelayakan di atas 85.
 
 Notifikasi "Skormu naik jadi X!" otomatis muncul di lonceng begitu
 skor asli (dari compute_score()) naik dibanding pengecekan terakhir.
@@ -582,23 +582,23 @@ skor asli (dari compute_score()) naik dibanding pengecekan terakhir.
 ========================================================
 12. NOTIFIKASI IN-APP
 ========================================================
-Semua notifikasi murni IN-APP (badge lonceng saja) — TIDAK ADA push
+Semua notifikasi murni IN-APP (badge lonceng saja) - TIDAK ADA push
 notification, email, atau WhatsApp keluar aplikasi. Dihitung ulang
 setiap kali halaman dibuka, dengan kunci dedupe supaya tidak muncul
 berulang dalam periode alaminya:
 
-1. Capture harian — "X transaksi baru terdeteksi hari ini, total
+1. Capture harian - "X transaksi baru terdeteksi hari ini, total
    RpY" (muncul sekali per hari kalau ada transaksi hari itu).
-2. Chat kurang yakin — "Ada X chat yang WIRABUMI kurang yakin
+2. Chat kurang yakin - "Ada X chat yang WIRABUMI kurang yakin
    bacanya, cek & koreksi manual?" (transaksi 7 hari terakhir dengan
    label yakin low/medium dari sumber tempel-chat/foto).
-3. Rekap bulanan — "Pembukuan bulan [Nama Bulan] selesai disusun, X
+3. Rekap bulanan - "Pembukuan bulan [Nama Bulan] selesai disusun, X
    transaksi, total RpY" (muncul sekali per bulan, untuk bulan
    sebelumnya).
-4. Omzet turun — "Omzetmu turun X% minggu ini dibanding rata-rata,
+4. Omzet turun - "Omzetmu turun X% minggu ini dibanding rata-rata,
    lihat detail?" (kalau omzet 7 hari terakhir di bawah 80% rata-rata
    4 minggu sebelumnya, sekali per minggu kalender/ISO week).
-5. Skor naik — "Skormu naik jadi X!" (hanya kalau ada pengecekan skor
+5. Skor naik - "Skormu naik jadi X!" (hanya kalau ada pengecekan skor
    sebelumnya untuk dibandingkan, dan skor sungguhan naik).
 
 Semua angka di atas dihitung dari data transaksi asli, bukan simulasi.
@@ -608,36 +608,36 @@ Semua angka di atas dihitung dari data transaksi asli, bukan simulasi.
 13. DASHBOARD (Usaha + Dinkop)
 ========================================================
 UPDATE PENTING: sejak fitur Peran & Hak Akses 4-role (lihat bagian 17),
-Dashboard Usaha dan Dashboard Dinkop BUKAN LAGI satu halaman yang sama —
+Dashboard Usaha dan Dashboard Dinkop BUKAN LAGI satu halaman yang sama -
 keduanya dipisah jadi dua rute berbeda, masing-masing khusus untuk peran
 tertentu.
 
-A. DASHBOARD USAHA (/dashboard — khusus peran UMKM, komponen UsahaDashboard)
+A. DASHBOARD USAHA (/dashboard - khusus peran UMKM, komponen UsahaDashboard)
    - KPI: Skor Kelayakan, Omzet Bulan Ini, Laba Bersih Bulan Ini,
-     Plafon KUR Tersedia — semua REAL dari data sendiri.
+     Plafon KUR Tersedia - semua REAL dari data sendiri.
    - Grafik tren omzet dengan pilihan periode (1 minggu/3 minggu/1
-     bulan/3 bulan, maksimal 3 bulan ke belakang) — klik salah satu
+     bulan/3 bulan, maksimal 3 bulan ke belakang) - klik salah satu
      batang untuk melihat produk terlaris di periode itu.
-   - Bagian "Langkah yang Direkomendasikan" (quest) dan Legalitas —
+   - Bagian "Langkah yang Direkomendasikan" (quest) dan Legalitas -
      lihat bagian 11.
    - Produk terlaris 90 hari terakhir.
    - JUJUR: halaman ini TIDAK LAGI menampilkan kartu teaser ke Dashboard
-     Dinkop seperti sebelumnya — pemilik UMKM hanya melihat dashboard
+     Dinkop seperti sebelumnya - pemilik UMKM hanya melihat dashboard
      pribadinya sendiri, sesuai keputusan bahwa Dashboard Dinkop kini
      khusus staf (lihat poin B).
 
-B. DASHBOARD DINKOP (/dinkop — khusus Pemerintah, Bank, & Super Admin)
+B. DASHBOARD DINKOP (/dinkop - khusus Pemerintah, Bank, & Super Admin)
    - Menampilkan data GABUNGAN semua UMKM terdaftar: total UMKM,
      rata-rata skor, persentase layak KUR, jumlah berkas KUR dibuat,
      skor rata-rata per kecamatan, tren jumlah UMKM aktif per bulan.
-     SEMUA DIHITUNG REAL dari fungsi SQL dinkop_dashboard() — rumus
+     SEMUA DIHITUNG REAL dari fungsi SQL dinkop_dashboard() - rumus
      & data sama persis seperti sebelumnya, HANYA aksesnya yang berubah.
    - Sengaja TIDAK menampilkan data transaksi/identitas per individu
-     UMKM — hanya angka gabungan.
-   - PERUBAHAN BESAR — TIDAK LAGI PUBLIK: sebelumnya halaman ini bisa
+     UMKM - hanya angka gabungan.
+   - PERUBAHAN BESAR - TIDAK LAGI PUBLIK: sebelumnya halaman ini bisa
      diakses siapa saja tanpa login (demi transparansi publik). Sekarang
      endpoint-nya (GET /api/dinkop) dijaga requireRole('government',
-     'bank_officer', 'super_admin') di server — pemilik UMKM dan
+     'bank_officer', 'super_admin') di server - pemilik UMKM dan
      pengunjung anonim TIDAK BISA lagi membukanya sama sekali. Ini
      keputusan produk yang disengaja (lihat bagian 17), bukan bug.
 
@@ -675,18 +675,18 @@ B. DASHBOARD DINKOP (/dinkop — khusus Pemerintah, Bank, & Super Admin)
 UPDATE BESAR: sistem peran diperluas dari 3 jadi 4 peran, dengan
 dashboard yang jauh lebih kontras satu sama lain. Ada 4 peran akun:
 
-- UMKM Owner (umkm_owner, dulu "User") — pemilik usaha, default semua
+- UMKM Owner (umkm_owner, dulu "User") - pemilik usaha, default semua
   akun baru. Hanya melihat dashboard pribadinya sendiri (bagian 13A).
-- Government / Pemerintah Dinkop (government, dulu "Admin") — staf
+- Government / Pemerintah Dinkop (government, dulu "Admin") - staf
   Dinas Koperasi. Melihat data agregat seluruh UMKM, tanpa identitas
   transaksi mentah.
-- Bank (bank_officer, BARU) — mitra penyalur KUR. Hanya melihat UMKM
+- Bank (bank_officer, BARU) - mitra penyalur KUR. Hanya melihat UMKM
   yang SUDAH MEMBERI IZIN (consent) untuk dilihat profil kelayakannya.
-- Super Admin (super_admin, tidak berubah) — developer/pengelola
+- Super Admin (super_admin, tidak berubah) - developer/pengelola
   sistem. Melihat semuanya, plus metrik kesehatan sistem.
 
 Setiap peran punya dashboard & menu navbar yang BENAR-BENAR berbeda,
-bukan halaman yang sama dengan tombol disembunyikan — UMKM Owner cuma
+bukan halaman yang sama dengan tombol disembunyikan - UMKM Owner cuma
 melihat Dashboard/Beranda/Cara Kerja/Keuangan/Mas Sido; Government
 melihat Dashboard Dinkop + menu Admin (Monitoring, Dampak); Bank cuma
 melihat satu link "Dashboard" ke halamannya sendiri; Super Admin
@@ -697,26 +697,26 @@ oleh middleware requireRole di server (server/auth.js) yang mengecek
 peran pengguna LANGSUNG dari database di setiap request (bukan dari
 isi token JWT, supaya perubahan peran langsung berlaku, tidak perlu
 tunggu token lama kedaluwarsa). Kalau peran tidak sesuai, server
-membalas HTTP 403 — bisa dibuktikan langsung lewat panggilan API
+membalas HTTP 403 - bisa dibuktikan langsung lewat panggilan API
 manual (curl), bukan cuma "link-nya disembunyikan di tampilan".
 ProtectedRoute di frontend juga mengecek peran untuk pengalaman
 pengguna yang mulus (langsung tampil "Akses ditolak" tanpa perlu
-menunggu API menolak), tapi pengecekan itu HANYA kosmetik/UX — kalaupun
+menunggu API menolak), tapi pengecekan itu HANYA kosmetik/UX - kalaupun
 seseorang mengakalinya di sisi frontend, permintaan ke server tetap
 akan ditolak dengan 403.
 
 MIGRASI DATA: akun lama dengan peran "user" otomatis jadi "umkm_owner",
-dan "admin" otomatis jadi "government" — nilai lama di kolom
+dan "admin" otomatis jadi "government" - nilai lama di kolom
 activity_log.role_at_time SENGAJA TIDAK ditulis ulang (tetap
 menunjukkan "user"/"admin" apa adanya untuk baris aktivitas dari
 sebelum migrasi), konsisten dengan prinsip "role_at_time dicatat saat
 kejadian, tidak pernah ditulis ulang".
 
-A. HALAMAN MONITORING AKTIVITAS (/admin/monitoring — Government & Super Admin)
+A. HALAMAN MONITORING AKTIVITAS (/admin/monitoring - Government & Super Admin)
    - Setiap tindakan penting (daftar, masuk, catat transaksi, catat
      pengeluaran, buat berkas KUR, ubah status legalitas, ubah peran
      pengguna, ubah izin Bank, review pengajuan KUR oleh Bank)
-     TERCATAT NYATA ke tabel activity_log di database — bukan data
+     TERCATAT NYATA ke tabel activity_log di database - bukan data
      contoh/statis. Kalau pencatatan aktivitas gagal karena alasan
      apapun, itu tidak pernah menggagalkan permintaan utama pengguna
      (mis. transaksi tetap tersimpan walau logging gagal).
@@ -727,132 +727,132 @@ A. HALAMAN MONITORING AKTIVITAS (/admin/monitoring — Government & Super Admin)
      Semuanya dihitung ulang setiap halaman dibuka.
    - "Distribusi Aktivitas per Peran" = jumlah aktivitas 30 hari
      terakhir dikelompokkan per peran SAAT aktivitas itu terjadi
-     (role_at_time) — kalau seseorang naik jabatan, riwayat
+     (role_at_time) - kalau seseorang naik jabatan, riwayat
      aktivitasnya SEBELUM naik jabatan tetap tercatat dengan peran
      lama, tidak ditulis ulang (lihat catatan migrasi di atas).
    - "Aktivitas Terbaru" ditampilkan sebagai tabel log (waktu, pengguna,
      peran, aksi) berisi 20 aktivitas terakhir dari SELURUH pengguna,
      bukan cuma milik yang sedang login.
-   - KHUSUS SUPER ADMIN (BARU) — 3 bagian tambahan yang TIDAK muncul
+   - KHUSUS SUPER ADMIN (BARU) - 3 bagian tambahan yang TIDAK muncul
      untuk Government (karena membuka identitas akun staf Bank/Super
      Admin lain, bukan cuma UMKM):
-     * "Pengguna Terdaftar" & "Peran Terdaftar" (kartu KPI) — jumlah
+     * "Pengguna Terdaftar" & "Peran Terdaftar" (kartu KPI) - jumlah
        akun asli dari tabel users, dihitung ulang tiap halaman dibuka.
-     * "Distribusi Peran Pengguna Terdaftar" — jumlah AKUN per peran
-       saat ini (bukan jumlah aktivitas seperti poin di atas — dua hal
+     * "Distribusi Peran Pengguna Terdaftar" - jumlah AKUN per peran
+       saat ini (bukan jumlah aktivitas seperti poin di atas - dua hal
        yang beda: satu akun bisa punya banyak aktivitas).
-     * "Pengguna Paling Aktif (30 Hari)" — 8 akun dengan jumlah baris
+     * "Pengguna Paling Aktif (30 Hari)" - 8 akun dengan jumlah baris
        activity_log terbanyak 30 hari terakhir, diurutkan dari yang
        paling aktif, memakai peran akun SAAT INI (bukan role_at_time)
        karena ini daftar akun aktif sekarang, bukan riwayat historis.
 
-B. DASHBOARD DAMPAK (/admin/impact — Government & Super Admin)
+B. DASHBOARD DAMPAK (/admin/impact - Government & Super Admin)
    - 4 metrik nyata: Total UMKM, Skor Rata-rata, % Layak KUR, dan
-     Berkas KUR Dibuat — dihitung dari compute_score() yang sama
+     Berkas KUR Dibuat - dihitung dari compute_score() yang sama
      persis dipakai di halaman Skor (bukan angka terpisah/karangan).
    - 2 filter NYATA (bukan kosmetik): Kecamatan dan Status kelayakan.
      Mengubah salah satunya BENAR-BENAR menghitung ulang keempat metrik
-     DAN daftar UMKM di bawahnya dari data yang sudah difilter — bukan
+     DAN daftar UMKM di bawahnya dari data yang sudah difilter - bukan
      cuma menyaring tabel sementara metrik tetap sama.
    - Tabel detail per-UMKM: nama usaha, kategori, status (Layak
      Diajukan/Perlu Peningkatan), prioritas (Tinggi jika skor <40,
-     Sedang 40-69, Rendah >=70 — makin rendah skor, makin perlu
+     Sedang 40-69, Rendah >=70 - makin rendah skor, makin perlu
      didampingi duluan), waktu (transaksi terakhir), dan tombol "Detail"
      yang membuka panel berisi kecamatan & skor lengkap.
    - Detail transaksi mentah pelanggan tetap TIDAK ditampilkan di sini,
      hanya data level profil & skor.
 
-C. DASHBOARD BANK (/bank — KHUSUS Bank & Super Admin) — FITUR BARU
+C. DASHBOARD BANK (/bank - KHUSUS Bank & Super Admin) - FITUR BARU
    - Hanya menampilkan UMKM yang SUDAH MENYALAKAN "Izinkan mitra Bank
      melihat profil kelayakan usahaku" di halaman Profil mereka
-     (kolom profiles.bank_consent, default MATI/false — opt-in murni).
+     (kolom profiles.bank_consent, default MATI/false - opt-in murni).
    - Data yang tampil untuk tiap UMKM yang mengizinkan: nama usaha,
      kategori, kecamatan, skor kelayakan (compute_score() yang sama),
      simulasi KUR terakhir (dari kur_documents kalau ada). TIDAK PERNAH
      menampilkan transaksi mentah atau riwayat chat Mas Sido, sekalipun
-     consent menyala — hanya ringkasan yang sudah ditampilkan di
+     consent menyala - hanya ringkasan yang sudah ditampilkan di
      tempat lain juga.
    - Bank memberi status pengajuan: Menunggu/Disetujui/Ditolak, plus
      catatan opsional, tersimpan ke tabel bank_reviews (satu baris per
-     UMKM, bukan per dokumen PDF — review ini menilai profil/skor
+     UMKM, bukan per dokumen PDF - review ini menilai profil/skor
      UMKM-nya, bukan me-review "surat" yang sudah jadi).
    - JUJUR: mengubah status di sini TIDAK memblokir atau mengubah apa
-     pun di sisi UMKM — murni catatan internal pihak Bank untuk
+     pun di sisi UMKM - murni catatan internal pihak Bank untuk
      menandai progres pengajuan yang mereka proses sendiri di luar
      WIRABUMI.
 
-D. KELOLA PENGGUNA (/admin/pengguna — KHUSUS Super Admin)
+D. KELOLA PENGGUNA (/admin/pengguna - KHUSUS Super Admin)
    - Mengubah peran akun lain antara UMKM/Government/Bank lewat
      dropdown, memanggil endpoint yang juga dijaga
      requireRole('super_admin') di server, bukan cuma disembunyikan di
      tampilan untuk role lain.
-   - JUJUR — KETERBATASAN SENGAJA: peran "Super Admin" TIDAK BISA
+   - JUJUR - KETERBATASAN SENGAJA: peran "Super Admin" TIDAK BISA
      diberikan lewat halaman ini atau API manapun, hanya lewat akses
      database langsung (satu kali, saat setup awal). Ini pembatasan
      yang disengaja untuk memperkecil risiko privilege-escalation
      (kalau lewat API bisa, satu Super Admin yang disusupi bisa
-     membuat Super Admin baru tanpa batas) — bukan keterbatasan teknis
+     membuat Super Admin baru tanpa batas) - bukan keterbatasan teknis
      yang kelupaan.
 
-E. SYSTEM (/admin/system — KHUSUS Super Admin) — FITUR BARU
+E. SYSTEM (/admin/system - KHUSUS Super Admin) - FITUR BARU
    - Metrik NYATA (bukan angka karangan): Total Pengguna, Total UMKM,
      Ukuran Database (pg_database_size() asli), Status Database
      (cek koneksi asli lewat `select 1`).
    - "Pemakaian LLM (7 Hari Terakhir)": hitungan sukses/gagal ASLI dari
      setiap panggilan Groq (tabel llm_usage_log, ditulis dari dalam
-     server/lib/groqClient.js setiap callGroq() selesai) — dipecah per
+     server/lib/groqClient.js setiap callGroq() selesai) - dipecah per
      fitur (chat_parser, score_narrative, receipt_parser, chatbot).
    - "Error Log Terbaru": error server ASLI yang tertangkap oleh
      error-handler Express global (server/index.js), ditulis ke tabel
-     error_log. Kalau belum pernah ada error, kartunya kosong — bukan
+     error_log. Kalau belum pernah ada error, kartunya kosong - bukan
      dipalsukan supaya kelihatan "ada aktivitas".
    - "Role Management": pintasan ke Kelola Pengguna. "Permission
      Management": tabel referensi statis (bukan editor dinamis) yang
-     mendaftar rute mana bisa diakses peran mana — dokumentasi, bukan
+     mendaftar rute mana bisa diakses peran mana - dokumentasi, bukan
      mekanisme baru.
 
 
 ========================================================
 APAKAH ADA YANG BENERAN AI?
 ========================================================
-Jawaban jujur (per update terbaru): YA, di 5 titik — 1 titik OCR
+Jawaban jujur (per update terbaru): YA, di 5 titik - 1 titik OCR
 (Tesseract.js, sudah ada sejak awal) dan 4 titik LLM (Groq, model
 llama-3.3-70b-versatile). Semua 4 titik LLM PUNYA FALLBACK otomatis ke
 logic rule-based lama, jadi tidak satupun fitur berhenti total kalau
 Groq lambat/down/API key belum diisi.
 
 BUKAN AI SAMA SEKALI (murni aturan/matematika, tidak berubah):
-- Skor kelayakan & simulasi KUR (compute_score/get_kur_offer) — rumus
+- Skor kelayakan & simulasi KUR (compute_score/get_kur_offer) - rumus
   SQL biasa (rata-rata berbobot, tabel pengganda). SENGAJA tidak pernah
   disentuh LLM sedikit pun, supaya angka yang jadi dasar pengajuan KUR
-  tetap 100% bisa diaudit/dijelaskan asal-usulnya — LLM hanya boleh
+  tetap 100% bisa diaudit/dijelaskan asal-usulnya - LLM hanya boleh
   menuliskan ULANG angka ini jadi kalimat (lihat "Narasi Skor" di
   bawah) atau menjawab pertanyaan tentangnya (lihat "Mas Sido" di
   bawah), tidak pernah menghitungnya.
-- Sistem quest & lencana — katalog tetap dengan syarat deteksi
+- Sistem quest & lencana - katalog tetap dengan syarat deteksi
   otomatis, bukan model apa pun.
 
 SEKARANG BENERAN AI, DENGAN FALLBACK RULE-BASED (Groq LLM,
-llama-3.3-70b-versatile, lewat server/lib/groqClient.js — timeout 8
+llama-3.3-70b-versatile, lewat server/lib/groqClient.js - timeout 8
 detik per panggilan):
 1. Parser Tempel Chat (server/lib/llmChatParser.js, endpoint
-   POST /api/parse/chat) — LLM membaca chat penjualan informal dan
+   POST /api/parse/chat) - LLM membaca chat penjualan informal dan
    mengekstrak semua transaksi jadi JSON. Fallback: regex lama di
    src/lib/chatParser.js (src/lib/chatParser.js sendiri TIDAK dihapus,
    masih dipakai persis sebagai fallback).
-2. Narasi Skor (server/lib/llmScoreNarrative.js) — LLM menulis 2-3
+2. Narasi Skor (server/lib/llmScoreNarrative.js) - LLM menulis 2-3
    kalimat penjelasan dari angka skor yang SUDAH dihitung SQL (lihat
-   catatan di atas — LLM tidak pernah menghitung skornya sendiri).
+   catatan di atas - LLM tidak pernah menghitung skornya sendiri).
    Fallback: kalimat statis sederhana yang tetap disusun dari angka
    asli (total_score & status), bukan LLM.
 3. Parser hasil OCR foto (server/lib/llmReceiptParser.js, endpoint
-   POST /api/parse/receipt) — Tesseract.js tetap yang membaca teks dari
+   POST /api/parse/receipt) - Tesseract.js tetap yang membaca teks dari
    foto (tidak berubah), tapi teks mentahnya sekarang diekstrak jadi
    data terstruktur oleh LLM (lebih toleran ke noise/typo OCR
    dibanding regex kaku). Fallback: regex lama di
    src/lib/receiptParser.js (juga tidak dihapus).
 4. Mas Sido, chatbot (server/lib/llmChatbotAnswer.js, endpoint
-   POST /api/chat-messages/ask) — LLM menjawab pertanyaan bebas
+   POST /api/chat-messages/ask) - LLM menjawab pertanyaan bebas
    berbahasa natural, diberi data konteks usaha yang sama seperti versi
    lama (skor, KUR, omzet, produk terlaris, legalitas) dan diinstruksi
    tegas untuk HANYA memakai angka itu, tidak mengarang, dan jujur
@@ -861,7 +861,7 @@ detik per panggilan):
    IDENTIK dengan sebelumnya, cuma pindah lokasi file).
 
 Di 3 titik yang menghasilkan data terstruktur (parser Tempel Chat, OCR
-foto, dan — kalau kamu tambahkan tampilannya — Mas Sido), badge kecil
+foto, dan - kalau kamu tambahkan tampilannya - Mas Sido), badge kecil
 "✨ Diproses AI (Groq)" atau "⚙️ Mode cadangan (aturan)" bisa dipakai
 untuk menunjukkan jalur mana yang sebenarnya memproses input; saat ini
 badge itu sudah tampil di tabel review Tempel Chat & Unggah Foto.
@@ -870,18 +870,18 @@ Tesseract.js (OCR, dari awal sudah ada, tidak diubah):
 - Mesin OCR (pengenalan karakter dari gambar) yang di dalamnya memakai
   model jaringan saraf terlatih (LSTM). Teknologi pihak ketiga yang
   sudah jadi (bukan dilatih sendiri oleh tim WIRABUMI), berjalan 100%
-  di browser — foto tidak pernah dikirim ke server manapun.
+  di browser - foto tidak pernah dikirim ke server manapun.
 
 CATATAN PENTING soal "tanpa cloud": sebelum perubahan ini, WIRABUMI
 benar-benar tidak memanggil layanan pihak ketiga apa pun. Sekarang, 3
-fitur di atas memanggil Groq API (cloud, di luar komputer sendiri) —
+fitur di atas memanggil Groq API (cloud, di luar komputer sendiri) -
 jadi klaim "100% lokal" itu SUDAH TIDAK SEPENUHNYA BENAR LAGI untuk 3
 fitur tersebut. Yang masih 100% lokal: database, autentikasi, OCR
 Tesseract, dan semua fitur rule-based lainnya. GROQ_API_KEY di .env
-bersifat opsional — kalau dikosongkan, aplikasi tetap jalan penuh
+bersifat opsional - kalau dikosongkan, aplikasi tetap jalan penuh
 lewat fallback, hanya tanpa bagian yang benar-benar AI.
 
-Jadi kalau ditanya "ini aplikasi AI?" — jawaban akuratnya: skor, KUR,
+Jadi kalau ditanya "ini aplikasi AI?" - jawaban akuratnya: skor, KUR,
 dan quest tetap murni rule-based (sengaja, supaya bisa
 dipertanggungjawabkan); 4 titik yang berhubungan dengan membaca input
 tidak terstruktur (chat, hasil OCR), menjelaskan skor, dan menjawab
@@ -894,26 +894,26 @@ KETERBATASAN YANG PERLU DIKETAHUI
 ========================================================
 1. Mas Sido sekarang coba LLM lebih dulu (bisa paham pertanyaan bebas/
    berbelit), tapi tetap punya fallback ke pencocokan kata kunci lama
-   kalau Groq gagal — di jalur fallback itu, keterbatasan lama masih
+   kalau Groq gagal - di jalur fallback itu, keterbatasan lama masih
    berlaku (tidak akan paham pertanyaan yang rumit/berbelit).
 2. Parser Tempel Chat sekarang coba LLM lebih dulu, tapi tetap bisa
    salah menebak (baik lewat LLM maupun fallback regex) untuk chat
-   yang sangat tidak lazim — karena itu selalu ada langkah review
+   yang sangat tidak lazim - karena itu selalu ada langkah review
    sebelum disimpan, di kedua jalur.
 3. Fitur unggah foto: OCR (Tesseract) hanya membaca teks, tidak
-   memahami isinya — foto buram/miring/gelap bisa gagal/salah baca.
+   memahami isinya - foto buram/miring/gelap bisa gagal/salah baca.
    Tahap ekstraksi setelahnya (LLM atau fallback regex) bisa membaca
    noise OCR lebih baik dari sebelumnya, tapi tetap tidak sempurna.
    Belum bisa membedakan transfer masuk (penjualan) vs keluar
    (pengeluaran).
-4. Tidak ada verifikasi legalitas ke instansi resmi (OSS/BPJPH) —
+4. Tidak ada verifikasi legalitas ke instansi resmi (OSS/BPJPH) -
    checklist murni pencatatan internal.
-5. Tidak ada pengajuan KUR sungguhan ke bank — PDF adalah bahan yang
+5. Tidak ada pengajuan KUR sungguhan ke bank - PDF adalah bahan yang
    dibawa sendiri.
-6. Aplikasi jalan LOKAL di satu komputer (Postgres lokal) — belum
+6. Aplikasi jalan LOKAL di satu komputer (Postgres lokal) - belum
    di-deploy ke internet.
 7. Reset kata sandi SUDAH ada (lewat 2 pertanyaan keamanan, bukan
-   email — lihat bagian "Daftar & Masuk"), tapi tetap tidak ada
+   email - lihat bagian "Daftar & Masuk"), tapi tetap tidak ada
    verifikasi email/OTP atau notifikasi email/WhatsApp otomatis
    (notifikasi murni in-app).
 8. Suku bunga KUR (6% efektif/tahun) dan formula pengganda plafon
@@ -931,7 +931,7 @@ KETERBATASAN YANG PERLU DIKETAHUI
     untuk benar-benar aktif memakai AI. Kalau salah satu tidak
     terpenuhi (offline, key kosong/salah, API Groq sedang down/
     timeout), keempat fitur itu otomatis jalan di "mode cadangan"
-    (logic rule-based lama) tanpa error — untuk Tempel Chat & Unggah
+    (logic rule-based lama) tanpa error - untuk Tempel Chat & Unggah
     Foto, badge di tabel review menunjukkan mode mana yang aktif; untuk
     Mas Sido & narasi Skor, cek log terminal backend untuk memastikan
     (baris "Groq gagal..." muncul kalau sedang di mode cadangan).
@@ -951,45 +951,45 @@ NYATA (dihitung/tersimpan sungguhan dari database):
   saat lintas ambang, muncul di Laporan Laba Rugi + PDF-nya + 1 baris di
   PDF Berkas KUR)
 - Statistik Beranda (agregat asli, tetap publik) & Dashboard Dinkop
-  (agregat asli, sekarang khusus Government/Bank/Super Admin — lihat
+  (agregat asli, sekarang khusus Government/Bank/Super Admin - lihat
   bagian 13 & 17)
 - Riwayat chat Mas Sido (tersimpan, dibatasi 5 percakapan)
 - Sistem quest & lencana (status dideteksi dari data asli, simulasi
   dampak skor/plafon pakai rumus asli, lencana tersimpan permanen)
 - Notifikasi in-app (5 jenis, semua dihitung dari data asli)
 - Foto profil (avatar), mode gelap, ulasan pengguna
-- Peran & hak akses 4 peran (UMKM Owner/Government/Bank/Super Admin) —
+- Peran & hak akses 4 peran (UMKM Owner/Government/Bank/Super Admin) -
   pembatasan ditegakkan di server (requireRole, 403 nyata), bukan
   disembunyikan di tampilan saja
 - Log aktivitas nyata (activity_log, kini dengan rincian per jenis
   aksi) + halaman Monitoring & Dashboard Dampak untuk Government/Super
-  Admin — 2 filter yang benar-benar mengubah metrik & tabel, bukan
+  Admin - 2 filter yang benar-benar mengubah metrik & tabel, bukan
   kosmetik
 - Dashboard Bank (konsensual, opt-in lewat profiles.bank_consent) +
   status pengajuan (bank_reviews) khusus Bank/Super Admin
-- Halaman System khusus Super Admin — ukuran database, pemakaian LLM,
+- Halaman System khusus Super Admin - ukuran database, pemakaian LLM,
   dan error log yang semuanya NYATA (llm_usage_log, error_log), bukan
   angka karangan
 
 HYBRID: LLM DULU, FALLBACK RULE-BASED KALAU GAGAL (baru):
-- Parser Tempel Chat — Groq LLM (llama-3.3-70b-versatile) lebih dulu,
+- Parser Tempel Chat - Groq LLM (llama-3.3-70b-versatile) lebih dulu,
   fallback ke regex src/lib/chatParser.js
-- Parser hasil OCR foto — Groq LLM lebih dulu (baca teks OCR yang
+- Parser hasil OCR foto - Groq LLM lebih dulu (baca teks OCR yang
   berantakan), fallback ke regex src/lib/receiptParser.js
-- Narasi Skor — Groq LLM menuliskan ulang angka skor (yang tetap
+- Narasi Skor - Groq LLM menuliskan ulang angka skor (yang tetap
   murni SQL) jadi kalimat, fallback ke kalimat statis sederhana
-- Mas Sido (chatbot) — Groq LLM menjawab pertanyaan bebas dari data
+- Mas Sido (chatbot) - Groq LLM menjawab pertanyaan bebas dari data
   konteks usaha, fallback ke pencocokan kata kunci di
   src/lib/chatbotAnswer.js (logika identik dengan versi lama)
 
 AI SUNGGUHAN:
-- Tesseract.js — OCR (model jaringan saraf pihak ketiga) untuk membaca
+- Tesseract.js - OCR (model jaringan saraf pihak ketiga) untuk membaca
   teks dari foto bukti transfer, berjalan lokal di browser (tidak
   diubah oleh pekerjaan ini).
-- Groq API (llama-3.3-70b-versatile) — satu-satunya panggilan ke
+- Groq API (llama-3.3-70b-versatile) - satu-satunya panggilan ke
   layanan cloud pihak ketiga di seluruh aplikasi, dipakai di 4 fitur
   hybrid di atas, opsional lewat GROQ_API_KEY di .env.
 
 Dokumen ini ditulis ulang supaya siapa pun yang membaca tahu persis
 apa yang sungguhan berjalan di WIRABUMI, apa yang masih sederhana, dan
-di mana tepatnya AI benar-benar dipakai — tanpa dilebih-lebihkan.
+di mana tepatnya AI benar-benar dipakai - tanpa dilebih-lebihkan.

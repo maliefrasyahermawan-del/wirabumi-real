@@ -4,33 +4,33 @@ import TopNav from '../components/TopNav';
 const GUIDES = [
   {
     key: 'nib',
-    title: 'NIB — Nomor Induk Berusaha',
+    title: 'NIB - Nomor Induk Berusaha',
     tag: 'GRATIS',
     site: 'oss.go.id',
     url: 'https://oss.go.id/id',
-    intro: 'NIB adalah dasar dari semua izin usaha lain — urus ini duluan sebelum P-IRT atau Sertifikasi Halal.',
+    intro: 'NIB adalah dasar dari semua izin usaha lain - urus ini duluan sebelum P-IRT atau Sertifikasi Halal.',
     dokumen: ['KTP elektronik (e-KTP) yang masih berlaku', 'NPWP pribadi (buat dulu online kalau belum punya)'],
     steps: [
       'Buka oss.go.id, klik "Daftar" untuk buat akun baru.',
       'Pilih jenis pelaku usaha: Perorangan (untuk sebagian besar UMKM).',
       'Verifikasi akun lewat tautan di email dan kode OTP yang dikirim ke WhatsApp.',
       'Lengkapi profil usaha: pilih skala usaha (Mikro/Kecil/Menengah) dan isi KBLI (kode klasifikasi bidang usaha) sesuai jenis usahamu.',
-      'Kirim permohonan — untuk usaha risiko rendah (kebanyakan UMKM), NIB biasanya langsung terbit dalam hitungan menit.',
+      'Kirim permohonan - untuk usaha risiko rendah (kebanyakan UMKM), NIB biasanya langsung terbit dalam hitungan menit.',
     ],
-    waktu: 'Beberapa menit (risiko rendah) — 1-3 hari kerja (risiko menengah/tinggi)',
+    waktu: 'Beberapa menit (risiko rendah) - 1-3 hari kerja (risiko menengah/tinggi)',
   },
   {
     key: 'pirt',
-    title: 'P-IRT — Sertifikat Produksi Pangan Rumahan',
+    title: 'P-IRT - Sertifikat Produksi Pangan Rumahan',
     tag: 'GRATIS',
     site: 'sppirt.pom.go.id',
     url: 'https://sppirt.pom.go.id/',
-    intro: 'WAJIB sudah punya NIB dulu — sistemnya memang mensyaratkan itu, jadi urus NIB duluan kalau belum punya.',
+    intro: 'WAJIB sudah punya NIB dulu - sistemnya memang mensyaratkan itu, jadi urus NIB duluan kalau belum punya.',
     dokumen: ['NIB yang sudah terbit', 'Data & foto produk yang mau didaftarkan', 'Desain label kemasan'],
     steps: [
       'Login ke oss.go.id memakai akun usaha yang NIB-nya sudah terbit.',
       'Di dashboard OSS, buka menu Perizinan Berusaha → pilih PB-UMKU.',
-      'Cari dan pilih "SPP-IRT" (Sertifikat Pemenuhan Komitmen Industri Rumah Tangga) — sistem otomatis mengarahkanmu ke sppirt.pom.go.id.',
+      'Cari dan pilih "SPP-IRT" (Sertifikat Pemenuhan Komitmen Industri Rumah Tangga) - sistem otomatis mengarahkanmu ke sppirt.pom.go.id.',
       'Lengkapi data usaha (kalau belum terdaftar di sana), lalu isi data produk dan unggah desain label.',
       'Isi pernyataan komitmen keamanan pangan, lalu kirim permohonan.',
     ],
@@ -42,7 +42,7 @@ const GUIDES = [
     tag: 'GRATIS untuk UMK',
     site: 'ptsp.halal.go.id',
     url: 'https://ptsp.halal.go.id/login',
-    intro: 'Jalur "Self Declare" khusus untuk UMK dengan produk sederhana & 100% bahan halal — tanpa audit, prosesnya online semua.',
+    intro: 'Jalur "Self Declare" khusus untuk UMK dengan produk sederhana & 100% bahan halal - tanpa audit, prosesnya online semua.',
     dokumen: ['NIB', 'KTP', 'Alamat usaha', 'Foto produk', 'Daftar bahan baku & proses produksi'],
     steps: [
       'Buka ptsp.halal.go.id, klik "Create an Account".',
@@ -71,7 +71,7 @@ export default function PanduanSertifikat() {
           begitu buka website resminya.
         </p>
         <p style={{ fontSize: 12.5, color: 'var(--text-faint)', marginBottom: 28 }}>
-          Catatan jujur: langkah &amp; syarat di bawah dirangkum dari panduan publik yang tersedia saat ini — proses
+          Catatan jujur: langkah &amp; syarat di bawah dirangkum dari panduan publik yang tersedia saat ini - proses
           pemerintah bisa berubah sewaktu-waktu, jadi anggap ini peta kasar, bukan pengganti instruksi resmi di
           situsnya langsung.
         </p>

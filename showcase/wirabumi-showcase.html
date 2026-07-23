@@ -1,5 +1,5 @@
 <meta charset="UTF-8" />
-<title>WIRABUMI — Showcase Interaktif</title>
+<title>WIRABUMI - Showcase Interaktif</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
   /* ---------- design tokens ---------- */
@@ -398,10 +398,10 @@
 
 <script>
 /* =====================================================================
-   WIRABUMI — standalone interactive showcase
+   WIRABUMI - standalone interactive showcase
    Semua angka dihitung live dari data contoh di bawah, memakai rumus
    yang sama persis dengan compute_score() / get_kur_offer() di aplikasi asli.
-   Tidak ada koneksi keluar — seluruhnya berjalan di file ini saja.
+   Tidak ada koneksi keluar - seluruhnya berjalan di file ini saja.
 ===================================================================== */
 
 /* ---------------- state & seed data ---------------- */
@@ -463,8 +463,8 @@ function seed(){
 
   notifications = [
     { id: 1, type: 'capture_daily', title: `2 transaksi baru terdeteksi hari ini`, created: new Date(Date.now()-3*3600e3), read: false },
-    { id: 2, type: 'monthly_recap', title: 'Pembukuan bulan lalu selesai disusun — cek ringkasannya', created: new Date(Date.now()-2*86400e3), read: false },
-    { id: 3, type: 'low_confidence', title: 'Ada 1 chat yang WIRABUMI kurang yakin bacanya — cek & koreksi manual?', created: new Date(Date.now()-4*86400e3), read: true },
+    { id: 2, type: 'monthly_recap', title: 'Pembukuan bulan lalu selesai disusun - cek ringkasannya', created: new Date(Date.now()-2*86400e3), read: false },
+    { id: 3, type: 'low_confidence', title: 'Ada 1 chat yang WIRABUMI kurang yakin bacanya - cek & koreksi manual?', created: new Date(Date.now()-4*86400e3), read: true },
   ];
 }
 seed();
@@ -543,7 +543,7 @@ function buildQuestCatalog(m){
       key:'streak5', category:'consistency', title:'Catat transaksi 5 hari berturut-turut',
       poin:15, estimasi:'Otomatis terdeteksi',
       done: streak >= 5,
-      impact: `Naikkan skor Konsistensi — kamu di hari ke-${streak} dari target 5.`,
+      impact: `Naikkan skor Konsistensi - kamu di hari ke-${streak} dari target 5.`,
       target:'pembukuan',
     },
     {
@@ -557,7 +557,7 @@ function buildQuestCatalog(m){
       key:'omzet-naik15', category:'volume', title:'Naikkan omzet 15% dari bulan lalu',
       poin:20, estimasi:'Otomatis terdeteksi',
       done: m.growth >= 0.15,
-      impact: `Omzet 30 hari terakhir ${growthPct>=0?'naik':'turun'} ${Math.abs(growthPct)}% — kejar 15% biar skor Volume tembus 65+.`,
+      impact: `Omzet 30 hari terakhir ${growthPct>=0?'naik':'turun'} ${Math.abs(growthPct)}% - kejar 15% biar skor Volume tembus 65+.`,
       target:'pembukuan',
     },
     {
@@ -585,7 +585,7 @@ function buildQuestCatalog(m){
       key:'urus-pirt', category:'legal', title:'Lengkapi izin P-IRT',
       poin:20, estimasi:'~3 hari kerja', berbayar:true,
       done: legal.pirt,
-      impact:'P-IRT membuka skor Legalitas 66 — makin dekat ke ambang siap-KUR.',
+      impact:'P-IRT membuka skor Legalitas 66 - makin dekat ke ambang siap-KUR.',
       target:'kur',
     },
     {
@@ -834,7 +834,7 @@ function renderDashboard(){
       </div>
       ${selected ? `
       <div class="drilldown">
-        <h4>Produk Terlaris — ${selected.label} (${rupiah(selected.total)})</h4>
+        <h4>Produk Terlaris - ${selected.label} (${rupiah(selected.total)})</h4>
         ${topProductsInBucket(selected).map(([name,total])=>`<div class="prod-row"><span>${name}</span><span class="tabular">${rupiah(total)}</span></div>`).join('')}
       </div>` : ''}
     </div>
@@ -853,7 +853,7 @@ function renderDashboard(){
     </div>
 
     <div class="cta-banner">
-      <div><h3>Skor ${s.score.total_score} — cek simulasi plafon KUR-mu</h3><p>Lihat rincian faktor skor dan cicilan per tenor di halaman Skor &amp; KUR.</p></div>
+      <div><h3>Skor ${s.score.total_score} - cek simulasi plafon KUR-mu</h3><p>Lihat rincian faktor skor dan cicilan per tenor di halaman Skor &amp; KUR.</p></div>
       <button class="btn" onclick="goScreen('kur')">Buka Skor &amp; KUR →</button>
     </div>
   </div>`;
@@ -936,7 +936,7 @@ function filteredSortedTxns(){
 function renderTxnBody(){
   document.getElementById('txnBody').innerHTML = filteredSortedTxns().map(t=>`
     <tr><td>${tanggalID(t.tanggal)}</td><td>${t.produk}</td><td class="tabular">${t.qty} ${t.satuan}</td>
-    <td class="tabular">${rupiah(t.total)}</td><td>${t.pelanggan||'<span style="color:var(--ink-faint)">—</span>'}</td>
+    <td class="tabular">${rupiah(t.total)}</td><td>${t.pelanggan||'<span style="color:var(--ink-faint)"> - </span>'}</td>
     <td><span class="conf-chip ${t.confidence}">${t.source==='chat_parse'?'Chat':'Manual'}</span></td></tr>`).join('') ||
     `<tr><td colspan="6" style="text-align:center;color:var(--ink-faint);padding:24px;">Tidak ada transaksi cocok.</td></tr>`;
 }
@@ -996,7 +996,7 @@ function renderKur(){
         <div class="kur-box"><div class="lbl">Cicilan / Bulan</div><div class="val tabular">${rupiah(s.kur.cicilan)}</div></div>
         <div class="kur-box"><div class="lbl">Rata-rata Omzet / Bulan</div><div class="val tabular">${rupiah(s.kur.rata)}</div></div>
       </div>
-      <button class="btn btn-ghost btn-sm" style="margin-top:16px;" onclick="showToast('Ini demo — di aplikasi asli, tombol ini mengunduh PDF berkas KUR sungguhan.')">Unduh Berkas (PDF)</button>
+      <button class="btn btn-ghost btn-sm" style="margin-top:16px;" onclick="showToast('Ini demo - di aplikasi asli, tombol ini mengunduh PDF berkas KUR sungguhan.')">Unduh Berkas (PDF)</button>
     </div>
   </div>`;
 }
@@ -1005,7 +1005,7 @@ function setTenor(t){ state.tenor = t; render(); }
 /* ---------------- mas sido ---------------- */
 function renderSido(){
   if (state.chatLog.length===0){
-    state.chatLog.push({ role:'bot', text:`Halo, aku Mas Sido 👋 — namanya dari "sido dadi" (Jawa: jadi kesampaian). Tugasku nemenin pembukuanmu sampai beneran naik kelas. Coba tanya soal skor, omzet, laba, KUR, legalitas, atau pelanggan.` });
+    state.chatLog.push({ role:'bot', text:`Halo, aku Mas Sido 👋 - namanya dari "sido dadi" (Jawa: jadi kesampaian). Tugasku nemenin pembukuanmu sampai beneran naik kelas. Coba tanya soal skor, omzet, laba, KUR, legalitas, atau pelanggan.` });
   }
   return `
   <div class="screen">
@@ -1060,7 +1060,7 @@ function answerSido(q){
   if (t.includes('pelanggan')){
     return `Dari transaksi 180 hari terakhir, ${s.score.repeatCount} dari ${s.score.filledCount} transaksi berpelanggan tercatat adalah pembeli ulang.`;
   }
-  return `Aku bisa bantu jawab soal skor, omzet, laba, simulasi KUR, legalitas, atau pelanggan — coba tanya salah satunya.`;
+  return `Aku bisa bantu jawab soal skor, omzet, laba, simulasi KUR, legalitas, atau pelanggan - coba tanya salah satunya.`;
 }
 
 /* ---------------- profil ---------------- */

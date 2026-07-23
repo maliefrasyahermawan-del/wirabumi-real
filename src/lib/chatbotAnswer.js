@@ -1,6 +1,6 @@
 // Rule-based Mas Sido answer engine (no AI). Extracted out of Chatbot.jsx so
 // the backend can import it as a fallback for the LLM-backed answer path
-// (server/lib/llmChatbotAnswer.js) — same file, same behavior, no duplicated
+// (server/lib/llmChatbotAnswer.js) - same file, same behavior, no duplicated
 // logic to drift out of sync.
 
 import { rupiah } from './format.js';

@@ -157,7 +157,7 @@ export default function TopNav({ variant = 'full' }) {
       <header className="topnav">
         <div className="topnav-inner">
           <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            {/* Hamburger — hanya untuk admin/super_admin */}
+            {/* Hamburger - hanya untuk admin/super_admin */}
             {user && isAdmin && (
               <button
                 type="button"
@@ -214,7 +214,7 @@ export default function TopNav({ variant = 'full' }) {
         </div>
       </header>
 
-      {/* Admin sidebar — muncul di atas semua halaman untuk admin */}
+      {/* Admin sidebar - muncul di atas semua halaman untuk admin */}
       {user && isAdmin && (
         <AdminSidebar
           open={sidebarOpen}

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 /**
- * Dashboard router — baca role user lalu arahkan ke halaman dashboard yang sesuai.
+ * Dashboard router - baca role user lalu arahkan ke halaman dashboard yang sesuai.
  *
  * umkm_owner  → /dashboard/umkm    (dashboard personal usaha)
  * government  → /admin/monitoring  (monitoring aktivitas Dinkop)

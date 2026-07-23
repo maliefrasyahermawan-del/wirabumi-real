@@ -5,7 +5,7 @@ import { requireAuth, requireRole } from '../auth.js';
 const router = Router();
 
 // The aggregate Dinkop dashboard used to be public (no login). It's now
-// private — only Government, Bank, and Super Admin can view it. UMKM
+// private - only Government, Bank, and Super Admin can view it. UMKM
 // Owners never see this; they only ever see their own personal dashboard.
 router.use(requireAuth, requireRole('government', 'bank_officer', 'super_admin'));
 

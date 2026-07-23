@@ -1,5 +1,5 @@
 /**
- * db:migrate — Pastikan semua kolom dan tabel yang dibutuhkan ada di database.
+ * db:migrate - Pastikan semua kolom dan tabel yang dibutuhkan ada di database.
  * Aman dijalankan berulang kali (idempotent via IF NOT EXISTS / ADD COLUMN IF NOT EXISTS).
  * Tambahkan migrasi baru ke array `migrations` setiap kali schema.sql berubah.
  */
@@ -94,7 +94,7 @@ async function migrate() {
       skipped++;
     }
   }
-  console.log(`\n✅ Done — ${ok} applied, ${skipped} skipped.\n`);
+  console.log(`\n✅ Done - ${ok} applied, ${skipped} skipped.\n`);
   pool.end();
 }
 

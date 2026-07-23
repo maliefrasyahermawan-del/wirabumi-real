@@ -8,7 +8,7 @@ router.use(requireAuth, requireRole('bank_officer', 'government', 'super_admin')
 
 const REVIEW_STATUSES = ['pending', 'approved', 'rejected'];
 
-// Only UMKM who've opted in via profiles.bank_consent appear here — never
+// Only UMKM who've opted in via profiles.bank_consent appear here - never
 // raw transactions/chat, only the same score/simulation already shown
 // elsewhere in the app (compute_score, latest kur_documents row).
 router.get('/consenting', async (_req, res) => {

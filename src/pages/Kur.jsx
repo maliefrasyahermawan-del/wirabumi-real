@@ -24,7 +24,7 @@ const LEGAL_ITEMS = [
     key: 'legal_pirt', title: 'Sertifikat P-IRT / merek', shortLabel: 'P-IRT',
     desc: 'Perkuat kredibilitas produk di mata bank.',
     url: 'https://sppirt.pom.go.id/', linkLabel: 'Daftar P-IRT →',
-    // P-IRT registration requires an NIB first — steer the user there instead
+    // P-IRT registration requires an NIB first - steer the user there instead
     // of sending them to a form they can't actually complete yet.
     requires: 'legal_nib',
   },
@@ -64,7 +64,7 @@ export default function Kur() {
     const now = new Date();
     api.get(`/report/tax-estimate?year=${now.getFullYear()}&month=${now.getMonth() + 1}`)
       .then(setTaxEstimate)
-      .catch(() => {}); // sinyal tambahan opsional di PDF — jangan sampai memblokir halaman KUR kalau gagal
+      .catch(() => {}); // sinyal tambahan opsional di PDF - jangan sampai memblokir halaman KUR kalau gagal
   }, [user.id]);
 
   async function toggleLegal(key) {
@@ -305,7 +305,7 @@ export default function Kur() {
               <span style={{ fontSize: 18 }}>📖</span>
               <span style={{ flex: 1 }}>
                 <div style={{ fontWeight: 700, fontSize: 13.5, color: 'var(--blue-dark)' }}>Belum tahu cara daftarnya?</div>
-                <div style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>Lihat Panduan Daftar Sertifikat — langkah demi langkah untuk NIB, P-IRT, dan Halal.</div>
+                <div style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>Lihat Panduan Daftar Sertifikat - langkah demi langkah untuk NIB, P-IRT, dan Halal.</div>
               </span>
               <span style={{ color: 'var(--blue-dark)', fontWeight: 700 }}>→</span>
             </button>

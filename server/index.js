@@ -51,7 +51,7 @@ app.use('/api', publicRoutes);
 app.use((err, req, res, _next) => {
   console.error(err);
   // Fire-and-forget: real server errors feed the Super Admin System page's
-  // Error Log — never fabricated, only ever written when something actually
+  // Error Log - never fabricated, only ever written when something actually
   // threw, and never allowed to affect the response already being sent.
   pool.query('insert into error_log (route, message) values ($1, $2)', [req.originalUrl, err.message])
     .catch((logErr) => console.error('[errorLog] gagal mencatat:', logErr.message));

@@ -43,7 +43,7 @@ export default function NotificationBell() {
       setItems(data.notifications || []);
       setUnreadCount(data.unread_count || 0);
     } catch {
-      // notifications are a nicety, not a critical path — fail silently
+      // notifications are a nicety, not a critical path - fail silently
     }
   }
 

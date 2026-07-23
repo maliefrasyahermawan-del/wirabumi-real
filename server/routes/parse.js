@@ -10,7 +10,7 @@ router.use(requireAuth);
 
 // Tempel Chat: try the Groq LLM first (handles messy real-world phrasing far
 // better than regex), and fall back to the original rule-based parser the
-// instant anything about the LLM call goes wrong — a live demo can't afford
+// instant anything about the LLM call goes wrong - a live demo can't afford
 // this endpoint to ever hard-fail just because Groq is slow/down/rate-limited.
 router.post('/chat', async (req, res) => {
   const text = (req.body?.text || '').trim();

@@ -39,7 +39,7 @@ router.get('/laba-rugi', async (req, res) => {
   });
 });
 
-// Estimasi PPh Final UMKM (PP 55/2022 jo. PP 20/2026) — murni SQL lewat
+// Estimasi PPh Final UMKM (PP 55/2022 jo. PP 20/2026) - murni SQL lewat
 // compute_tax_estimate(), tidak melibatkan LLM sama sekali. month: 1-12.
 router.get('/tax-estimate', async (req, res) => {
   const year = req.query.year ? Number(req.query.year) : null;
