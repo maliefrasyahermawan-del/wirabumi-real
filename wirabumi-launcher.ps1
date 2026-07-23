@@ -75,14 +75,73 @@ function Start-Wirabumi {
   Write-Host ""
 
   Write-Host "  -> Memeriksa PostgreSQL (port $PgPort)..." -ForegroundColor DarkGray
-  if (Get-PortOwner $PgPort) {
+  $pgReady = [bool](Get-PortOwner $PgPort)
+
+  if (-not $pgReady) {
+    Write-Host "     PostgreSQL tidak terdeteksi, mencoba menyalakan service..." -ForegroundColor DarkGray
+    $pgService = Get-Service -Name 'postgresql*' -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($pgService) {
+      try {
+        Start-Service -Name $pgService.Name -ErrorAction Stop
+        Write-Host "     Menunggu PostgreSQL menyala" -NoNewline -ForegroundColor DarkGray
+        $waited = 0
+        while (-not (Get-PortOwner $PgPort) -and $waited -lt 10000) {
+          Start-Sleep -Milliseconds 300
+          $waited += 300
+          Write-Host "." -NoNewline -ForegroundColor DarkGray
+        }
+        Write-Host ""
+        $pgReady = [bool](Get-PortOwner $PgPort)
+      } catch {
+        Write-Host "     Tidak bisa menyalakan service '$($pgService.Name)' otomatis (coba jalankan start.bat sebagai Administrator)." -ForegroundColor Red
+      }
+    } else {
+      Write-Host "     Tidak ditemukan service PostgreSQL di komputer ini - install PostgreSQL dulu (lihat README.md)." -ForegroundColor Red
+    }
+  }
+
+  $dbReady = $false
+  if ($pgReady) {
     Write-Host "     PostgreSQL aktif." -ForegroundColor Green
-    
-    Write-Host "  -> Memeriksa / Membuat Akun Testing di Database..." -ForegroundColor DarkGray
-    Start-Process -FilePath "npm.cmd" -ArgumentList "run","db:seed" -WorkingDirectory $ProjectRoot -WindowStyle Hidden -Wait
-    Write-Host "     Akun testing (Mockup) siap digunakan." -ForegroundColor Green
+
+    $envPath = Join-Path $ProjectRoot '.env'
+    if (-not (Test-Path $envPath)) {
+      Write-Host "  -> File .env belum ada, membuat otomatis dari .env.example..." -ForegroundColor DarkGray
+      $envExample = Get-Content (Join-Path $ProjectRoot '.env.example') -Raw
+      $devPassword = 'wirabumi_dev_only'
+      $jwtSecret = ([guid]::NewGuid().ToString('N')) + ([guid]::NewGuid().ToString('N'))
+      $envContent = ($envExample -replace 'CHANGE_ME', $devPassword) -replace 'JWT_SECRET=', "JWT_SECRET=$jwtSecret"
+      Set-Content -Path $envPath -Value $envContent -Encoding utf8 -NoNewline
+      Write-Host "     .env dibuat (password database default: $devPassword)." -ForegroundColor Green
+    }
+
+    Write-Host "  -> Memeriksa struktur database 'wirabumi'..." -ForegroundColor DarkGray
+    & node (Join-Path $ProjectRoot 'server\scripts\ensure-db.js')
+    if ($LASTEXITCODE -eq 0) {
+      Write-Host "     Schema database siap." -ForegroundColor Green
+
+      & node (Join-Path $ProjectRoot 'server\scripts\migrate.js') | Out-Null
+
+      Write-Host "  -> Memeriksa / Membuat Akun Testing di Database..." -ForegroundColor DarkGray
+      & node (Join-Path $ProjectRoot 'server\scripts\seed.js') | Out-Null
+      Write-Host "     Akun testing (Mockup) siap digunakan." -ForegroundColor Green
+      $dbReady = $true
+    } else {
+      Write-Host ""
+      Write-Host "     Database/role 'wirabumi_app' belum ada di PostgreSQL. Jalankan sekali (lewat psql):" -ForegroundColor Red
+      Write-Host "       CREATE ROLE wirabumi_app WITH LOGIN PASSWORD '<sesuai DATABASE_URL di .env>';" -ForegroundColor Yellow
+      Write-Host "       CREATE DATABASE wirabumi OWNER wirabumi_app;" -ForegroundColor Yellow
+      Write-Host "     Detail lengkap: README.md bagian 'Quick setup for judges / reviewers'." -ForegroundColor DarkGray
+    }
   } else {
-    Write-Host "     PostgreSQL TIDAK terdeteksi. Pastikan service Postgres menyala." -ForegroundColor Red
+    Write-Host "     PostgreSQL TIDAK aktif - tidak bisa lanjut tanpa database." -ForegroundColor Red
+  }
+
+  if (-not $dbReady) {
+    Write-Host ""
+    Write-Host "  Tekan tombol apa saja untuk kembali ke menu..." -ForegroundColor DarkGray
+    [void][System.Console]::ReadKey($true)
+    return
   }
 
   if (Get-PortOwner $BackendPort) {

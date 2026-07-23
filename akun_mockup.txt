@@ -5,8 +5,11 @@ AKUN MOCKUP / TEST WIRABUMI - SEMUA PERAN
 File ini: akun_mockup.txt (di root folder proyek, sejajar dengan
 fitur_wirabumi.txt dan README.md).
 
-CARA TERCEPAT DAPAT SEMUA AKUN INI (satu perintah, setelah database
-"wirabumi" dibuat dan server/schema.sql sudah dijalankan):
+CARA TERCEPAT DAPAT SEMUA AKUN INI: cukup jalankan start.bat lalu pilih
+"Nyalakan Website WIRABUMI" - ini otomatis membuat schema database (kalau
+belum ada) dan men-seed SEMUA 8 akun di bawah setiap kali dijalankan, jadi
+tidak perlu perintah manual apapun. Kalau mau jalankan seed-nya saja secara
+terpisah (server sudah menyala), perintahnya:
 
     npm run db:seed
 

@@ -19,36 +19,52 @@ kept in sync with the app as it grows.
 
 ## Quick setup for judges / reviewers
 
-WIRABUMI has no cloud database - everything runs on your own machine, so
-there's a one-time local setup before you can log in. It's about 5 minutes:
+WIRABUMI has no cloud database - everything runs on your own machine. On
+Windows, with PostgreSQL already installed, this is genuinely two steps:
 
-1. Install PostgreSQL if you don't have it, and make sure it's running.
-2. Create the database and app role (via `psql` or a GUI like pgAdmin):
+1. Make sure PostgreSQL is installed (any recent version) - if you already
+   have it, you don't need to touch it further, `start.bat` handles the rest
+   below automatically.
+2. `npm install`, then double-click `start.bat` and choose "Nyalakan Website
+   WIRABUMI".
+
+That single click now automatically: starts the PostgreSQL service if it
+isn't already running, creates `.env` from `.env.example` with a working
+local dev password + a freshly generated `JWT_SECRET` if `.env` doesn't
+exist yet, applies `server/schema.sql` if the database is empty, runs any
+pending migrations, seeds all 8 test accounts (`npm run db:seed`), then
+starts the backend and frontend and opens your browser. Full list of the
+seeded accounts + passwords is in [`akun_mockup.txt`](akun_mockup.txt)
+(Indonesian) - covers UMKM Owner, Government, Bank, and Super Admin, so you
+can see all 4 distinct role dashboards without registering anything by hand.
+
+The one thing `start.bat` cannot do for you is create the `wirabumi_app`
+database role/database from a totally blank PostgreSQL install (that needs
+one-time superuser access). If it detects that's missing, it prints the
+exact two SQL commands to run once via `psql` or pgAdmin and stops there -
+run those, click "Nyalakan Website WIRABUMI" again, and everything above
+runs automatically from that point on.
+
+Prefer to do it by hand, or on macOS/Linux? The manual steps are the same
+ones `start.bat` automates:
+
+1. Create the database and app role (via `psql` or a GUI like pgAdmin):
    ```sql
    CREATE ROLE wirabumi_app WITH LOGIN PASSWORD 'ganti_password_ini';
    CREATE DATABASE wirabumi OWNER wirabumi_app;
    ```
-3. Apply the schema (tables + the scoring/KUR SQL functions):
+2. Apply the schema (tables + the scoring/KUR SQL functions):
    ```
    psql -U wirabumi_app -d wirabumi -f server/schema.sql
    ```
-4. Copy `.env.example` to `.env` and fill in `DATABASE_URL` (the password
-   from step 2) and `JWT_SECRET` (any random string). `GROQ_API_KEY` is
+3. Copy `.env.example` to `.env` and fill in `DATABASE_URL` (the password
+   from step 1) and `JWT_SECRET` (any random string). `GROQ_API_KEY` is
    optional - leave it empty and the app still works fully on rule-based
    fallbacks for the 4 AI features.
-5. `npm install`
-6. Seed 8 ready-to-use test accounts (one for each role) with realistic
-   bookkeeping data, in one command:
-   ```
-   npm run db:seed
-   ```
-   Full list of accounts + passwords is in [`akun_mockup.txt`](akun_mockup.txt)
-   (Indonesian) - covers UMKM Owner, Government, Bank, and Super Admin, so
-   you can see all 4 distinct role dashboards without registering anything
-   by hand.
-7. Start the app - either `start.bat` (Windows, opens an interactive menu),
-   or the two commands in the next section (`npm run server` + `npm run dev`)
-   - then log in with any account from `akun_mockup.txt`.
+4. `npm install`
+5. `npm run db:seed` to create the 8 test accounts.
+6. `npm run server` + `npm run dev` (see the next section), then log in
+   with any account from `akun_mockup.txt`.
 
 ## Running the stack locally
 
@@ -87,22 +103,31 @@ Runs on `http://localhost:5173`. It talks to the API via `VITE_API_URL` in `.env
 
 ### Faster: `start.bat`
 
-Once the one-time setup above (`npm install`, database created, `.env` filled
-in) is done, `start.bat` in the project root is a quicker way to run the app
-day-to-day. Double-click it (or run `wirabumi-launcher.ps1` directly) to get
-an interactive terminal menu (arrow keys + Enter):
+`start.bat` in the project root (after `npm install`) is the recommended way
+to run the app - it does the one-time setup automatically the first time and
+is a quick day-to-day launcher after that. Double-click it (or run
+`wirabumi-launcher.ps1` directly) to get an interactive terminal menu
+(arrow keys + Enter):
 
-- **Nyalakan Website Wirabumi** - starts the backend and frontend if they
-  aren't already running (checks the ports first, so it won't double-start),
-  waits until both are actually reachable, then prints a clickable local link
-  and opens it in your browser automatically.
+- **Nyalakan Website Wirabumi** - starts PostgreSQL's service if it isn't
+  running, creates `.env` from `.env.example` if missing, applies
+  `server/schema.sql` and pending migrations if the database is empty, seeds
+  the 8 test accounts, then starts the backend and frontend if they aren't
+  already running (checks the ports first, so it won't double-start), waits
+  until both are actually reachable, and opens the app in your browser
+  automatically. If the `wirabumi_app` database role doesn't exist yet, it
+  prints the two `CREATE ROLE`/`CREATE DATABASE` commands to run once and
+  stops there instead of guessing.
 - **Matikan Website Wirabumi** - stops both processes cleanly, found by the
   port they're listening on (not a blanket "kill all node processes").
 - **Keluar** - closes the menu without stopping anything.
 
-Logs from each run go to `.wirabumi-run/` (git-ignored). This is purely a
-local convenience wrapper around the same two `npm` commands above - it
-doesn't replace the one-time setup.
+Logs from each run go to `.wirabumi-run/` (git-ignored). Behind the scenes
+it's still the same `npm run server` + `npm run dev` commands above, plus
+the database bootstrapping described in "Quick setup for judges /
+reviewers" - the only thing it can't do for you is create the PostgreSQL
+role/database on a completely fresh install (needs one-time superuser
+access), which is the manual step documented there.
 
 ## Configuration
 
