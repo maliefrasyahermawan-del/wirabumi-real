@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { pool } from './db.js';
 
 import authRoutes from './routes/auth.js';
 import profileRoutes from './routes/profile.js';
@@ -18,6 +19,8 @@ import questsRoutes from './routes/quests.js';
 import publicRoutes from './routes/public.js';
 import parseRoutes from './routes/parse.js';
 import adminRoutes from './routes/admin.js';
+import dinkopRoutes from './routes/dinkop.js';
+import bankRoutes from './routes/bank.js';
 
 dotenv.config();
 
@@ -39,10 +42,17 @@ app.use('/api/notifications', notificationsRoutes);
 app.use('/api/quests', questsRoutes);
 app.use('/api/parse', parseRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/dinkop', dinkopRoutes);
+app.use('/api/bank', bankRoutes);
 app.use('/api', publicRoutes);
 
-app.use((err, _req, res, _next) => {
+app.use((err, req, res, _next) => {
   console.error(err);
+  // Fire-and-forget: real server errors feed the Super Admin System page's
+  // Error Log — never fabricated, only ever written when something actually
+  // threw, and never allowed to affect the response already being sent.
+  pool.query('insert into error_log (route, message) values ($1, $2)', [req.originalUrl, err.message])
+    .catch((logErr) => console.error('[errorLog] gagal mencatat:', logErr.message));
   res.status(500).json({ error: 'Terjadi kesalahan pada server.' });
 });
 

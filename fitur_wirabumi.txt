@@ -161,11 +161,14 @@ Navbar atas (komponen TopNav) berisi:
 - Tombol ganti tema terang/gelap
 - Avatar/foto profil → dropdown: Lihat Profil, Pengaturan Akun,
   Tentang, Berikan Ulasan, Keluar
-- Dropdown "Admin" — HANYA muncul untuk akun berperan Admin atau Super
-  Admin (akun User biasa tidak melihat menu ini sama sekali, bukan
-  cuma disembunyikan lewat CSS): Monitoring Aktivitas, Dashboard
-  Dampak, dan (khusus Super Admin) Kelola Pengguna. Lihat bagian 17
-  untuk detail lengkap peran & hak akses.
+- Navbar BERBEDA per peran (lihat bagian 17 untuk detail lengkap):
+  UMKM Owner melihat menu di atas apa adanya (Dashboard/Beranda/Cara
+  Kerja/Keuangan/Mas Sido). Government & Super Admin melihat dropdown
+  "Admin" (Monitoring Aktivitas, Dashboard Dampak, dan khusus Super
+  Admin: Dashboard Bank, Kelola Pengguna, System) plus link "Dashboard"
+  yang mengarah ke Dashboard Dinkop (bukan dashboard pribadi). Bank
+  hanya melihat satu link "Dashboard" ke halaman Bank-nya sendiri, tanpa
+  Keuangan/Mas Sido/dropdown Admin sama sekali.
 
 Catatan penamaan: menu "Pembukuan" itulah sisi PEMASUKAN (setiap
 transaksi yang dicatat = penjualan/uang masuk). Tidak ada menu terpisah
@@ -604,9 +607,12 @@ Semua angka di atas dihitung dari data transaksi asli, bukan simulasi.
 ========================================================
 13. DASHBOARD (Usaha + Dinkop)
 ========================================================
-Satu halaman (menu "Dashboard" di navbar) berisi dua bagian:
+UPDATE PENTING: sejak fitur Peran & Hak Akses 4-role (lihat bagian 17),
+Dashboard Usaha dan Dashboard Dinkop BUKAN LAGI satu halaman yang sama —
+keduanya dipisah jadi dua rute berbeda, masing-masing khusus untuk peran
+tertentu.
 
-A. DASHBOARD USAHA (personal, komponen UsahaDashboard)
+A. DASHBOARD USAHA (/dashboard — khusus peran UMKM, komponen UsahaDashboard)
    - KPI: Skor Kelayakan, Omzet Bulan Ini, Laba Bersih Bulan Ini,
      Plafon KUR Tersedia — semua REAL dari data sendiri.
    - Grafik tren omzet dengan pilihan periode (1 minggu/3 minggu/1
@@ -615,18 +621,25 @@ A. DASHBOARD USAHA (personal, komponen UsahaDashboard)
    - Bagian "Langkah yang Direkomendasikan" (quest) dan Legalitas —
      lihat bagian 11.
    - Produk terlaris 90 hari terakhir.
+   - JUJUR: halaman ini TIDAK LAGI menampilkan kartu teaser ke Dashboard
+     Dinkop seperti sebelumnya — pemilik UMKM hanya melihat dashboard
+     pribadinya sendiri, sesuai keputusan bahwa Dashboard Dinkop kini
+     khusus staf (lihat poin B).
 
-B. DASHBOARD DINKOP (agregat, sudut pandang dinas)
-   - Ditampilkan sebagai kartu "teaser" yang bisa diklik untuk dibuka
-     penuh (Lihat Dashboard Dinkop →), diletakkan di bawah Dashboard
-     Usaha.
+B. DASHBOARD DINKOP (/dinkop — khusus Pemerintah, Bank, & Super Admin)
    - Menampilkan data GABUNGAN semua UMKM terdaftar: total UMKM,
      rata-rata skor, persentase layak KUR, jumlah berkas KUR dibuat,
      skor rata-rata per kecamatan, tren jumlah UMKM aktif per bulan.
-     SEMUA DIHITUNG REAL dari fungsi SQL dinkop_dashboard().
+     SEMUA DIHITUNG REAL dari fungsi SQL dinkop_dashboard() — rumus
+     & data sama persis seperti sebelumnya, HANYA aksesnya yang berubah.
    - Sengaja TIDAK menampilkan data transaksi/identitas per individu
-     UMKM — hanya angka gabungan, untuk menjaga privasi.
-   - Bagian ini bisa diakses tanpa login (endpoint publik).
+     UMKM — hanya angka gabungan.
+   - PERUBAHAN BESAR — TIDAK LAGI PUBLIK: sebelumnya halaman ini bisa
+     diakses siapa saja tanpa login (demi transparansi publik). Sekarang
+     endpoint-nya (GET /api/dinkop) dijaga requireRole('government',
+     'bank_officer', 'super_admin') di server — pemilik UMKM dan
+     pengunjung anonim TIDAK BISA lagi membukanya sama sekali. Ini
+     keputusan produk yang disengaja (lihat bagian 17), bukan bug.
 
 
 ========================================================
@@ -659,18 +672,32 @@ B. DASHBOARD DINKOP (agregat, sudut pandang dinas)
 ========================================================
 17. PERAN & HAK AKSES (Role-Based Access Control)
 ========================================================
-Ada 3 peran akun: User (pemilik UMKM, default semua akun baru),
-Admin (staf Dinkop/pembina UMKM), dan Super Admin (developer/pengelola
-sistem). Setiap peran punya dashboard & menu navbar yang BENAR-BENAR
-berbeda, bukan halaman yang sama dengan tombol disembunyikan — User
-tidak pernah melihat menu "Admin" sama sekali di navbar-nya.
+UPDATE BESAR: sistem peran diperluas dari 3 jadi 4 peran, dengan
+dashboard yang jauh lebih kontras satu sama lain. Ada 4 peran akun:
 
-PEMBATASAN AKSES INI NYATA, BUKAN KOSMETIK: setiap endpoint di
-/api/admin/* dijaga oleh middleware requireRole di server (server/auth.js)
-yang mengecek peran pengguna LANGSUNG dari database di setiap request
-(bukan dari isi token JWT, supaya perubahan peran langsung berlaku,
-tidak perlu tunggu token lama kedaluwarsa). Kalau peran tidak sesuai,
-server membalas HTTP 403 — bisa dibuktikan langsung lewat panggilan API
+- UMKM Owner (umkm_owner, dulu "User") — pemilik usaha, default semua
+  akun baru. Hanya melihat dashboard pribadinya sendiri (bagian 13A).
+- Government / Pemerintah Dinkop (government, dulu "Admin") — staf
+  Dinas Koperasi. Melihat data agregat seluruh UMKM, tanpa identitas
+  transaksi mentah.
+- Bank (bank_officer, BARU) — mitra penyalur KUR. Hanya melihat UMKM
+  yang SUDAH MEMBERI IZIN (consent) untuk dilihat profil kelayakannya.
+- Super Admin (super_admin, tidak berubah) — developer/pengelola
+  sistem. Melihat semuanya, plus metrik kesehatan sistem.
+
+Setiap peran punya dashboard & menu navbar yang BENAR-BENAR berbeda,
+bukan halaman yang sama dengan tombol disembunyikan — UMKM Owner cuma
+melihat Dashboard/Beranda/Cara Kerja/Keuangan/Mas Sido; Government
+melihat Dashboard Dinkop + menu Admin (Monitoring, Dampak); Bank cuma
+melihat satu link "Dashboard" ke halamannya sendiri; Super Admin
+melihat semuanya plus System.
+
+PEMBATASAN AKSES INI NYATA, BUKAN KOSMETIK: setiap endpoint dijaga
+oleh middleware requireRole di server (server/auth.js) yang mengecek
+peran pengguna LANGSUNG dari database di setiap request (bukan dari
+isi token JWT, supaya perubahan peran langsung berlaku, tidak perlu
+tunggu token lama kedaluwarsa). Kalau peran tidak sesuai, server
+membalas HTTP 403 — bisa dibuktikan langsung lewat panggilan API
 manual (curl), bukan cuma "link-nya disembunyikan di tampilan".
 ProtectedRoute di frontend juga mengecek peran untuk pengalaman
 pengguna yang mulus (langsung tampil "Akses ditolak" tanpa perlu
@@ -678,25 +705,35 @@ menunggu API menolak), tapi pengecekan itu HANYA kosmetik/UX — kalaupun
 seseorang mengakalinya di sisi frontend, permintaan ke server tetap
 akan ditolak dengan 403.
 
-A. HALAMAN MONITORING AKTIVITAS (/admin/monitoring — Admin & Super Admin)
+MIGRASI DATA: akun lama dengan peran "user" otomatis jadi "umkm_owner",
+dan "admin" otomatis jadi "government" — nilai lama di kolom
+activity_log.role_at_time SENGAJA TIDAK ditulis ulang (tetap
+menunjukkan "user"/"admin" apa adanya untuk baris aktivitas dari
+sebelum migrasi), konsisten dengan prinsip "role_at_time dicatat saat
+kejadian, tidak pernah ditulis ulang".
+
+A. HALAMAN MONITORING AKTIVITAS (/admin/monitoring — Government & Super Admin)
    - Setiap tindakan penting (daftar, masuk, catat transaksi, catat
      pengeluaran, buat berkas KUR, ubah status legalitas, ubah peran
-     pengguna) TERCATAT NYATA ke tabel activity_log di database —
-     bukan data contoh/statis. Kalau pencatatan aktivitas gagal karena
-     alasan apapun, itu tidak pernah menggagalkan permintaan utama
-     pengguna (mis. transaksi tetap tersimpan walau logging gagal).
+     pengguna, ubah izin Bank, review pengajuan KUR oleh Bank)
+     TERCATAT NYATA ke tabel activity_log di database — bukan data
+     contoh/statis. Kalau pencatatan aktivitas gagal karena alasan
+     apapun, itu tidak pernah menggagalkan permintaan utama pengguna
+     (mis. transaksi tetap tersimpan walau logging gagal).
    - "Pengguna Aktif" = jumlah akun berbeda yang punya aktivitas dalam
      24 jam terakhir. "Aktivitas Hari Ini" = jumlah baris activity_log
-     sejak tengah malam. Keduanya dihitung ulang setiap halaman dibuka.
+     sejak tengah malam. "Rincian Aktivitas Hari Ini" (BARU) memecah
+     angka itu per jenis aksi (mis. "11 Masuk, 3 Update Legalitas").
+     Semuanya dihitung ulang setiap halaman dibuka.
    - "Distribusi Aktivitas per Peran" = jumlah aktivitas 30 hari
      terakhir dikelompokkan per peran SAAT aktivitas itu terjadi
-     (role_at_time) — kalau seseorang naik jabatan jadi Admin, riwayat
-     aktivitasnya SEBELUM naik jabatan tetap tercatat sebagai "User",
-     tidak ditulis ulang.
+     (role_at_time) — kalau seseorang naik jabatan, riwayat
+     aktivitasnya SEBELUM naik jabatan tetap tercatat dengan peran
+     lama, tidak ditulis ulang (lihat catatan migrasi di atas).
    - "Aktivitas Terbaru" menampilkan 20 aktivitas terakhir dari SELURUH
      pengguna, bukan cuma milik yang sedang login.
 
-B. DASHBOARD DAMPAK (/admin/impact — Admin & Super Admin)
+B. DASHBOARD DAMPAK (/admin/impact — Government & Super Admin)
    - 4 metrik nyata: Total UMKM, Skor Rata-rata, % Layak KUR, dan
      Berkas KUR Dibuat — dihitung dari compute_score() yang sama
      persis dipakai di halaman Skor (bukan angka terpisah/karangan).
@@ -709,20 +746,33 @@ B. DASHBOARD DAMPAK (/admin/impact — Admin & Super Admin)
      Sedang 40-69, Rendah >=70 — makin rendah skor, makin perlu
      didampingi duluan), waktu (transaksi terakhir), dan tombol "Detail"
      yang membuka panel berisi kecamatan & skor lengkap.
-   - JUJUR — beda dengan Dashboard Dinkop yang publik (menu "Dashboard"
-     di navbar, bisa diakses tanpa login): halaman itu SENGAJA hanya
-     menampilkan angka gabungan, tanpa identitas per-UMKM, untuk
-     menjaga privasi publik. Dashboard Dampak ini BEDA — khusus staf
-     yang benar-benar login sebagai Admin/Super Admin, jadi boleh
-     melihat nama usaha per baris (sama seperti petugas bank yang perlu
-     tahu nama nasabahnya, bukan cuma angka agregat). Detail transaksi
-     mentah pelanggan tetap TIDAK ditampilkan di sini, hanya data level
-     profil & skor.
+   - Detail transaksi mentah pelanggan tetap TIDAK ditampilkan di sini,
+     hanya data level profil & skor.
 
-C. KELOLA PENGGUNA (/admin/pengguna — KHUSUS Super Admin)
-   - Mengubah peran akun lain antara "User" dan "Admin" lewat tombol,
-     memanggil endpoint yang juga dijaga requireRole('super_admin') di
-     server, bukan cuma disembunyikan di tampilan untuk role lain.
+C. DASHBOARD BANK (/bank — KHUSUS Bank & Super Admin) — FITUR BARU
+   - Hanya menampilkan UMKM yang SUDAH MENYALAKAN "Izinkan mitra Bank
+     melihat profil kelayakan usahaku" di halaman Profil mereka
+     (kolom profiles.bank_consent, default MATI/false — opt-in murni).
+   - Data yang tampil untuk tiap UMKM yang mengizinkan: nama usaha,
+     kategori, kecamatan, skor kelayakan (compute_score() yang sama),
+     simulasi KUR terakhir (dari kur_documents kalau ada). TIDAK PERNAH
+     menampilkan transaksi mentah atau riwayat chat Mas Sido, sekalipun
+     consent menyala — hanya ringkasan yang sudah ditampilkan di
+     tempat lain juga.
+   - Bank memberi status pengajuan: Menunggu/Disetujui/Ditolak, plus
+     catatan opsional, tersimpan ke tabel bank_reviews (satu baris per
+     UMKM, bukan per dokumen PDF — review ini menilai profil/skor
+     UMKM-nya, bukan me-review "surat" yang sudah jadi).
+   - JUJUR: mengubah status di sini TIDAK memblokir atau mengubah apa
+     pun di sisi UMKM — murni catatan internal pihak Bank untuk
+     menandai progres pengajuan yang mereka proses sendiri di luar
+     WIRABUMI.
+
+D. KELOLA PENGGUNA (/admin/pengguna — KHUSUS Super Admin)
+   - Mengubah peran akun lain antara UMKM/Government/Bank lewat
+     dropdown, memanggil endpoint yang juga dijaga
+     requireRole('super_admin') di server, bukan cuma disembunyikan di
+     tampilan untuk role lain.
    - JUJUR — KETERBATASAN SENGAJA: peran "Super Admin" TIDAK BISA
      diberikan lewat halaman ini atau API manapun, hanya lewat akses
      database langsung (satu kali, saat setup awal). Ini pembatasan
@@ -730,6 +780,23 @@ C. KELOLA PENGGUNA (/admin/pengguna — KHUSUS Super Admin)
      (kalau lewat API bisa, satu Super Admin yang disusupi bisa
      membuat Super Admin baru tanpa batas) — bukan keterbatasan teknis
      yang kelupaan.
+
+E. SYSTEM (/admin/system — KHUSUS Super Admin) — FITUR BARU
+   - Metrik NYATA (bukan angka karangan): Total Pengguna, Total UMKM,
+     Ukuran Database (pg_database_size() asli), Status Database
+     (cek koneksi asli lewat `select 1`).
+   - "Pemakaian LLM (7 Hari Terakhir)": hitungan sukses/gagal ASLI dari
+     setiap panggilan Groq (tabel llm_usage_log, ditulis dari dalam
+     server/lib/groqClient.js setiap callGroq() selesai) — dipecah per
+     fitur (chat_parser, score_narrative, receipt_parser, chatbot).
+   - "Error Log Terbaru": error server ASLI yang tertangkap oleh
+     error-handler Express global (server/index.js), ditulis ke tabel
+     error_log. Kalau belum pernah ada error, kartunya kosong — bukan
+     dipalsukan supaya kelihatan "ada aktivitas".
+   - "Role Management": pintasan ke Kelola Pengguna. "Permission
+     Management": tabel referensi statis (bukan editor dinamis) yang
+     mendaftar rute mana bisa diakses peran mana — dokumentasi, bukan
+     mekanisme baru.
 
 
 ========================================================
@@ -870,17 +937,26 @@ NYATA (dihitung/tersimpan sungguhan dari database):
   SQL, ambang Rp500jt/tahun untuk Orang Pribadi, perhitungan marginal
   saat lintas ambang, muncul di Laporan Laba Rugi + PDF-nya + 1 baris di
   PDF Berkas KUR)
-- Statistik Beranda & Dashboard Dinkop (agregat asli)
+- Statistik Beranda (agregat asli, tetap publik) & Dashboard Dinkop
+  (agregat asli, sekarang khusus Government/Bank/Super Admin — lihat
+  bagian 13 & 17)
 - Riwayat chat Mas Sido (tersimpan, dibatasi 5 percakapan)
 - Sistem quest & lencana (status dideteksi dari data asli, simulasi
   dampak skor/plafon pakai rumus asli, lencana tersimpan permanen)
 - Notifikasi in-app (5 jenis, semua dihitung dari data asli)
 - Foto profil (avatar), mode gelap, ulasan pengguna
-- Peran & hak akses (User/Admin/Super Admin) — pembatasan ditegakkan di
-  server (requireRole, 403 nyata), bukan disembunyikan di tampilan saja
-- Log aktivitas nyata (activity_log) + halaman Monitoring & Dashboard
-  Dampak untuk Admin/Super Admin — 2 filter yang benar-benar mengubah
-  metrik & tabel, bukan kosmetik
+- Peran & hak akses 4 peran (UMKM Owner/Government/Bank/Super Admin) —
+  pembatasan ditegakkan di server (requireRole, 403 nyata), bukan
+  disembunyikan di tampilan saja
+- Log aktivitas nyata (activity_log, kini dengan rincian per jenis
+  aksi) + halaman Monitoring & Dashboard Dampak untuk Government/Super
+  Admin — 2 filter yang benar-benar mengubah metrik & tabel, bukan
+  kosmetik
+- Dashboard Bank (konsensual, opt-in lewat profiles.bank_consent) +
+  status pengajuan (bank_reviews) khusus Bank/Super Admin
+- Halaman System khusus Super Admin — ukuran database, pemakaian LLM,
+  dan error log yang semuanya NYATA (llm_usage_log, error_log), bukan
+  angka karangan
 
 HYBRID: LLM DULU, FALLBACK RULE-BASED KALAU GAGAL (baru):
 - Parser Tempel Chat — Groq LLM (llama-3.3-70b-versatile) lebih dulu,

@@ -61,6 +61,7 @@ export async function parseChatWithLLM(rawText) {
   const result = await callGroq({
     system: SYSTEM_PROMPT,
     user: rawText,
+    feature: 'chat_parser',
     temperature: 0.1,
     maxTokens: 1500,
   });

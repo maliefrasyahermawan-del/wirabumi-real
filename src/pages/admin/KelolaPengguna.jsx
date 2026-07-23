@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import TopNav from '../../components/TopNav';
 import { api } from '../../lib/apiClient';
 import { useAuth } from '../../context/AuthContext';
+import { ROLE_LABELS } from '../../lib/roles';
 
-const ROLE_LABELS = { user: 'User', admin: 'Admin', super_admin: 'Super Admin' };
-const COLS = '1.4fr 1.3fr 0.9fr 140px';
+const ASSIGNABLE_ROLES = ['umkm_owner', 'government', 'bank_officer'];
+const COLS = '1.4fr 1.3fr 0.9fr 180px';
 
 export default function KelolaPengguna() {
   const { user } = useAuth();
@@ -18,9 +19,8 @@ export default function KelolaPengguna() {
 
   useEffect(() => { load(); }, []);
 
-  async function toggleRole(u) {
-    if (u.role === 'super_admin') return; // not togglable via API, by design
-    const nextRole = u.role === 'admin' ? 'user' : 'admin';
+  async function changeRole(u, nextRole) {
+    if (nextRole === u.role) return;
     setBusyId(u.id);
     try {
       await api.patch(`/admin/users/${u.id}/role`, { role: nextRole });
@@ -39,8 +39,8 @@ export default function KelolaPengguna() {
         <div className="eyebrow"><span className="eyebrow-dot"></span>KHUSUS SUPER ADMIN</div>
         <h1 className="page-title md" style={{ marginTop: 8 }}>Kelola Pengguna</h1>
         <p className="page-sub" style={{ marginBottom: 24 }}>
-          Jadikan pengguna sebagai Admin (bisa lihat Monitoring &amp; Dashboard Dampak) atau kembalikan jadi User biasa.
-          Peran "Super Admin" sengaja tidak bisa diberikan lewat halaman ini — hanya lewat akses database langsung.
+          Atur peran akun: UMKM, Pemerintah (Dinkop), atau Bank. Peran "Super Admin" sengaja tidak bisa
+          diberikan lewat halaman ini — hanya lewat akses database langsung.
         </p>
 
         {error && <div className="alert-error" style={{ marginBottom: 16 }}>{error}</div>}
@@ -63,13 +63,14 @@ export default function KelolaPengguna() {
                   ) : u.id === user.id ? (
                     <span className="muted" style={{ fontSize: 12 }}>Akun kamu</span>
                   ) : (
-                    <button
-                      className="btn btn-secondary btn-sm"
+                    <select
+                      value={u.role}
                       disabled={busyId === u.id}
-                      onClick={() => toggleRole(u)}
+                      onChange={(e) => changeRole(u, e.target.value)}
+                      style={{ padding: '6px 8px', borderRadius: 8, border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)', fontSize: 13 }}
                     >
-                      {busyId === u.id ? '…' : u.role === 'admin' ? 'Jadikan User' : 'Jadikan Admin'}
-                    </button>
+                      {ASSIGNABLE_ROLES.map((r) => <option key={r} value={r}>{ROLE_LABELS[r]}</option>)}
+                    </select>
                   )}
                 </div>
               </div>

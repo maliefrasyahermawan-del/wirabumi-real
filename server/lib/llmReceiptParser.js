@@ -50,6 +50,7 @@ export async function parseReceiptWithLLM(rawText) {
   const result = await callGroq({
     system: SYSTEM_PROMPT,
     user: rawText,
+    feature: 'receipt_parser',
     temperature: 0.1,
     maxTokens: 500,
   });

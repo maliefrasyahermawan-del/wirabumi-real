@@ -4,14 +4,14 @@ import { requireAuth, requireRole } from '../auth.js';
 import { logActivity } from '../lib/activityLog.js';
 
 const router = Router();
-router.use(requireAuth, requireRole('admin', 'super_admin'));
+router.use(requireAuth, requireRole('government', 'super_admin'));
 
 // Constraint 1: Multi-Role Collaboration & Activity Monitoring.
 // "Active user" = distinct user_id with an activity_log row in the last 24h,
 // paired with "today's activity count" so both numbers describe the same
 // rolling window of real, live activity — not a static snapshot.
 router.get('/monitoring', async (req, res) => {
-  const [activeUsers, todayActivity, recentActivities, activityByRole] = await Promise.all([
+  const [activeUsers, todayActivity, recentActivities, activityByRole, todayByType] = await Promise.all([
     pool.query(`select count(distinct user_id) as c from activity_log where created_at >= now() - interval '24 hours'`),
     pool.query(`select count(*) as c from activity_log where created_at >= current_date`),
     pool.query(
@@ -27,6 +27,11 @@ router.get('/monitoring', async (req, res) => {
        where created_at >= current_date - interval '30 days'
        group by role_at_time order by c desc`
     ),
+    pool.query(
+      `select action_type, count(*) as c from activity_log
+       where created_at >= current_date
+       group by action_type order by c desc`
+    ),
   ]);
 
   res.json({
@@ -34,6 +39,7 @@ router.get('/monitoring', async (req, res) => {
     today_activity_count: Number(todayActivity.rows[0].c),
     recent_activities: recentActivities.rows,
     activity_by_role: activityByRole.rows.map((r) => ({ role: r.role_at_time, count: Number(r.c) })),
+    today_activity_by_type: todayByType.rows.map((r) => ({ action_type: r.action_type, count: Number(r.c) })),
   });
 });
 
@@ -96,13 +102,47 @@ router.get('/users', requireRole('super_admin'), async (req, res) => {
 
 router.patch('/users/:id/role', requireRole('super_admin'), async (req, res) => {
   const { role } = req.body || {};
-  if (!['user', 'admin'].includes(role)) {
-    return res.status(400).json({ error: 'Role harus "user" atau "admin".' });
+  const ASSIGNABLE_ROLES = ['umkm_owner', 'government', 'bank_officer'];
+  if (!ASSIGNABLE_ROLES.includes(role)) {
+    return res.status(400).json({ error: `Role harus salah satu dari: ${ASSIGNABLE_ROLES.join(', ')}.` });
   }
   const result = await pool.query('update users set role = $1 where id = $2 returning id, email, role', [role, req.params.id]);
   if (result.rows.length === 0) return res.status(404).json({ error: 'Pengguna tidak ditemukan.' });
   logActivity(req.userId, 'role_change', `Mengubah peran ${result.rows[0].email} jadi "${role}"`);
   res.json(result.rows[0]);
+});
+
+// Super Admin System page: real (never fabricated) system-health metrics.
+router.get('/system', requireRole('super_admin'), async (req, res) => {
+  const [totalUsers, totalUmkm, dbSize, dbHealth, llmUsage, recentErrors] = await Promise.all([
+    pool.query('select count(*) as c from users'),
+    pool.query('select count(*) as c from profiles'),
+    pool.query('select pg_database_size(current_database()) as bytes'),
+    pool.query('select 1').then(() => true).catch(() => false),
+    pool.query(
+      `select feature, success, count(*) as c from llm_usage_log
+       where created_at >= current_date - interval '7 days'
+       group by feature, success order by feature, success desc`
+    ),
+    pool.query('select id, route, message, created_at from error_log order by created_at desc limit 20'),
+  ]);
+
+  const llmByFeature = {};
+  for (const row of llmUsage.rows) {
+    const feature = row.feature;
+    if (!llmByFeature[feature]) llmByFeature[feature] = { feature, success: 0, failed: 0 };
+    if (row.success) llmByFeature[feature].success = Number(row.c);
+    else llmByFeature[feature].failed = Number(row.c);
+  }
+
+  res.json({
+    total_users: Number(totalUsers.rows[0].c),
+    total_umkm: Number(totalUmkm.rows[0].c),
+    db_size_bytes: Number(dbSize.rows[0].bytes),
+    db_healthy: dbHealth,
+    llm_usage_7d: Object.values(llmByFeature),
+    recent_errors: recentErrors.rows,
+  });
 });
 
 export default router;

@@ -91,19 +91,28 @@ All config lives in `.env` (see `.env.example` for the shape):
   Bearer <token>`. Password reset is self-service via two security questions
   (favorite food, favorite band) set at registration — no email/SMS provider
   is wired up.
-- **Roles & access control**: every account has a role — `user` (default),
-  `admin`, or `super_admin` — stored in the database and looked up fresh on
-  every request (not baked into the JWT, so a role change takes effect
-  immediately). `admin`/`super_admin` get a distinct "Admin" nav section with
-  an activity-monitoring dashboard and an aggregate impact dashboard;
-  `super_admin` additionally gets user-role management. Access is enforced
-  server-side (`requireRole` middleware, real HTTP 403s), not just hidden in
-  the UI. `super_admin` can only be granted via direct database access, never
-  through the app itself.
+- **Roles & access control**: 4 roles, each with a genuinely different
+  dashboard — `umkm_owner` (default, sees only their own personal dashboard),
+  `government` (Dinas Koperasi staff — aggregate dashboard, activity
+  monitoring, impact/outreach dashboard), `bank_officer` (KUR partner bank —
+  sees only UMKM who've opted in, reviews their credit profile), `super_admin`
+  (everything above plus role management and a system-health page). Role is
+  looked up fresh from the database on every request (not baked into the JWT,
+  so a role change takes effect immediately). Access is enforced server-side
+  (`requireRole` middleware, real HTTP 403s), not just hidden in the UI.
+  `super_admin` can only be granted via direct database access, never through
+  the app itself. The aggregate Dinkop dashboard used to be public; it's now
+  private to `government`/`bank_officer`/`super_admin` only.
+- **Bank consent**: a UMKM can opt in (off by default) to let a `bank_officer`
+  see their business name, category, score, and KUR simulation — never raw
+  transactions or chat history — and the bank can mark an application
+  pending/approved/rejected.
 - **Activity log**: key actions (register, login, add transaction/expense,
   generate a KUR document, update legal-document status, change a user's
-  role) are written to an `activity_log` table, feeding the admin monitoring
-  dashboard. Logging failures never block the action that triggered them.
+  role, toggle bank consent, bank review decisions) are written to an
+  `activity_log` table, feeding the admin monitoring dashboard (with a
+  same-day breakdown by action type). Logging failures never block the
+  action that triggered them.
 - **Scoring & KUR math**: implemented as PostgreSQL functions
   (`compute_score`, `get_kur_offer`) so the same formula backs the per-user
   Skor/KUR pages, the Mas Sido chatbot, the quest system, and the aggregate

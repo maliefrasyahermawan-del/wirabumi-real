@@ -10,7 +10,7 @@ import { logActivity } from '../lib/activityLog.js';
 const router = Router();
 router.use(requireAuth);
 
-const EDITABLE_FIELDS = ['business_name', 'business_category', 'business_address', 'kecamatan', 'phone', 'kategori_wajib_pajak', 'legal_nib', 'legal_pirt', 'legal_halal'];
+const EDITABLE_FIELDS = ['business_name', 'business_category', 'business_address', 'kecamatan', 'phone', 'kategori_wajib_pajak', 'legal_nib', 'legal_pirt', 'legal_halal', 'bank_consent'];
 
 const AVATAR_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'uploads', 'avatars');
 const AVATAR_MIME_EXT = { 'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '.webp' };
@@ -36,6 +36,12 @@ router.patch('/', async (req, res) => {
   );
   if (updates.some(([k]) => k.startsWith('legal_'))) {
     logActivity(req.userId, 'legal_update', 'Memperbarui status legalitas usaha');
+  }
+  const consentUpdate = updates.find(([k]) => k === 'bank_consent');
+  if (consentUpdate) {
+    logActivity(req.userId, 'bank_consent_toggle', consentUpdate[1]
+      ? 'Mengizinkan mitra Bank melihat profil kelayakan'
+      : 'Mencabut izin mitra Bank melihat profil kelayakan');
   }
   res.json(result.rows[0]);
 });

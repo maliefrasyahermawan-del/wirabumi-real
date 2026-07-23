@@ -23,6 +23,7 @@ export async function answerWithLLM(question, ctx) {
   const result = await callGroq({
     system: SYSTEM_PROMPT,
     user: JSON.stringify({ pertanyaan: question, data: ctx }),
+    feature: 'chatbot',
     temperature: 0.4,
     maxTokens: 300,
   });

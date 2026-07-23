@@ -37,6 +37,7 @@ export async function generateScoreNarrative(score) {
       status: score.status,
       faktor: score.factors.map((f) => ({ nama: f.name, nilai: f.val })),
     }),
+    feature: 'score_narrative',
     temperature: 0.4,
     maxTokens: 220,
   });

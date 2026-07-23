@@ -1,8 +1,14 @@
 import { useEffect, useState } from 'react';
 import TopNav from '../../components/TopNav';
 import { api } from '../../lib/apiClient';
+import { ROLE_LABELS } from '../../lib/roles';
 
-const ROLE_LABELS = { user: 'User', admin: 'Admin', super_admin: 'Super Admin' };
+const ACTION_LABELS = {
+  register: 'Daftar', login: 'Masuk', transaction_create: 'Catat Transaksi',
+  transaction_bulk: 'Impor Transaksi', expense_create: 'Catat Pengeluaran',
+  kur_document_create: 'Buat PDF KUR', legal_update: 'Update Legalitas',
+  role_change: 'Ubah Peran', bank_consent_toggle: 'Ubah Izin Bank', bank_review_status: 'Review KUR Bank',
+};
 
 function timeAgo(dateStr) {
   const mins = Math.floor((Date.now() - new Date(dateStr).getTime()) / 60000);
@@ -47,6 +53,21 @@ export default function Monitoring() {
             <div className="kpi-delta-flat">Sejak tengah malam</div>
           </div>
         </div>
+
+        {data.today_activity_by_type.length > 0 && (
+          <div className="card-lg" style={{ marginBottom: 20 }}>
+            <div style={{ fontWeight: 800, fontSize: 13, color: 'var(--text-faint)', letterSpacing: '0.3px', marginBottom: 14 }}>
+              RINCIAN AKTIVITAS HARI INI
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+              {data.today_activity_by_type.map((t) => (
+                <span key={t.action_type} className="status-badge" style={{ fontSize: 12.5 }}>
+                  {t.count} {ACTION_LABELS[t.action_type] || t.action_type}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="dinkop-grid" style={{ marginTop: 0 }}>
           <div className="card-lg">

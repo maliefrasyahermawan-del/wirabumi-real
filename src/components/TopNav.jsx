@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { api } from '../lib/apiClient';
+import { ROLE_HOME } from '../lib/roles';
 
 function MoonIcon() {
   return (
@@ -150,21 +151,11 @@ function NotificationBell() {
   );
 }
 
-const LINKS = [
-  { to: '/dashboard', label: 'Dashboard' },
-  { to: '/', label: 'Beranda' },
-  { to: '/cara-kerja', label: 'Cara Kerja' },
-];
-
 const KEUANGAN_LINKS = [
   { to: '/pembukuan', label: 'Pembukuan', desc: 'Catat penjualan' },
   { to: '/pengeluaran', label: 'Pengeluaran', desc: 'Catat beban usaha' },
   { to: '/laporan', label: 'Laporan Laba Rugi', desc: 'Ringkasan & PDF' },
   { to: '/kur', label: 'Ajukan KUR', desc: 'Simulasi plafon & unduh berkas' },
-];
-
-const TAIL_LINKS = [
-  { to: '/asisten', label: 'Mas Sido' },
 ];
 
 function KeuanganDropdown({ current }) {
@@ -214,7 +205,11 @@ function AdminDropdown({ current, role }) {
   const links = [
     { to: '/admin/monitoring', label: 'Monitoring Aktivitas', desc: 'Pengguna aktif & log aktivitas' },
     { to: '/admin/impact', label: 'Dashboard Dampak', desc: 'Metrik & daftar UMKM binaan' },
-    ...(role === 'super_admin' ? [{ to: '/admin/pengguna', label: 'Kelola Pengguna', desc: 'Atur peran Admin/User' }] : []),
+    ...(role === 'super_admin' ? [
+      { to: '/bank', label: 'Dashboard Bank', desc: 'Review pengajuan KUR' },
+      { to: '/admin/pengguna', label: 'Kelola Pengguna', desc: 'Atur peran UMKM/Pemerintah/Bank' },
+      { to: '/admin/system', label: 'System', desc: 'Storage, LLM usage, error log' },
+    ] : []),
   ];
   const isActive = links.some((l) => l.to === current);
 
@@ -315,6 +310,8 @@ export default function TopNav({ variant = 'full' }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, profile } = useAuth();
+  const role = profile?.role || 'umkm_owner';
+  const dashboardHome = ROLE_HOME[role] || '/dashboard';
 
   return (
     <header className="topnav">
@@ -325,18 +322,27 @@ export default function TopNav({ variant = 'full' }) {
           {variant === 'full' && <span className="brand-badge">SOLO RAYA</span>}
         </div>
 
-        {variant === 'full' && (
+        {variant === 'full' && user && (
           <nav className="navlinks">
-            {LINKS.map((l) => (
-              <button key={l.to} className={`navlink ${location.pathname === l.to ? 'current' : ''}`} onClick={() => navigate(l.to)}>{l.label}</button>
-            ))}
-            <KeuanganDropdown current={location.pathname} />
-            {TAIL_LINKS.map((l) => (
-              <button key={l.to} className={`navlink ${location.pathname === l.to ? 'current' : ''}`} onClick={() => navigate(l.to)}>{l.label}</button>
-            ))}
-            {profile?.role && profile.role !== 'user' && (
-              <AdminDropdown current={location.pathname} role={profile.role} />
+            <button className={`navlink ${location.pathname === dashboardHome ? 'current' : ''}`} onClick={() => navigate(dashboardHome)}>Dashboard</button>
+            <button className={`navlink ${location.pathname === '/' ? 'current' : ''}`} onClick={() => navigate('/')}>Beranda</button>
+            {role === 'umkm_owner' && (
+              <>
+                <button className={`navlink ${location.pathname === '/cara-kerja' ? 'current' : ''}`} onClick={() => navigate('/cara-kerja')}>Cara Kerja</button>
+                <KeuanganDropdown current={location.pathname} />
+                <button className={`navlink ${location.pathname === '/asisten' ? 'current' : ''}`} onClick={() => navigate('/asisten')}>Mas Sido</button>
+              </>
             )}
+            {(role === 'government' || role === 'super_admin') && (
+              <AdminDropdown current={location.pathname} role={role} />
+            )}
+          </nav>
+        )}
+
+        {variant === 'full' && !user && (
+          <nav className="navlinks">
+            <button className={`navlink ${location.pathname === '/' ? 'current' : ''}`} onClick={() => navigate('/')}>Beranda</button>
+            <button className={`navlink ${location.pathname === '/cara-kerja' ? 'current' : ''}`} onClick={() => navigate('/cara-kerja')}>Cara Kerja</button>
           </nav>
         )}
 

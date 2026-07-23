@@ -29,6 +29,7 @@ export default function Profile() {
     kecamatan: user.kecamatan || KECAMATAN_OPTIONS[0],
     phone: user.phone || '',
     kategori_wajib_pajak: user.kategori_wajib_pajak || 'orang_pribadi',
+    bank_consent: user.bank_consent || false,
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -190,6 +191,24 @@ export default function Profile() {
                         Menentukan apakah ambang bebas pajak Rp500 juta/tahun berlaku di estimasi pajak Laporan Laba Rugi. Hanya Orang Pribadi yang mendapat ambang ini.
                       </p>
                     </div>
+                    {(!user.role || user.role === 'umkm_owner') && (
+                      <div className="field">
+                        <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                          <input
+                            type="checkbox"
+                            checked={form.bank_consent}
+                            onChange={(e) => set('bank_consent', e.target.checked)}
+                            style={{ width: 16, height: 16 }}
+                          />
+                          Izinkan mitra Bank melihat profil kelayakan usahaku
+                        </label>
+                        <p className="page-sub" style={{ marginTop: 6, marginBottom: 0 }}>
+                          Kalau dinyalakan, mitra Bank (di dashboard mereka) bisa melihat nama usaha, kategori,
+                          kecamatan, skor kelayakan, dan simulasi KUR terakhirmu untuk mempertimbangkan pengajuan
+                          KUR-mu. Transaksi dan riwayat chat mentah TIDAK PERNAH dibagikan sekalipun ini menyala.
+                        </p>
+                      </div>
+                    )}
                     <button className="btn btn-primary btn-lg" style={{ alignSelf: 'flex-start' }} disabled={saving} type="submit">
                       {saving ? 'Menyimpan…' : 'Simpan Perubahan'}
                     </button>

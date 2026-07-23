@@ -12,10 +12,14 @@ create table if not exists users (
   -- the register route enforces both as required for new signups.
   security_food_hash text,
   security_band_hash text,
-  -- Access-control role. No self-serve path to 'admin'/'super_admin' — only a
-  -- super_admin can promote a user to 'admin' via the app (server/routes/admin.js),
-  -- and 'super_admin' itself is only ever granted via a direct DB update.
-  role text not null default 'user' check (role in ('user','admin','super_admin')),
+  -- Access-control role. 4 contrasting roles, each with its own dashboard:
+  -- umkm_owner (default, the business owner), government (Dinas Koperasi
+  -- staff), bank_officer (KUR partner bank), super_admin (developer/system
+  -- owner). No self-serve path to 'bank_officer'/'super_admin' via the app —
+  -- only a super_admin can assign umkm_owner/government/bank_officer via
+  -- server/routes/admin.js, and 'super_admin' itself is only ever granted via
+  -- a direct DB update.
+  role text not null default 'umkm_owner' check (role in ('umkm_owner','government','bank_officer','super_admin')),
   created_at timestamptz not null default now()
 );
 
@@ -35,6 +39,12 @@ create table if not exists profiles (
   legal_pirt boolean not null default false,
   legal_halal boolean not null default false,
   avatar_url text,
+  -- Opt-in: UMKM sendiri yang menyalakan ini di halaman Profil supaya
+  -- profil kelayakannya (nama usaha, kategori, kecamatan, skor, simulasi
+  -- KUR) bisa dilihat oleh mitra Bank di /bank. Default MATI — data
+  -- transaksi/chat mentah tetap tidak pernah dibagikan sekalipun consent
+  -- ini menyala (lihat server/routes/bank.js).
+  bank_consent boolean not null default false,
   created_at timestamptz not null default now()
 );
 
@@ -81,6 +91,19 @@ create table if not exists kur_documents (
   cicilan_bulanan numeric not null,
   skor_saat_itu int not null,
   generated_at timestamptz not null default now()
+);
+
+-- Bank review status — one row per UMKM (not per KUR document/"surat"), since
+-- a bank_officer reviews the UMKM's live credit profile/score via /api/bank,
+-- not a specific generated PDF. Only ever shown/editable for UMKM with
+-- profiles.bank_consent = true (server/routes/bank.js enforces this).
+create table if not exists bank_reviews (
+  user_id uuid primary key references users(id) on delete cascade,
+  status text not null default 'pending' check (status in ('pending','approved','rejected')),
+  reviewer_id uuid references users(id) on delete set null,
+  notes text,
+  reviewed_at timestamptz,
+  updated_at timestamptz not null default now()
 );
 
 create table if not exists chat_messages (
@@ -148,6 +171,28 @@ create table if not exists activity_log (
 );
 create index if not exists activity_log_created_idx on activity_log (created_at desc);
 create index if not exists activity_log_user_idx on activity_log (user_id);
+
+-- Real Groq LLM call outcomes (server/lib/groqClient.js), feeding the
+-- Super Admin System page's "LLM Usage" metric. Not a fabricated number —
+-- one row per actual callGroq() invocation, success true/false.
+create table if not exists llm_usage_log (
+  id uuid primary key default gen_random_uuid(),
+  feature text not null,
+  success boolean not null,
+  created_at timestamptz not null default now()
+);
+create index if not exists llm_usage_log_created_idx on llm_usage_log (created_at desc);
+
+-- Real server errors (caught by the global Express error handler in
+-- server/index.js), feeding the Super Admin System page's "Error Log". Never
+-- fabricated — only ever written when something genuinely threw.
+create table if not exists error_log (
+  id uuid primary key default gen_random_uuid(),
+  route text,
+  message text not null,
+  created_at timestamptz not null default now()
+);
+create index if not exists error_log_created_idx on error_log (created_at desc);
 
 -- ============ Scoring (same formula as before) ============
 create or replace function compute_score(p_user_id uuid)
