@@ -550,6 +550,13 @@ textarea.capture-input:focus { border-color: var(--blue); }
 @media (max-width: 900px) {
   .hero-grid, .doc-grid, .dinkop-grid, .score-panel { grid-template-columns: 1fr !important; }
   .kpi-grid, .steps-strip-inner { grid-template-columns: repeat(2, 1fr) !important; }
+
+  /* Landing hero (pra-login): stacked 1-kolom di atas lebih tinggi dari layar
+     HP - hero-main dulu dipaksa tinggi 1 layar penuh + overflow:hidden buat
+     background image di desktop, jadi kontennya kepotong di HP. Lepas itu
+     khusus di breakpoint ini supaya halaman scroll natural. */
+  .hero-main { min-height: auto; overflow: visible; flex: none; padding: 24px 0 32px; }
+  .hero-grid { padding: 0; gap: 28px; }
 }
 
 /* Mobile (phone-width): additive only - desktop rules above are untouched.
