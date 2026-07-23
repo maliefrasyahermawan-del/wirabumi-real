@@ -68,6 +68,15 @@ async function seed() {
   const client = await pool.connect();
   
   try {
+    // 0. Auto-Migration sederhana: tambahkan kolom bank_consent jika belum ada di database lokal temanmu
+    try {
+      await client.query('ALTER TABLE profiles ADD COLUMN IF NOT EXISTS bank_consent boolean not null default false;');
+      console.log('🔧 Auto-migration: Mengecek dan memperbarui tabel profiles (bank_consent)...');
+    } catch (err) {
+      // Abaikan error jika tabel profiles belum ada (berarti belum import schema.sql sama sekali)
+      if (err.code !== '42P01') console.error('Gagal menjalankan auto-migration:', err);
+    }
+
     await client.query('BEGIN');
     
     for (const u of mockUsers) {
