@@ -17,18 +17,26 @@ const TAX_STATUS_CONFIG = {
 
 const TAX_DISCLAIMER = 'Estimasi ini dihitung otomatis dari data pembukuanmu berdasarkan skema PPh Final UMKM (PP 55/2022 jo. PP 20/2026) dan bersifat perkiraan, bukan perhitungan resmi. Aturan pajak dapat berubah dan setiap usaha punya kondisi berbeda (mis. jenis usaha, masa berlaku fasilitas). Untuk kewajiban pajak resmi, konsultasikan ke akuntan atau konsultan pajak terdaftar, atau cek langsung ke pajak.go.id / Coretax.';
 
-function monthRange(year, month) {
-  const since = `${year}-${String(month + 1).padStart(2, '0')}-01`;
-  const lastDay = new Date(year, month + 1, 0).getDate();
-  const until = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
+function monthRange(startYear, startMonth, endYear, endMonth) {
+  const since = `${startYear}-${String(startMonth + 1).padStart(2, '0')}-01`;
+  const lastDay = new Date(endYear, endMonth + 1, 0).getDate();
+  const until = `${endYear}-${String(endMonth + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
   return { since, until };
+}
+
+// Jumlah bulan dari (startYear, startMonth) ke (endYear, endMonth), inklusif
+// kedua ujungnya - dipakai buat validasi batas maksimal 1 tahun (12 bulan).
+function monthSpan(startYear, startMonth, endYear, endMonth) {
+  return (endYear - startYear) * 12 + (endMonth - startMonth) + 1;
 }
 
 export default function LaporanKeuangan() {
   const { profile } = useAuth();
   const now = new Date();
-  const [year, setYear] = useState(now.getFullYear());
-  const [month, setMonth] = useState(now.getMonth());
+  const [startYear, setStartYear] = useState(now.getFullYear());
+  const [startMonth, setStartMonth] = useState(now.getMonth());
+  const [endYear, setEndYear] = useState(now.getFullYear());
+  const [endMonth, setEndMonth] = useState(now.getMonth());
   const [report, setReport] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [expenses, setExpenses] = useState([]);
@@ -36,14 +44,27 @@ export default function LaporanKeuangan() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const span = monthSpan(startYear, startMonth, endYear, endMonth);
+  const rangeInvalid = span < 1 || span > 12;
+  const isSingleMonth = startYear === endYear && startMonth === endMonth;
+  const periodeLabel = isSingleMonth
+    ? `${BULAN_NAMA[startMonth]} ${startYear}`
+    : `${BULAN_NAMA[startMonth]} ${startYear} - ${BULAN_NAMA[endMonth]} ${endYear}`;
+
   useEffect(() => {
-    const { since, until } = monthRange(year, month);
+    if (rangeInvalid) {
+      setError(span < 1 ? 'Bulan/tahun "Sampai" harus setelah atau sama dengan "Dari".' : 'Rentang maksimal 1 tahun (12 bulan).');
+      setReport(null);
+      return;
+    }
+    setError('');
+    const { since, until } = monthRange(startYear, startMonth, endYear, endMonth);
     setLoading(true);
     Promise.all([
       api.get(`/report/laba-rugi?since=${since}&until=${until}`),
       api.get(`/transactions?since=${since}&until=${until}`),
       api.get(`/expenses?since=${since}&until=${until}`),
-      api.get(`/report/tax-estimate?year=${year}&month=${month + 1}`),
+      api.get(`/report/tax-estimate?year=${endYear}&month=${endMonth + 1}`),
     ])
       .then(([reportData, txnData, expData, taxData]) => {
         setReport(reportData);
@@ -53,13 +74,12 @@ export default function LaporanKeuangan() {
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [year, month]);
+  }, [startYear, startMonth, endYear, endMonth, rangeInvalid, span]);
 
   function downloadPdf() {
     if (!report) return;
     const doc = new jsPDF();
     const businessName = profile?.business_name || 'Usaha Saya';
-    const periodeLabel = `${BULAN_NAMA[month]} ${year}`;
     const pageWidth = doc.internal.pageSize.getWidth();
     let y = 18;
 
@@ -172,6 +192,14 @@ export default function LaporanKeuangan() {
       doc.setFontSize(11);
       doc.text('ESTIMASI KEWAJIBAN PAJAK (PPh FINAL UMKM)', 14, y);
       y += 2;
+      if (!isSingleMonth) {
+        doc.setFont('helvetica', 'italic');
+        doc.setFontSize(8.5);
+        doc.setTextColor(120);
+        doc.text(`Dihitung untuk bulan ${BULAN_NAMA[endMonth]} ${endYear} saja (bulan terakhir periode) - estimasi pajak dihitung per bulan, bukan untuk seluruh rentang.`, 14, y + 4);
+        doc.setTextColor(0);
+        y += 8;
+      }
 
       autoTable(doc, {
         startY: y + 2,
@@ -179,7 +207,7 @@ export default function LaporanKeuangan() {
           ['Kategori Wajib Pajak', taxEstimate.kategori_wajib_pajak === 'badan_usaha' ? 'Badan Usaha' : 'Orang Pribadi'],
           ['Omzet Kumulatif Tahun Ini', rupiah(taxEstimate.omzet_kumulatif_tahun_ini)],
           ['Status', TAX_STATUS_CONFIG[taxEstimate.status_ambang]?.label || taxEstimate.status_ambang],
-          ['Estimasi PPh Final Bulan Ini', rupiah(taxEstimate.estimasi_pajak_bulan_ini)],
+          [`Estimasi PPh Final ${BULAN_NAMA[endMonth]} ${endYear}`, rupiah(taxEstimate.estimasi_pajak_bulan_ini)],
           ['Estimasi PPh Final Kumulatif Tahun Ini', rupiah(taxEstimate.estimasi_pajak_kumulatif_tahun_ini)],
         ],
         theme: 'grid',
@@ -204,7 +232,7 @@ export default function LaporanKeuangan() {
     }
     doc.setTextColor(0);
 
-    doc.save(`Laporan-Laba-Rugi-${businessName.replace(/\s+/g, '-')}-${periodeLabel.replace(' ', '-')}.pdf`);
+    doc.save(`Laporan-Laba-Rugi-${businessName.replace(/\s+/g, '-')}-${periodeLabel.replace(/\s+/g, '-')}.pdf`);
   }
 
   return (
@@ -218,21 +246,32 @@ export default function LaporanKeuangan() {
           </div>
         </header>
 
-        <div className="flex-center gap-12" style={{ margin: '16px 0 22px', flexWrap: 'wrap' }}>
-          <div className="field" style={{ width: 160 }}>
-            <label>Bulan</label>
-            <select value={month} onChange={(e) => setMonth(Number(e.target.value))}>
+        <div className="flex-center gap-12" style={{ margin: '16px 0 8px', flexWrap: 'wrap' }}>
+          <div className="field" style={{ width: 150 }}>
+            <label>Dari Bulan</label>
+            <select value={startMonth} onChange={(e) => setStartMonth(Number(e.target.value))}>
               {BULAN_NAMA.map((b, i) => <option key={b} value={i}>{b}</option>)}
             </select>
           </div>
-          <div className="field" style={{ width: 120 }}>
+          <div className="field" style={{ width: 110 }}>
             <label>Tahun</label>
-            <input type="number" value={year} onChange={(e) => setYear(Number(e.target.value) || now.getFullYear())} />
+            <input type="number" value={startYear} onChange={(e) => setStartYear(Number(e.target.value) || now.getFullYear())} />
+          </div>
+          <div className="field" style={{ width: 150 }}>
+            <label>Sampai Bulan</label>
+            <select value={endMonth} onChange={(e) => setEndMonth(Number(e.target.value))}>
+              {BULAN_NAMA.map((b, i) => <option key={b} value={i}>{b}</option>)}
+            </select>
+          </div>
+          <div className="field" style={{ width: 110 }}>
+            <label>Tahun</label>
+            <input type="number" value={endYear} onChange={(e) => setEndYear(Number(e.target.value) || now.getFullYear())} />
           </div>
           <button className="btn btn-primary btn-md" style={{ alignSelf: 'flex-end' }} disabled={!report || loading} onClick={downloadPdf}>
             Unduh PDF →
           </button>
         </div>
+        <p className="muted" style={{ fontSize: 12.5, margin: '0 0 14px' }}>Rentang maksimal 1 tahun (12 bulan). Kalau lebih dari 1 bulan, estimasi pajak dihitung untuk bulan terakhir saja.</p>
 
         {error && <div className="alert-error mt-16">{error}</div>}
 
@@ -243,7 +282,7 @@ export default function LaporanKeuangan() {
             <div className="center-text card-lg">
               <div style={{ fontWeight: 800, fontSize: 15 }}>{profile?.business_name}</div>
               <div className="serif" style={{ fontSize: 18, fontWeight: 600, marginTop: 2 }}>Laporan Laba Rugi</div>
-              <div className="muted" style={{ fontSize: 13, marginTop: 2 }}>Untuk Periode {BULAN_NAMA[month]} {year}</div>
+              <div className="muted" style={{ fontSize: 13, marginTop: 2 }}>Untuk Periode {periodeLabel}</div>
             </div>
 
             <div style={{ border: '1px solid #000', borderRadius: 8, overflow: 'hidden' }}>
@@ -320,17 +359,23 @@ export default function LaporanKeuangan() {
                   </span>
                 </div>
 
-                <div className="muted" style={{ fontSize: 13, marginBottom: 4 }}>Omzet kumulatif tahun {year}</div>
+                <div className="muted" style={{ fontSize: 13, marginBottom: 4 }}>Omzet kumulatif tahun {endYear}</div>
                 <div className="serif" style={{ fontWeight: 700, fontSize: 20, marginBottom: 14 }}>{rupiah(taxEstimate.omzet_kumulatif_tahun_ini)}</div>
 
                 <div className="flex between" style={{ padding: '8px 0', borderTop: '1px solid var(--border)', fontSize: 13.5 }}>
-                  <div>Estimasi PPh Final bulan ini</div>
+                  <div>Estimasi PPh Final {BULAN_NAMA[endMonth]} {endYear}</div>
                   <div style={{ fontWeight: 700 }}>{rupiah(taxEstimate.estimasi_pajak_bulan_ini)}</div>
                 </div>
                 <div className="flex between" style={{ padding: '8px 0', borderTop: '1px solid var(--border)', fontSize: 13.5 }}>
-                  <div>Estimasi kumulatif tahun ini</div>
+                  <div>Estimasi kumulatif tahun {endYear}</div>
                   <div style={{ fontWeight: 700 }}>{rupiah(taxEstimate.estimasi_pajak_kumulatif_tahun_ini)}</div>
                 </div>
+
+                {!isSingleMonth && (
+                  <p className="muted" style={{ fontSize: 11.5, marginTop: 10, marginBottom: 0, fontStyle: 'italic' }}>
+                    Estimasi pajak dihitung per bulan, jadi angka di atas hanya untuk {BULAN_NAMA[endMonth]} {endYear} (bulan terakhir periode), bukan untuk seluruh rentang {periodeLabel}.
+                  </p>
+                )}
 
                 <p className="muted" style={{ fontSize: 11.5, marginTop: 14, marginBottom: 0, lineHeight: 1.5 }}>{TAX_DISCLAIMER}</p>
               </div>
