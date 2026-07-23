@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import TopNav from '../components/TopNav';
+import AdminLayout from '../components/AdminLayout';
 import { api } from '../lib/apiClient';
 
 export default function DinkopAggregate() {
@@ -17,8 +17,7 @@ export default function DinkopAggregate() {
   const maxTrend = Math.max(1, ...data.monthly_trend.map((m) => m.umkm_aktif));
 
   return (
-    <div className="page full-h">
-      <TopNav />
+    <AdminLayout>
       <div className="wrap-1180" style={{ paddingTop: 30, paddingBottom: 60 }}>
         <div className="flex" style={{ alignItems: 'baseline', justifyContent: 'space-between', margin: '22px 0 20px', flexWrap: 'wrap', gap: 8 }}>
           <div>
@@ -68,6 +67,6 @@ export default function DinkopAggregate() {
           </div>
         </div>
       </div>
-    </div>
+    </AdminLayout>
   );
 }

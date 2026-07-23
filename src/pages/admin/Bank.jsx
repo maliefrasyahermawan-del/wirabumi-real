@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import TopNav from '../../components/TopNav';
+import AdminLayout from '../../components/AdminLayout';
 import { api } from '../../lib/apiClient';
 import { rupiah, formatDateID } from '../../lib/format';
 
@@ -46,8 +46,7 @@ export default function Bank() {
   for (const a of applications) counts[a.review_status] = (counts[a.review_status] || 0) + 1;
 
   return (
-    <div className="page full-h">
-      <TopNav />
+    <AdminLayout>
       <div className="wrap-1180" style={{ paddingTop: 30, paddingBottom: 60 }}>
         <div className="eyebrow"><span className="eyebrow-dot"></span>DASHBOARD BANK</div>
         <h1 className="page-title md" style={{ marginTop: 8 }}>Pengajuan KUR</h1>
@@ -121,6 +120,6 @@ export default function Bank() {
           ))}
         </div>
       </div>
-    </div>
+    </AdminLayout>
   );
 }

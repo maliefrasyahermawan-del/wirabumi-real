@@ -58,9 +58,18 @@ function SystemIcon() {
   );
 }
 
+function MonitoringIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="3" width="20" height="14" rx="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" />
+    </svg>
+  );
+}
+
 const NAV_ITEMS = {
   government: [
     { to: '/dinkop', label: 'Dashboard', Icon: DashboardIcon },
+    { to: '/admin/monitoring', label: 'Monitoring Aktivitas', Icon: MonitoringIcon },
     { to: '/admin/impact', label: 'Dashboard Dampak', Icon: ImpactIcon },
   ],
   bank_officer: [
@@ -68,6 +77,7 @@ const NAV_ITEMS = {
   ],
   super_admin: [
     { to: '/dinkop', label: 'Dashboard', Icon: DashboardIcon },
+    { to: '/admin/monitoring', label: 'Monitoring Aktivitas', Icon: MonitoringIcon },
     { to: '/admin/impact', label: 'Dashboard Dampak', Icon: ImpactIcon },
     { to: '/bank', label: 'Dashboard Bank', Icon: BankIcon },
     { to: '/admin/pengguna', label: 'Kelola Pengguna', Icon: UsersIcon },
@@ -75,20 +85,32 @@ const NAV_ITEMS = {
   ],
 };
 
+
 export default function AdminLayout({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { profile } = useAuth();
   const role = profile?.role || 'government';
   const items = NAV_ITEMS[role] || [];
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className={`admin-shell ${sidebarOpen ? '' : 'sidebar-collapsed'}`}>
+    <div className={`admin-shell ${sidebarOpen ? 'sidebar-open' : ''}`}>
+      {sidebarOpen && (
+        <div className="admin-sidebar-overlay" onClick={() => setSidebarOpen(false)} />
+      )}
       <aside className="admin-sidebar">
         <div className="admin-sidebar-brand" onClick={() => navigate('/')}>
           <div className="brand-mark small">W</div>
           <span className="admin-sidebar-brand-name">WIRABUMI</span>
+          <button
+            type="button"
+            className="admin-sidebar-close"
+            onClick={(e) => { e.stopPropagation(); setSidebarOpen(false); }}
+            aria-label="Tutup sidebar"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
         </div>
 
         <div className="admin-sidebar-user">
