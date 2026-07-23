@@ -17,6 +17,39 @@ simple rule-based logic, and exactly where AI is and isn't involved - see
 setup and architecture; that file is the canonical feature reference and is
 kept in sync with the app as it grows.
 
+## Quick setup for judges / reviewers
+
+WIRABUMI has no cloud database - everything runs on your own machine, so
+there's a one-time local setup before you can log in. It's about 5 minutes:
+
+1. Install PostgreSQL if you don't have it, and make sure it's running.
+2. Create the database and app role (via `psql` or a GUI like pgAdmin):
+   ```sql
+   CREATE ROLE wirabumi_app WITH LOGIN PASSWORD 'ganti_password_ini';
+   CREATE DATABASE wirabumi OWNER wirabumi_app;
+   ```
+3. Apply the schema (tables + the scoring/KUR SQL functions):
+   ```
+   psql -U wirabumi_app -d wirabumi -f server/schema.sql
+   ```
+4. Copy `.env.example` to `.env` and fill in `DATABASE_URL` (the password
+   from step 2) and `JWT_SECRET` (any random string). `GROQ_API_KEY` is
+   optional - leave it empty and the app still works fully on rule-based
+   fallbacks for the 4 AI features.
+5. `npm install`
+6. Seed 8 ready-to-use test accounts (one for each role) with realistic
+   bookkeeping data, in one command:
+   ```
+   npm run db:seed
+   ```
+   Full list of accounts + passwords is in [`akun_mockup.txt`](akun_mockup.txt)
+   (Indonesian) - covers UMKM Owner, Government, Bank, and Super Admin, so
+   you can see all 4 distinct role dashboards without registering anything
+   by hand.
+7. Start the app - either `start.bat` (Windows, opens an interactive menu),
+   or the two commands in the next section (`npm run server` + `npm run dev`)
+   - then log in with any account from `akun_mockup.txt`.
+
 ## Running the stack locally
 
 You need three things running: PostgreSQL, the API server, and the frontend.
