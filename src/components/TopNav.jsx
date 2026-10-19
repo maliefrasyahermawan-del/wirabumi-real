@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import ThemeToggle from './ThemeToggle';
 import NotificationBell from './NotificationBell';
 import ProfileDropdown from './ProfileDropdown';
+import MobileNav from './MobileNav';
 
 const KEUANGAN_LINKS = [
   { to: '/pembukuan', label: 'Pembukuan', desc: 'Catat penjualan' },
@@ -233,6 +234,8 @@ export default function TopNav({ variant = 'full' }) {
           </div>
         </div>
       </header>
+
+      {user && role === 'umkm_owner' && <MobileNav />}
 
       {/* Admin sidebar - muncul di atas semua halaman untuk admin */}
       {user && isAdmin && (

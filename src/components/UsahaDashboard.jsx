@@ -186,8 +186,8 @@ export default function UsahaDashboard() {
   const bucketTopProducts = activeBucket ? topProductsInRange(data.txns, activeBucket.start, activeBucket.end) : null;
 
   return (
-    <div className="wrap-1180" style={{ paddingTop: 26 }}>
-      <div className="flex" style={{ alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 20, flexWrap: 'wrap', gap: 8 }}>
+    <div className="wrap-1180 mobile-dashboard" style={{ paddingTop: 26 }}>
+      <div className="flex mobile-dashboard-heading" style={{ alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 20, flexWrap: 'wrap', gap: 8 }}>
         <div>
           <div className="muted" style={{ fontSize: 13, fontWeight: 700, marginBottom: 4 }}>Dashboard Usaha</div>
           <h1 className="serif" style={{ fontWeight: 600, fontSize: 28, letterSpacing: '-0.5px', margin: 0 }}>{profile?.business_name || 'Usahaku'}</h1>
@@ -199,7 +199,7 @@ export default function UsahaDashboard() {
         <AiInsightCard endpoint="/insight/umkm" title="AI Insight Usaha" />
       </div>
 
-      <div className="kpi-grid">
+      <div className="kpi-grid mobile-kpi-grid">
         <div className="kpi-card">
           <div className="stat-label">Skor Kelayakan</div>
           <div className="kpi-value" style={{ color: 'var(--blue-dark)' }}>{score.total_score}</div>
@@ -222,7 +222,7 @@ export default function UsahaDashboard() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2.2fr) minmax(220px, 1fr)', gap: 16, marginTop: 16, alignItems: 'start' }}>
+      <div className="mobile-dashboard-actions" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2.2fr) minmax(220px, 1fr)', gap: 16, marginTop: 16, alignItems: 'start' }}>
         {quests && (
           <div className="card-lg">
             <div style={{ fontWeight: 800, fontSize: 13, color: 'var(--text-faint)', letterSpacing: '0.3px', marginBottom: 4 }}>
@@ -323,7 +323,7 @@ export default function UsahaDashboard() {
         )}
       </div>
 
-      <div className="dinkop-grid">
+      <div className="dinkop-grid mobile-dashboard-bottom">
         <div className="card-lg">
           <div style={{ fontWeight: 800, fontSize: 13, color: 'var(--text-faint)', letterSpacing: '0.3px', marginBottom: 18 }}>PRODUK TERLARIS</div>
           {topProducts.length === 0 ? (

@@ -581,3 +581,55 @@ textarea.capture-input:focus { border-color: var(--blue); }
   .steps-strip-inner { grid-template-columns: 1fr !important; }
   .kpi-grid { grid-template-columns: repeat(2, 1fr) !important; }
 }
+
+/* Android-first app shell for BUMIRA. Desktop navigation stays intact above
+   this breakpoint while the same functional routes become thumb-friendly. */
+.mobile-nav { display: none; }
+
+@media (max-width: 720px) {
+  html { background: var(--bg); }
+  body { min-width: 320px; }
+  .page { padding-bottom: 88px; }
+
+  .topnav { position: sticky; top: 0; z-index: 30; background: color-mix(in srgb, var(--surface) 94%, transparent); backdrop-filter: blur(18px); }
+  .topnav-inner { height: 58px; padding: 0 18px; grid-template-columns: 1fr auto; }
+  .topnav-inner .brand-mark { width: 30px; height: 30px; border-radius: 10px; font-size: 15px; }
+  .topnav-inner .brand-name { font-size: 17px; letter-spacing: .8px; }
+  .topnav-inner .brand-badge, .topnav .navlinks, .topnav-toolbar-divider, .topnav .theme-toggle, .topnav .profile-dropdown { display: none; }
+  .topnav-toolbar { background: transparent; padding: 0; }
+  .topnav-actions { gap: 0; }
+
+  .mobile-nav { position: fixed; display: grid; grid-template-columns: repeat(5, 1fr); align-items: end; left: 0; right: 0; bottom: 0; z-index: 50; height: calc(70px + env(safe-area-inset-bottom)); padding: 7px 10px calc(7px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); background: color-mix(in srgb, var(--surface) 96%, transparent); backdrop-filter: blur(18px); box-shadow: 0 -8px 28px rgba(20, 31, 45, .08); }
+  .mobile-nav-item { min-width: 0; appearance: none; border: 0; background: transparent; color: var(--text-faint); display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 4px 1px; font: inherit; font-size: 10px; font-weight: 700; line-height: 1.1; }
+  .mobile-nav-icon { height: 23px; width: 23px; display: grid; place-items: center; }
+  .mobile-nav-icon svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .mobile-nav-item.active { color: var(--blue); }
+  .mobile-nav-item.primary { transform: translateY(-17px); color: var(--white); }
+  .mobile-nav-item.primary .mobile-nav-icon { width: 48px; height: 48px; border-radius: 17px; background: var(--blue); box-shadow: 0 10px 22px rgba(26, 95, 168, .32); }
+  .mobile-nav-item.primary .mobile-nav-icon svg { width: 24px; height: 24px; }
+  .mobile-nav-item.primary span:last-child { color: var(--blue-dark); margin-top: 1px; }
+
+  .wrap-1240, .wrap-1180, .wrap-900, .wrap-940, .wrap-480 { padding-left: 18px; padding-right: 18px; }
+  .wrap-1180 { padding-bottom: 96px; }
+  .card-lg { padding: 18px; border-radius: 16px; }
+  .page-sub { font-size: 14px !important; line-height: 1.55; }
+  .page h1 { font-size: 26px !important; }
+
+  .mobile-dashboard { padding-top: 18px !important; }
+  .mobile-dashboard-heading { align-items: flex-start !important; margin-bottom: 15px !important; }
+  .mobile-dashboard-heading .connected-badge { font-size: 10px; padding: 5px 8px; }
+  .mobile-kpi-grid { display: flex !important; overflow-x: auto; scroll-snap-type: x mandatory; gap: 10px; margin: 0 -18px; padding: 0 18px 5px; scrollbar-width: none; }
+  .mobile-kpi-grid::-webkit-scrollbar { display: none; }
+  .mobile-kpi-grid .kpi-card { min-width: 156px; scroll-snap-align: start; padding: 16px; }
+  .mobile-kpi-grid .kpi-value { font-size: 21px; }
+  .mobile-dashboard-actions, .mobile-dashboard-bottom { grid-template-columns: 1fr !important; }
+  .mobile-dashboard-actions > div:last-child { display: grid !important; grid-template-columns: 1fr 1fr; }
+  .mobile-dashboard-actions > div:last-child > div { grid-column: 1 / -1; }
+  .mobile-dashboard-actions > div:last-child .btn { padding: 10px 8px !important; font-size: 12px !important; }
+  .quest-grid { grid-template-columns: 1fr !important; }
+
+  .table-card { border-radius: 15px; }
+  .mode-tabs { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 3px; }
+  .mode-tab { white-space: nowrap; }
+  .chat-window { border-radius: 16px; }
+}
