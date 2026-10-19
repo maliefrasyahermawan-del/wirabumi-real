@@ -149,12 +149,22 @@ Prioritas terbesar ada pada tiga area bernilai masing-masing 25%:
 
 UI/UX tetap penting: demo harus singkat, dapat dipahami pemilik UMKM, dan mengantarkan pengguna ke nilai utama tanpa banyak klik. Untuk etika, jelaskan data pengguna dipisahkan per akun, akses bank bersifat opt-in, dan AI tidak menjadi pengambil keputusan kredit.
 
+### Keputusan platform: Android mobile-first
+
+BUMIRA akan diposisikan dan didemokan sebagai **mobile app Android**, bukan sebagai produk web desktop. Keputusan ini mengikuti kebiasaan pemilik UMKM yang mencatat penjualan, membaca chat pelanggan, dan memotret bukti transfer dari ponsel.
+
+- Desain utama menggunakan layar ponsel; versi desktop hanya menjadi pendukung pengembangan atau kebutuhan admin.
+- Alur inti harus nyaman dipakai dengan satu tangan: Beranda, Tambah Transaksi, Pembukuan, Insight/Skor, dan Mira.
+- Navigasi utama memakai bottom navigation, tombol aksi utama yang mudah dijangkau ibu jari, serta formulir singkat dengan bahasa sehari-hari.
+- Demo kompetisi perlu memperlihatkan ukuran layar Android, interaksi sentuh, dan alur yang jelas dari transaksi sampai rekomendasi tindakan.
+- Target keluaran akhir adalah APK Android atau aplikasi mobile yang dapat dipasang/didemokan pada perangkat Android, dengan localhost atau backend yang siap digunakan saat final.
+
 ## 7. Scope MVP yang paling aman untuk didemokan
 
 Agar demo 3-5 menit dan live demo 7 menit fokus, gunakan cerita tunggal berikut:
 
-1. Masuk sebagai pemilik UMKM.
-2. Masukkan satu atau beberapa transaksi dari chat informal atau input manual.
+1. Buka BUMIRA di Android dan masuk sebagai pemilik UMKM.
+2. Masukkan satu transaksi dari chat informal, foto bukti, atau input manual.
 3. Tunjukkan transaksi masuk ke pembukuan serta dampaknya terhadap omzet/laporan.
 4. Buka skor kelayakan dan tampilkan faktor yang perlu ditingkatkan.
 5. Buka simulasi KUR dan tunjukkan plafon serta cicilan.
@@ -198,4 +208,6 @@ Jangan menjadikan seluruh fitur sebagai pusat demo. Tekankan satu transformasi u
 ## 10. Ringkasan keputusan untuk BUMIRA
 
 BUMIRA sebaiknya diposisikan bukan sebagai aplikasi "AI untuk UMKM" secara umum, melainkan sebagai **platform kesiapan pembiayaan UMKM yang dimulai dari kebiasaan jualan sehari-hari**. AI adalah akselerator input dan pendamping pemahaman; nilai kompetitif utamanya adalah pembukuan yang lebih mudah, perhitungan yang transparan, dan jalur yang jelas dari transaksi menuju kesiapan KUR.
+
+Keputusan produk saat ini: BUMIRA menggunakan strategi **Android mobile-first**. Seluruh prioritas UI/UX, alur demo, dan penyajian fitur ditujukan untuk pengalaman pemilik UMKM di ponsel.
 
