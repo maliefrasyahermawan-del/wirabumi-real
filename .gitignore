@@ -33,3 +33,8 @@ dist-ssr
 
 server/uploads/avatars/*
 !server/uploads/avatars/.gitkeep
+
+# Local Flutter SDK and transient build logs for the Android BUMIRA app
+bumira_mobile/_tooling/
+bumira_mobile/flutter-*.out
+bumira_mobile/flutter-*.err
