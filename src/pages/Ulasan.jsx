@@ -48,12 +48,12 @@ export default function Ulasan() {
             </div>
             <div>
               <h1 className="serif" style={{ fontSize: 22, fontWeight: 600, margin: 0 }}>Berikan Ulasan</h1>
-              <p className="muted" style={{ fontSize: 13.5, margin: '2px 0 0' }}>Bantu kami membuat WIRABUMI lebih baik.</p>
+              <p className="muted" style={{ fontSize: 13.5, margin: '2px 0 0' }}>Bantu kami membuat BUMIRA lebih baik.</p>
             </div>
           </div>
 
           {sent ? (
-            <div className="alert-ok mt-16">Terima kasih! Ulasanmu sudah kami terima dan akan jadi bahan perbaikan WIRABUMI.</div>
+            <div className="alert-ok mt-16">Terima kasih! Ulasanmu sudah kami terima dan akan jadi bahan perbaikan BUMIRA.</div>
           ) : (
             <form onSubmit={handleSubmit} style={{ marginTop: 22 }}>
               <div className="field">

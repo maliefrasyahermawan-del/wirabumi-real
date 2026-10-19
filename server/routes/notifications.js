@@ -51,8 +51,8 @@ async function ensureNotifications(userId) {
   const lowConfCount = Number(lowConf.rows[0].c);
   if (lowConfCount > 0) {
     const title = lowConfCount === 1
-      ? 'Ada 1 chat yang WIRABUMI kurang yakin bacanya, cek & koreksi manual?'
-      : `Ada ${lowConfCount} chat yang WIRABUMI kurang yakin bacanya, cek & koreksi manual?`;
+      ? 'Ada 1 chat yang BUMIRA kurang yakin bacanya, cek & koreksi manual?'
+      : `Ada ${lowConfCount} chat yang BUMIRA kurang yakin bacanya, cek & koreksi manual?`;
     await upsertNotification(userId, 'low_confidence', `low-confidence-${today}`, title);
   }
 

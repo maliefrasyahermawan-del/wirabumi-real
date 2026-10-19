@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 
 const ThemeContext = createContext(null);
-const STORAGE_KEY = 'wirabumi_theme';
+const STORAGE_KEY = 'bumira_theme';
 
 function getInitialTheme() {
   const stored = localStorage.getItem(STORAGE_KEY);

@@ -99,8 +99,8 @@ export default function AdminLayout({ children }) {
       )}
       <aside className="admin-sidebar">
         <div className="admin-sidebar-brand" onClick={() => navigate('/')}>
-          <div className="brand-mark small">W</div>
-          <span className="admin-sidebar-brand-name">WIRABUMI</span>
+          <div className="brand-mark small">B</div>
+          <span className="admin-sidebar-brand-name">BUMIRA</span>
           <button
             type="button"
             className="admin-sidebar-close"

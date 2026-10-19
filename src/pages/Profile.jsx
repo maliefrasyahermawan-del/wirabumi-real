@@ -102,7 +102,7 @@ export default function Profile() {
             <h1 className="page-title md">{section === 'akun' ? 'Akun' : 'Profil Usaha'}</h1>
             <p className="page-sub">
               {section === 'akun'
-                ? 'Informasi akun yang kamu pakai untuk masuk ke WIRABUMI.'
+                ? 'Informasi akun yang kamu pakai untuk masuk ke BUMIRA.'
                 : 'Informasi ini dipakai untuk berkas KUR dan dashboard Dinkop.'}
             </p>
           </div>

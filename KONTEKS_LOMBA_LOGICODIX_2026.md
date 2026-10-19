@@ -1,6 +1,6 @@
 # LOGICODIX 2026 - Konteks Utama Hackathon
 
-Dokumen ini merangkum ketentuan kompetisi yang relevan untuk persiapan WIRABUMI pada LOGICODIX Hackathon Competition 2026. Dokumen ini adalah ringkasan kerja; apabila terdapat pembaruan dari panitia melalui kanal resmi, pembaruan panitia menjadi acuan utama.
+Dokumen ini merangkum ketentuan kompetisi yang relevan untuk persiapan BUMIRA pada LOGICODIX Hackathon Competition 2026. Dokumen ini adalah ringkasan kerja; apabila terdapat pembaruan dari panitia melalui kanal resmi, pembaruan panitia menjadi acuan utama.
 
 ## 1. Konteks kompetisi
 
@@ -18,9 +18,9 @@ Subtema ini meminta peserta membangun platform atau alat bantu digital yang memb
 - memperluas akses pasar; atau
 - mengoptimalkan manajemen bisnis agar lebih kompetitif di era ekonomi kreatif.
 
-### Kecocokan WIRABUMI
+### Kecocokan BUMIRA
 
-WIRABUMI diposisikan sebagai MVP pendamping digital UMKM yang membantu pemilik usaha mengubah aktivitas usaha harian menjadi bukti kesiapan bisnis:
+BUMIRA diposisikan sebagai MVP pendamping digital UMKM yang membantu pemilik usaha mengubah aktivitas usaha harian menjadi bukti kesiapan bisnis:
 
 ```text
 Pencatatan penjualan dan pengeluaran
@@ -32,7 +32,7 @@ Pencatatan penjualan dan pengeluaran
 Nilai yang perlu ditekankan dalam narasi lomba:
 
 - UMKM yang berjualan lewat chat sering belum memiliki pembukuan yang rapi dan mudah dibaca.
-- WIRABUMI mendigitalisasi pencatatan dari input manual, chat informal, dan foto bukti transfer.
+- BUMIRA mendigitalisasi pencatatan dari input manual, chat informal, dan foto bukti transfer.
 - Data pembukuan diolah menjadi laporan keuangan, indikator kesiapan pembiayaan, dan langkah peningkatan yang dapat ditindaklanjuti.
 - AI membantu ekstraksi/penjelasan data, tetapi skor dan simulasi keuangan tetap dihitung dari aturan serta data usaha, bukan dibentuk bebas oleh AI.
 
@@ -66,12 +66,12 @@ Penggunaan AI diperbolehkan baik dalam proses pengembangan maupun sebagai bagian
 
 ## 4. Tahapan dan jadwal
 
-| Waktu | Tahap | Hal yang perlu dilakukan untuk WIRABUMI |
+| Waktu | Tahap | Hal yang perlu dilakukan untuk BUMIRA |
 |---|---|---|
 | 7 September - 6 Oktober 2026 | Registrasi Batch 1 | Daftar tim bila menggunakan batch pertama. |
 | 7 Oktober - 6 November 2026 | Registrasi Batch 2 | Daftar tim bila menggunakan batch kedua. |
 | 7 November 2026 | Mentoring dan technical meeting penyisihan | Pastikan seluruh anggota mengikuti; gunakan sesi ini untuk memvalidasi problem, scope MVP, serta integrasi AI. |
-| 7-14 November 2026 | Hacking Week | Kembangkan dan rapikan MVP WIRABUMI selama satu minggu. |
+| 7-14 November 2026 | Hacking Week | Kembangkan dan rapikan MVP BUMIRA selama satu minggu. |
 | 14 November 2026 | Last submission | Pastikan repository dan video demo sudah final sebelum tenggat. |
 | 21 November 2026 | Pengumuman finalis | Top 8 tim melaju. |
 | 22 November 2026 | Technical meeting finalis | Siapkan mekanisme demo localhost serta presentasi. |
@@ -139,7 +139,7 @@ Alokasi waktu setiap tim: **15 menit**.
 | Desain & Pengalaman Pengguna (UI/UX) | Kualitas antarmuka, kemudahan penggunaan, dan alur pengguna. | 15% |
 | Prinsip Khusus (Green IT & Ethics) | Efisiensi sumber daya, privasi data, dan transparansi penggunaan AI. | 10% |
 
-### Implikasi strategi untuk WIRABUMI
+### Implikasi strategi untuk BUMIRA
 
 Prioritas terbesar ada pada tiga area bernilai masing-masing 25%:
 
@@ -195,7 +195,7 @@ Jangan menjadikan seluruh fitur sebagai pusat demo. Tekankan satu transformasi u
 - Menggunakan aset, data, atau kode yang tidak dapat dipertanggungjawabkan.
 - Mengabaikan privasi data dan transparansi penggunaan AI.
 
-## 10. Ringkasan keputusan untuk WIRABUMI
+## 10. Ringkasan keputusan untuk BUMIRA
 
-WIRABUMI sebaiknya diposisikan bukan sebagai aplikasi "AI untuk UMKM" secara umum, melainkan sebagai **platform kesiapan pembiayaan UMKM yang dimulai dari kebiasaan jualan sehari-hari**. AI adalah akselerator input dan pendamping pemahaman; nilai kompetitif utamanya adalah pembukuan yang lebih mudah, perhitungan yang transparan, dan jalur yang jelas dari transaksi menuju kesiapan KUR.
+BUMIRA sebaiknya diposisikan bukan sebagai aplikasi "AI untuk UMKM" secara umum, melainkan sebagai **platform kesiapan pembiayaan UMKM yang dimulai dari kebiasaan jualan sehari-hari**. AI adalah akselerator input dan pendamping pemahaman; nilai kompetitif utamanya adalah pembukuan yang lebih mudah, perhitungan yang transparan, dan jalur yang jelas dari transaksi menuju kesiapan KUR.
 

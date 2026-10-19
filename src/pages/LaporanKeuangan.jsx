@@ -222,7 +222,7 @@ export default function LaporanKeuangan() {
     doc.setFont('helvetica', 'italic');
     doc.setFontSize(8);
     doc.setTextColor(140);
-    doc.text('Dibuat otomatis oleh WIRABUMI dari data pembukuan (penjualan) dan pengeluaran yang dicatat pengguna.', 14, y);
+    doc.text('Dibuat otomatis oleh BUMIRA dari data pembukuan (penjualan) dan pengeluaran yang dicatat pengguna.', 14, y);
     y += 4;
     doc.text('Format mengacu pada struktur Laporan Laba Rugi SAK EMKM - bukan laporan yang diaudit/diverifikasi akuntan.', 14, y);
     if (taxEstimate) {

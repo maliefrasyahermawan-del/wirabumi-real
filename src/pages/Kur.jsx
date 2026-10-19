@@ -96,7 +96,7 @@ export default function Kur() {
     doc.text('Paket Dokumen Pengajuan KUR', 14, 20);
     doc.setFontSize(11);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Dibuat oleh WIRABUMI · ${new Date().toLocaleDateString('id-ID')}`, 14, 27);
+    doc.text(`Dibuat oleh BUMIRA · ${new Date().toLocaleDateString('id-ID')}`, 14, 27);
 
     doc.setFontSize(13);
     doc.setFont('helvetica', 'bold');
@@ -161,12 +161,12 @@ export default function Kur() {
       <div className="wrap-900">
         <header className="subheader">
           <div className="brand" onClick={() => navigate('/')}>
-            <div className="brand-mark small">W</div>
-            <span className="brand-name small">WIRABUMI</span>
+            <div className="brand-mark small">B</div>
+            <span className="brand-name small">BUMIRA</span>
           </div>
         </header>
 
-        <div style={{ animation: 'wbFade .5s ease' }}>
+        <div style={{ animation: 'bumiraFade .5s ease' }}>
           <h1 className="page-title md">Berkas KUR-mu</h1>
           <p className="page-sub" style={{ marginBottom: 24 }}>Dihitung dari data pembukuanmu sendiri: omzet 6 bulan terakhir dan skor kelayakan saat ini.</p>
 
@@ -177,12 +177,12 @@ export default function Kur() {
               <div className="kur-icon">📄</div>
               <h2 className="serif" style={{ fontWeight: 600, fontSize: 22, margin: '20px 0 6px' }}>Belum ada data transaksi</h2>
               <p style={{ fontSize: 14.5, color: 'var(--text-muted)', margin: '0 auto 22px', maxWidth: 380, lineHeight: 1.55 }}>
-                Catat dulu transaksi penjualanmu di menu Pembukuan supaya WIRABUMI bisa menghitung plafon KUR yang sesuai.
+                Catat dulu transaksi penjualanmu di menu Pembukuan supaya BUMIRA bisa menghitung plafon KUR yang sesuai.
               </p>
               <button className="btn btn-primary btn-xl" onClick={() => navigate('/pembukuan')}>Ke Pembukuan</button>
             </div>
           ) : (
-            <div style={{ animation: 'wbFade .5s ease' }}>
+            <div style={{ animation: 'bumiraFade .5s ease' }}>
               {generated && <div className="done-flag">✓ Berkas berhasil dibuat &amp; diunduh</div>}
               <div className="doc-grid">
                 <div className="doc-card">

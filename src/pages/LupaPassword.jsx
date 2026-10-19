@@ -42,7 +42,7 @@ export default function LupaPassword() {
     <div className="auth-wrap">
       <div className="wrap-480">
         <div className="brand" style={{ justifyContent: 'center', marginBottom: 20, cursor: 'pointer' }} onClick={() => navigate('/')}>
-          <div className="brand-mark">W</div><span className="brand-name">WIRABUMI</span>
+          <div className="brand-mark">B</div><span className="brand-name">BUMIRA</span>
         </div>
         <div className="auth-card">
           {done ? (

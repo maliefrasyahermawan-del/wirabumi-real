@@ -1,4 +1,4 @@
-// Rule-based Mas Sido answer engine (no AI). Extracted out of Chatbot.jsx so
+// Rule-based Mira answer engine (no AI). Extracted out of Chatbot.jsx so
 // the backend can import it as a fallback for the LLM-backed answer path
 // (server/lib/llmChatbotAnswer.js) - same file, same behavior, no duplicated
 // logic to drift out of sync.
@@ -55,11 +55,11 @@ export function buildAnswer(qRaw, ctx) {
   // generic "what can you do" fallback below so a bare "halo" gets an actual
   // greeting back instead of the capabilities list.
   if (/\bhai\b|\bhalo+\b|\bhallo\b|\bhi\b|\bpagi\b|\bsiang\b|\bsore\b|\bmalam\b/.test(q)) {
-    if (/pagi/.test(q)) return 'Selamat pagi! Aku Mas Sido, asisten keuangan WIRABUMI 👋 Ada yang bisa aku bantu soal usahamu?';
-    if (/siang/.test(q)) return 'Selamat siang! Aku Mas Sido, asisten keuangan WIRABUMI 👋 Ada yang bisa aku bantu soal usahamu?';
-    if (/sore/.test(q)) return 'Selamat sore! Aku Mas Sido, asisten keuangan WIRABUMI 👋 Ada yang bisa aku bantu soal usahamu?';
-    if (/malam/.test(q)) return 'Selamat malam! Aku Mas Sido, asisten keuangan WIRABUMI 👋 Ada yang bisa aku bantu soal usahamu?';
-    return 'Hai! Aku Mas Sido, asisten keuangan WIRABUMI 👋 Ada yang bisa aku bantu soal usahamu?';
+    if (/pagi/.test(q)) return 'Selamat pagi! Aku Mira, asisten keuangan BUMIRA 👋 Ada yang bisa aku bantu soal usahamu?';
+    if (/siang/.test(q)) return 'Selamat siang! Aku Mira, asisten keuangan BUMIRA 👋 Ada yang bisa aku bantu soal usahamu?';
+    if (/sore/.test(q)) return 'Selamat sore! Aku Mira, asisten keuangan BUMIRA 👋 Ada yang bisa aku bantu soal usahamu?';
+    if (/malam/.test(q)) return 'Selamat malam! Aku Mira, asisten keuangan BUMIRA 👋 Ada yang bisa aku bantu soal usahamu?';
+    return 'Hai! Aku Mira, asisten keuangan BUMIRA 👋 Ada yang bisa aku bantu soal usahamu?';
   }
   if (/help|bantu|bisa apa|apa aja/.test(q)) {
     return 'Aku bisa bantu soal: omzet & penjualan, skor kelayakan, simulasi plafon KUR, angsuran bulanan, produk terlaris, dan status legalitas usahamu. Semua dihitung langsung dari data pembukuanmu. Mau mulai dari mana?';

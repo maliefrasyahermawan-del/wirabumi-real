@@ -34,7 +34,7 @@ export default function Impact() {
       <div className="wrap-1180" style={{ paddingTop: 30, paddingBottom: 60 }}>
         <div className="eyebrow"><span className="eyebrow-dot"></span>KHUSUS ADMIN</div>
         <h1 className="page-title md" style={{ marginTop: 8 }}>Dashboard Dampak</h1>
-        <p className="page-sub" style={{ marginBottom: 24 }}>Ringkasan dampak WIRABUMI ke UMKM binaan, dan daftar yang paling perlu ditindaklanjuti.</p>
+        <p className="page-sub" style={{ marginBottom: 24 }}>Ringkasan dampak BUMIRA ke UMKM binaan, dan daftar yang paling perlu ditindaklanjuti.</p>
 
         {!data ? (
           <div className="loading-center"><span className="spinner-sm" style={{ width: 28, height: 28, borderWidth: 3 }}></span></div>

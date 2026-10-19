@@ -1,4 +1,4 @@
-# WIRABUMI
+# BUMIRA
 
 A real (not a demo/mockup) web app for Indonesian UMKM bookkeeping and KUR-loan
 readiness: paste informal sales chat or upload a transfer-confirmation photo,
@@ -9,24 +9,24 @@ Stack: React 19 + Vite frontend, Node/Express API, self-hosted PostgreSQL for
 data and auth - no external cloud database. The only third-party service
 called over the network is Groq (LLM), and only for 4 specific features, each
 with an automatic rule-based fallback if it's unavailable - see
-[AI in WIRABUMI](#ai-in-wirabumi) below.
+[AI in BUMIRA](#ai-in-bumira) below.
 
 For a full, brutally-honest walkthrough of every feature - what's real, what's
 simple rule-based logic, and exactly where AI is and isn't involved - see
-[`fitur_wirabumi.txt`](fitur_wirabumi.txt) (Indonesian). This README covers
+[`fitur_bumira.txt`](fitur_bumira.txt) (Indonesian). This README covers
 setup and architecture; that file is the canonical feature reference and is
 kept in sync with the app as it grows.
 
 ## Quick setup for judges / reviewers
 
-WIRABUMI has no cloud database - everything runs on your own machine. On
+BUMIRA has no cloud database - everything runs on your own machine. On
 Windows, with PostgreSQL already installed, this is genuinely two steps:
 
 1. Make sure PostgreSQL is installed (any recent version) - if you already
    have it, you don't need to touch it further, `start.bat` handles the rest
    below automatically.
 2. `npm install`, then double-click `start.bat` and choose "Nyalakan Website
-   WIRABUMI".
+   BUMIRA".
 
 That single click now automatically: starts the PostgreSQL service if it
 isn't already running, creates `.env` from `.env.example` with a working
@@ -38,11 +38,11 @@ seeded accounts + passwords is in [`akun_mockup.txt`](akun_mockup.txt)
 (Indonesian) - covers UMKM Owner, Government, Bank, and Super Admin, so you
 can see all 4 distinct role dashboards without registering anything by hand.
 
-The one thing `start.bat` cannot do for you is create the `wirabumi_app`
+The one thing `start.bat` cannot do for you is create the `bumira_app`
 database role/database from a totally blank PostgreSQL install (that needs
 one-time superuser access). If it detects that's missing, it prints the
 exact two SQL commands to run once via `psql` or pgAdmin and stops there -
-run those, click "Nyalakan Website WIRABUMI" again, and everything above
+run those, click "Nyalakan Website BUMIRA" again, and everything above
 runs automatically from that point on.
 
 Prefer to do it by hand, or on macOS/Linux? The manual steps are the same
@@ -50,12 +50,12 @@ ones `start.bat` automates:
 
 1. Create the database and app role (via `psql` or a GUI like pgAdmin):
    ```sql
-   CREATE ROLE wirabumi_app WITH LOGIN PASSWORD 'ganti_password_ini';
-   CREATE DATABASE wirabumi OWNER wirabumi_app;
+   CREATE ROLE bumira_app WITH LOGIN PASSWORD 'ganti_password_ini';
+   CREATE DATABASE bumira OWNER bumira_app;
    ```
 2. Apply the schema (tables + the scoring/KUR SQL functions):
    ```
-   psql -U wirabumi_app -d wirabumi -f server/schema.sql
+   psql -U bumira_app -d bumira -f server/schema.sql
    ```
 3. Copy `.env.example` to `.env` and fill in `DATABASE_URL` (the password
    from step 1) and `JWT_SECRET` (any random string). `GROQ_API_KEY` is
@@ -80,7 +80,7 @@ Get-Service postgresql-x64-18
 If it's stopped, start it with `Start-Service postgresql-x64-18` (from an
 elevated PowerShell) or via the Services app.
 
-The app connects to a dedicated `wirabumi` database under the `wirabumi_app`
+The app connects to a dedicated `bumira` database under the `bumira_app`
 role - see `server/schema.sql` for the full schema (tables + the
 `compute_score`/`get_kur_offer` SQL functions) if you ever need to recreate it
 from scratch.
@@ -106,23 +106,23 @@ Runs on `http://localhost:5173`. It talks to the API via `VITE_API_URL` in `.env
 `start.bat` in the project root (after `npm install`) is the recommended way
 to run the app - it does the one-time setup automatically the first time and
 is a quick day-to-day launcher after that. Double-click it (or run
-`wirabumi-launcher.ps1` directly) to get an interactive terminal menu
+`bumira-launcher.ps1` directly) to get an interactive terminal menu
 (arrow keys + Enter):
 
-- **Nyalakan Website Wirabumi** - starts PostgreSQL's service if it isn't
+- **Nyalakan Website BUMIRA** - starts PostgreSQL's service if it isn't
   running, creates `.env` from `.env.example` if missing, applies
   `server/schema.sql` and pending migrations if the database is empty, seeds
   the 8 test accounts, then starts the backend and frontend if they aren't
   already running (checks the ports first, so it won't double-start), waits
   until both are actually reachable, and opens the app in your browser
-  automatically. If the `wirabumi_app` database role doesn't exist yet, it
+  automatically. If the `bumira_app` database role doesn't exist yet, it
   prints the two `CREATE ROLE`/`CREATE DATABASE` commands to run once and
   stops there instead of guessing.
-- **Matikan Website Wirabumi** - stops both processes cleanly, found by the
+- **Matikan Website BUMIRA** - stops both processes cleanly, found by the
   port they're listening on (not a blanket "kill all node processes").
 - **Keluar** - closes the menu without stopping anything.
 
-Logs from each run go to `.wirabumi-run/` (git-ignored). Behind the scenes
+Logs from each run go to `.bumira-run/` (git-ignored). Behind the scenes
 it's still the same `npm run server` + `npm run dev` commands above, plus
 the database bootstrapping described in "Quick setup for judges /
 reviewers" - the only thing it can't do for you is create the PostgreSQL
@@ -173,12 +173,12 @@ All config lives in `.env` (see `.env.example` for the shape):
   action that triggered them.
 - **Scoring & KUR math**: implemented as PostgreSQL functions
   (`compute_score`, `get_kur_offer`) so the same formula backs the per-user
-  Skor/KUR pages, the Mas Sido chatbot, the quest system, and the aggregate
+  Skor/KUR pages, the Mira chatbot, the quest system, and the aggregate
   Dinkop/Impact dashboards. See `server/schema.sql` for the actual formulas.
   These functions are never touched by the LLM - AI only narrates numbers
   that SQL already computed, never computes them itself.
 
-## AI in WIRABUMI
+## AI in BUMIRA
 
 Groq (`llama-3.3-70b-versatile`, via `server/lib/groqClient.js`) is used at 4
 points, each with an automatic rule-based fallback if the call fails, times
@@ -195,7 +195,7 @@ of Groq:
    reads text from an uploaded transfer-confirmation photo; the LLM then
    structures that often-messy OCR text into a transaction. Fallback: the
    original regex parser (`src/lib/receiptParser.js`).
-4. **Mas Sido chatbot** - answers free-form questions about your own business
+4. **Mira chatbot** - answers free-form questions about your own business
    data (score, KUR simulation, revenue, legal-document status), instructed
    to only use the data it's given and say "I don't know" rather than
    guessing. Fallback: the original keyword-matching engine
@@ -204,4 +204,4 @@ of Groq:
 Everywhere AI-assisted output is shown, a badge indicates which path actually
 processed it ("✨ Diproses AI (Groq)" vs "⚙️ Mode cadangan (aturan)"). Full
 detail, including exactly what each feature is and isn't allowed to do, is in
-`fitur_wirabumi.txt`.
+`fitur_bumira.txt`.

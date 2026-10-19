@@ -7,7 +7,7 @@ import { answerWithLLM } from '../lib/llmChatbotAnswer.js';
 const router = Router();
 router.use(requireAuth);
 
-// Mas Sido: try the Groq LLM first (handles real free-form questions instead
+// Mira: try the Groq LLM first (handles real free-form questions instead
 // of a fixed keyword list), fall back to the original rule-based answer
 // engine the instant anything about the LLM call goes wrong.
 router.post('/ask', async (req, res) => {

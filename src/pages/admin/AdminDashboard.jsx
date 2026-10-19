@@ -70,7 +70,7 @@ export default function AdminDashboard() {
       <div className="wrap-1180" style={{ paddingTop: 30, paddingBottom: 60 }}>
         <div className="eyebrow"><span className="eyebrow-dot"></span>PORTAL ADMIN</div>
         <h1 className="page-title md" style={{ marginTop: 8 }}>Dashboard {ROLE_LABELS[role] || 'Admin'}</h1>
-        <p className="page-sub" style={{ marginBottom: 20 }}>Selamat datang di portal admin Wirabumi. Pilih menu dashboard di bawah ini atau melalui sidebar.</p>
+        <p className="page-sub" style={{ marginBottom: 20 }}>Selamat datang di portal admin BUMIRA. Pilih menu dashboard di bawah ini atau melalui sidebar.</p>
 
         <div style={{ marginBottom: 24 }}>
           <AiInsightCard endpoint={insight.endpoint} title={insight.title} />

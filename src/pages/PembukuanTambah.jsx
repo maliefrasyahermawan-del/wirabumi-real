@@ -7,7 +7,7 @@ import { rupiah, formatDateID, todayISO, formatThousands, parseThousands } from 
 
 const STATUS_OPTIONS = ['Lunas', 'DP 50%', 'Belum Lunas'];
 const SATUAN_OPTIONS = ['pcs', 'lusin', 'gros', 'kodi', 'pack', 'box', 'dus', 'kg', 'liter'];
-const SAMPLE_CHAT = "Bu, batik tulis motif Sidomukti yg kemarin msh ada?\nMasih Bu, ready 2 pcs. 320rb/pcs ya\nOke saya ambil 2. Total 640rb kan?\nBetul Bu, 640rb. Sudah saya transfer ya\nSudah masuk Bu, terima kasih barang dikirim sore ini";
+const SAMPLE_CHAT = "Bu, tenun motif Nusantara yg kemarin msh ada?\nMasih Bu, ready 2 pcs. 320rb/pcs ya\nOke saya ambil 2. Total 640rb kan?\nBetul Bu, 640rb. Sudah saya transfer ya\nSudah masuk Bu, terima kasih barang dikirim sore ini";
 
 export default function PembukuanTambah() {
   const { user } = useAuth();
@@ -274,20 +274,20 @@ export default function PembukuanTambah() {
         {mode === 'chat' && (
           <div>
             {!draft ? (
-              <div style={{ animation: 'wbFade .4s ease' }}>
+              <div style={{ animation: 'bumiraFade .4s ease' }}>
                 <p style={{ fontSize: 15, color: 'var(--text-muted)', maxWidth: 640 }}>
-                  Tempel percakapan WhatsApp atau caption Instagram penjualanmu. WIRABUMI akan mencoba mengenali produk, jumlah, dan harga secara otomatis. Kamu tetap bisa mengoreksi hasilnya sebelum disimpan.
+                  Tempel percakapan WhatsApp atau caption Instagram penjualanmu. BUMIRA akan mencoba mengenali produk, jumlah, dan harga secara otomatis. Kamu tetap bisa mengoreksi hasilnya sebelum disimpan.
                 </p>
                 <textarea
                   className="capture-input"
                   value={chatText}
                   onChange={(e) => setChatText(e.target.value)}
-                  placeholder="Contoh:  Bu, batik motif Sidomukti masih ada?  Masih, 320rb/pcs ya…"
+                  placeholder="Contoh:  Bu, tenun motif Nusantara masih ada?  Masih, 320rb/pcs ya…"
                 />
                 <div className="flex between mt-16" style={{ flexWrap: 'wrap', gap: 12 }}>
                   <button className="btn btn-secondary btn-md" onClick={() => setChatText(SAMPLE_CHAT)}>Isi contoh chat</button>
                   <button className="btn btn-primary btn-lg" disabled={!chatText.trim() || parsing} onClick={runParse}>
-                    {parsing ? 'Memproses…' : 'Proses dengan WIRABUMI →'}
+                    {parsing ? 'Memproses…' : 'Proses dengan BUMIRA →'}
                   </button>
                 </div>
               </div>
@@ -307,9 +307,9 @@ export default function PembukuanTambah() {
         {mode === 'photo' && (
           <div>
             {!draft ? (
-              <div style={{ animation: 'wbFade .4s ease' }}>
+              <div style={{ animation: 'bumiraFade .4s ease' }}>
                 <p style={{ fontSize: 15, color: 'var(--text-muted)', maxWidth: 640 }}>
-                  Unggah foto/screenshot bukti transfer bank (mis. konfirmasi m-Transfer BCA/BNI). WIRABUMI membaca teks di gambar itu memakai OCR di browser (tanpa dikirim ke server manapun), lalu mencoba mengenali nominal &amp; keterangannya. Kamu tetap bisa mengoreksi hasilnya sebelum disimpan.
+                  Unggah foto/screenshot bukti transfer bank (mis. konfirmasi m-Transfer BCA/BNI). BUMIRA membaca teks di gambar itu memakai OCR di browser (tanpa dikirim ke server manapun), lalu mencoba mengenali nominal &amp; keterangannya. Kamu tetap bisa mengoreksi hasilnya sebelum disimpan.
                 </p>
                 <div className="card" style={{ marginTop: 16, padding: 20 }}>
                   <input type="file" accept="image/*" onChange={handlePhotoSelect} />
@@ -322,7 +322,7 @@ export default function PembukuanTambah() {
                 <div className="flex between mt-16" style={{ flexWrap: 'wrap', gap: 12 }}>
                   <span className="muted" style={{ fontSize: 13 }}>{ocrBusy ? ocrStatus : 'Format: JPG/PNG, hasil pembacaan bisa dikoreksi sebelum disimpan.'}</span>
                   <button className="btn btn-primary btn-lg" disabled={!photoFile || ocrBusy} onClick={runOcr}>
-                    {ocrBusy ? 'Membaca gambar…' : 'Proses dengan WIRABUMI →'}
+                    {ocrBusy ? 'Membaca gambar…' : 'Proses dengan BUMIRA →'}
                   </button>
                 </div>
               </div>
@@ -351,7 +351,7 @@ export default function PembukuanTambah() {
 
 function DraftReview({ draft, updateDraftRow, importDate, setImportDate, importing, saveDraft, onBack, emptyHint, extra, source }) {
   return (
-    <div style={{ animation: 'wbFade .4s ease' }}>
+    <div style={{ animation: 'bumiraFade .4s ease' }}>
       <div className="flex" style={{ alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
         <div className="done-flag">{draft.length === 0 ? 'Tidak ada transaksi terdeteksi' : `${draft.length} transaksi terdeteksi, periksa & koreksi sebelum disimpan`}</div>
         {source && (

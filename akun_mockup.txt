@@ -1,12 +1,12 @@
 ========================================================
-AKUN MOCKUP / TEST WIRABUMI - SEMUA PERAN
+AKUN MOCKUP / TEST BUMIRA - SEMUA PERAN
 (hanya untuk testing lokal, bukan data produksi)
 ========================================================
 File ini: akun_mockup.txt (di root folder proyek, sejajar dengan
-fitur_wirabumi.txt dan README.md).
+fitur_bumira.txt dan README.md).
 
 CARA TERCEPAT DAPAT SEMUA AKUN INI: cukup jalankan start.bat lalu pilih
-"Nyalakan Website WIRABUMI" - ini otomatis membuat schema database (kalau
+"Nyalakan Website BUMIRA" - ini otomatis membuat schema database (kalau
 belum ada) dan men-seed SEMUA 8 akun di bawah setiap kali dijalankan, jadi
 tidak perlu perintah manual apapun. Kalau mau jalankan seed-nya saja secara
 terpisah (server sudah menyala), perintahnya:
@@ -108,7 +108,7 @@ seed.js, jadi tidak ikut ter-reset kalau db:seed dijalankan.
 
 - Email    : superadmin@gmail.com
   Password : password123
-  Usaha    : Admin WIRABUMI
+  Usaha    : Admin BUMIRA
   Akses    : SEMUANYA - /dinkop, /admin/monitoring, /admin/impact,
              /bank, /admin/pengguna (kelola pengguna, ubah peran akun
              lain), /admin/system (storage, pemakaian LLM, error log).
@@ -126,5 +126,5 @@ CARA CEK CEPAT
 3. Buka http://localhost:5173/masuk
 4. Login pakai salah satu email + password di atas.
 5. Navbar & dashboard yang muncul akan otomatis berbeda sesuai peran
-   akun itu (lihat fitur_wirabumi.txt bagian 17 untuk detail lengkap
+   akun itu (lihat fitur_bumira.txt bagian 17 untuk detail lengkap
    siapa boleh lihat apa).

@@ -1,4 +1,4 @@
-// Makes sure the 'wirabumi' database is reachable and has the base schema
+// Makes sure the 'bumira' database is reachable and has the base schema
 // (tables + compute_score/get_kur_offer functions) applied, so db:seed and
 // the app itself can run immediately after. Safe to run every time - only
 // applies schema.sql if the 'users' table doesn't exist yet.

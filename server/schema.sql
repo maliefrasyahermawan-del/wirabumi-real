@@ -1,4 +1,4 @@
--- WIRABUMI local schema (self-hosted Postgres, replaces the Supabase schema).
+-- BUMIRA local schema (self-hosted Postgres, replaces the Supabase schema).
 -- No RLS here - the Node/Express API is the only thing that talks to this
 -- database, and it scopes every query to the authenticated user itself.
 

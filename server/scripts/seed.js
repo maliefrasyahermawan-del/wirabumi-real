@@ -113,7 +113,7 @@ const umkmData = [
     },
     txns: makeTxns({
       products: [
-        'Batik Tulis Motif Sidomukti', 'Batik Cap Motif Kawung', 'Batik Printing Hem',
+        'Kriya Tenun Motif Nusantara', 'Batik Cap Motif Kawung', 'Batik Printing Hem',
         'Kain Batik Meteran', 'Selendang Batik', 'Daster Batik', 'Sarung Batik',
         'Batik Tulis Motif Parang', 'Set Batik Couple',
       ],
@@ -121,7 +121,7 @@ const umkmData = [
       satuan: 'pcs',
       pelanggan: [
         'Bu Hartini', 'Pak Slamet', 'Bu Endang', 'Pak Rudi', 'Bu Wati',
-        'Toko Pratama', 'CV Solo Craft', 'Bu Retno', 'Pak Hendra',
+        'Toko Pratama', 'CV Kriya Nusantara', 'Bu Retno', 'Pak Hendra',
       ],
       startDay: 900,    // mulai ~2.5 tahun lalu
       txPerWeek: 14,    // ramai, ~14 transaksi/minggu
@@ -276,8 +276,8 @@ const umkmData = [
         products, prices,
         satuan: 'paket',
         pelanggan: [
-          'PT Sinar Mandiri', 'CV Berkah Jaya', 'Dinas Pendidikan Solo',
-          'Bu Hendri', 'Pak Wahyu', 'SMAN 5 Solo', 'Klinik Sehat Bersama', 'Bu Dewi',
+          'PT Sinar Mandiri', 'CV Berkah Jaya', 'Dinas Koperasi Kota',
+          'Bu Hendri', 'Pak Wahyu', 'Koperasi Sekolah', 'Klinik Sehat Bersama', 'Bu Dewi',
         ],
         startDay: 210,   // mulai ~7 bulan lalu di tahun ini
         txPerWeek: 10,   // cukup aktif
@@ -363,14 +363,14 @@ const mockUsers = [
     email: 'superadmin@gmail.com',
     password: 'password123',
     role: 'super_admin',
-    business_name: 'Admin WIRABUMI',
+    business_name: 'Admin BUMIRA',
   },
 ];
 
 // ─── Seed Utama ───────────────────────────────────────────────────────────────
 
 async function seed() {
-  console.log('🌱 Starting WIRABUMI database seeder...\n');
+  console.log('🌱 Starting BUMIRA database seeder...\n');
   const client = await pool.connect();
 
   try {

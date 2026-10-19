@@ -12,8 +12,8 @@ dist
 dist-ssr
 *.local
 
-# start.bat / wirabumi-launcher.ps1 runtime output
-.wirabumi-run/
+# start.bat / bumira-launcher.ps1 runtime output
+.bumira-run/
 
 # Editor directories and files
 .vscode/*

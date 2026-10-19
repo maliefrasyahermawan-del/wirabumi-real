@@ -84,8 +84,8 @@ function AdminSidebar({ open, onClose, role, profile }) {
       <aside className={`admin-sidebar topnav-sidebar ${open ? 'sidebar-active' : ''}`}>
         {/* Brand + close */}
         <div className="admin-sidebar-brand" onClick={() => { navigate('/'); onClose(); }}>
-          <div className="brand-mark small">W</div>
-          <span className="admin-sidebar-brand-name">WIRABUMI</span>
+          <div className="brand-mark small">B</div>
+          <span className="admin-sidebar-brand-name">BUMIRA</span>
           <button
             type="button"
             className="admin-sidebar-close"
@@ -172,9 +172,9 @@ export default function TopNav({ variant = 'full' }) {
             )}
 
             <div className="brand" onClick={() => navigate('/')}>
-              <div className={variant === 'compact' ? 'brand-mark small' : 'brand-mark'}>W</div>
-              <span className={variant === 'compact' ? 'brand-name small' : 'brand-name'}>WIRABUMI</span>
-              {variant === 'full' && <span className="brand-badge">SOLO RAYA</span>}
+              <div className={variant === 'compact' ? 'brand-mark small' : 'brand-mark'}>B</div>
+              <span className={variant === 'compact' ? 'brand-name small' : 'brand-name'}>BUMIRA</span>
+              {variant === 'full' && <span className="brand-badge">INDONESIA</span>}
             </div>
           </div>
 
@@ -184,7 +184,7 @@ export default function TopNav({ variant = 'full' }) {
               <button className={`navlink ${location.pathname === '/' ? 'current' : ''}`} onClick={() => navigate('/')}>Beranda</button>
               <button className={`navlink ${location.pathname === '/cara-kerja' ? 'current' : ''}`} onClick={() => navigate('/cara-kerja')}>Cara Kerja</button>
               <KeuanganDropdown current={location.pathname} />
-              <button className={`navlink ${location.pathname === '/asisten' ? 'current' : ''}`} onClick={() => navigate('/asisten')}>Mas Sido</button>
+              <button className={`navlink ${location.pathname === '/asisten' ? 'current' : ''}`} onClick={() => navigate('/asisten')}>Mira</button>
             </nav>
           )}
 

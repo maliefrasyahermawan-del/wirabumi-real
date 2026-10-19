@@ -24,9 +24,9 @@ export default function LandingAdmin() {
       <main className="hero-main" style={{ backgroundImage: "url('/umkm-hero.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <div className="hero-main-overlay" />
         <div className="wrap-1240 hero-grid" style={{ position: 'relative', zIndex: 2 }}>
-          <div style={{ animation: 'wbFade .5s ease' }}>
+          <div style={{ animation: 'bumiraFade .5s ease' }}>
             <div className="eyebrow eyebrow-light"><span className="eyebrow-dot"></span>PORTAL ADMIN & PEMERINTAH</div>
-            <h1 className="hero-title hero-title-light">Pantau dan Kelola<br />UMKM Solo Raya</h1>
+            <h1 className="hero-title hero-title-light">Pantau dan Kelola<br />UMKM Indonesia</h1>
             <p className="hero-sub hero-sub-light">Satu pintu untuk memonitor data, laporan, dan pengajuan KUR UMKM.</p>
             <div className="hero-ctas">
               <button className="btn btn-primary btn-md" onClick={goStart}>{user ? 'Buka Dashboard' : 'Masuk'}</button>
@@ -41,7 +41,7 @@ export default function LandingAdmin() {
             </div>
           </div>
 
-          <div className="hero-card" style={{ animation: 'wbFade .5s .1s ease' }}>
+          <div className="hero-card" style={{ animation: 'bumiraFade .5s .1s ease' }}>
             <div className="hero-card-head">
               <span className="hero-card-label">CONTOH: BUMBU &amp; IKAN ASIN</span>
               <span className="hero-card-badge">Skor 72</span>
@@ -49,7 +49,7 @@ export default function LandingAdmin() {
             <div className="hero-chat-bubble">Bu, bumbu soto &amp; ikan asin masih ada? mau 2 bungkus</div>
             <div className="hero-chat-bubble">Masih Bu, totalnya 45rb ya</div>
             <div className="hero-chat-bubble">Oke sudah tak transfer 45rb lunas 🙏</div>
-            <div className="hero-reading"><span className="spinner-sm"></span>WIRABUMI membaca…</div>
+            <div className="hero-reading"><span className="spinner-sm"></span>BUMIRA membaca…</div>
             <div className="hero-fields">
               <div className="hero-field"><div className="hero-field-label">Produk</div><div className="hero-field-val">Bumbu &amp; Ikan Asin</div></div>
               <div className="hero-field"><div className="hero-field-label">Jumlah</div><div className="hero-field-val">2 bungkus</div></div>

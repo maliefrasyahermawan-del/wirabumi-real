@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'SilentlyContinue'
 $ProjectRoot = $PSScriptRoot
-$LogDir = Join-Path $ProjectRoot '.wirabumi-run'
+$LogDir = Join-Path $ProjectRoot '.bumira-run'
 if (-not (Test-Path $LogDir)) { New-Item -ItemType Directory -Path $LogDir | Out-Null }
 
 $BackendPort = 4001
@@ -18,8 +18,8 @@ function Show-Banner {
   Write-Host ""
   Write-Host "  +$border+" -ForegroundColor Cyan
   Write-Host ("  |" + (" " * $width) + "|") -ForegroundColor Cyan
-  $title = "W I R A B U M I"
-  $sub = "Pembukuan & Kesiapan KUR untuk UMKM Solo Raya"
+  $title = "B U M I R A"
+  $sub = "Pembukuan & Kesiapan KUR untuk UMKM Indonesia"
   $titlePad = [math]::Floor(($width - $title.Length) / 2)
   $subPad = [math]::Floor(($width - $sub.Length) / 2)
   Write-Host ("  |" + (" " * $titlePad) + $title + (" " * ($width - $titlePad - $title.Length)) + "|") -ForegroundColor White
@@ -64,14 +64,14 @@ function Wait-ForPort($port, $label, $timeoutMs = 15000) {
     Write-Host "     $label aktif di http://localhost:$port" -ForegroundColor Green
     return $true
   } else {
-    Write-Host "     $label GAGAL menyala (timeout). Cek log di folder .wirabumi-run" -ForegroundColor Red
+    Write-Host "     $label GAGAL menyala (timeout). Cek log di folder .bumira-run" -ForegroundColor Red
     return $false
   }
 }
 
-function Start-Wirabumi {
+function Start-BUMIRA {
   Write-Host ""
-  Write-Host "  Menyalakan Website WIRABUMI..." -ForegroundColor Yellow
+  Write-Host "  Menyalakan Website BUMIRA..." -ForegroundColor Yellow
   Write-Host ""
 
   Write-Host "  -> Memeriksa PostgreSQL (port $PgPort)..." -ForegroundColor DarkGray
@@ -108,14 +108,14 @@ function Start-Wirabumi {
     if (-not (Test-Path $envPath)) {
       Write-Host "  -> File .env belum ada, membuat otomatis dari .env.example..." -ForegroundColor DarkGray
       $envExample = Get-Content (Join-Path $ProjectRoot '.env.example') -Raw
-      $devPassword = 'wirabumi_dev_only'
+      $devPassword = 'bumira_dev_only'
       $jwtSecret = ([guid]::NewGuid().ToString('N')) + ([guid]::NewGuid().ToString('N'))
       $envContent = ($envExample -replace 'CHANGE_ME', $devPassword) -replace 'JWT_SECRET=', "JWT_SECRET=$jwtSecret"
       Set-Content -Path $envPath -Value $envContent -Encoding utf8 -NoNewline
       Write-Host "     .env dibuat (password database default: $devPassword)." -ForegroundColor Green
     }
 
-    Write-Host "  -> Memeriksa struktur database 'wirabumi'..." -ForegroundColor DarkGray
+    Write-Host "  -> Memeriksa struktur database 'bumira'..." -ForegroundColor DarkGray
     & node (Join-Path $ProjectRoot 'server\scripts\ensure-db.js')
     if ($LASTEXITCODE -eq 0) {
       Write-Host "     Schema database siap." -ForegroundColor Green
@@ -128,9 +128,9 @@ function Start-Wirabumi {
       $dbReady = $true
     } else {
       Write-Host ""
-      Write-Host "     Database/role 'wirabumi_app' belum ada di PostgreSQL. Jalankan sekali (lewat psql):" -ForegroundColor Red
-      Write-Host "       CREATE ROLE wirabumi_app WITH LOGIN PASSWORD '<sesuai DATABASE_URL di .env>';" -ForegroundColor Yellow
-      Write-Host "       CREATE DATABASE wirabumi OWNER wirabumi_app;" -ForegroundColor Yellow
+      Write-Host "     Database/role 'bumira_app' belum ada di PostgreSQL. Jalankan sekali (lewat psql):" -ForegroundColor Red
+      Write-Host "       CREATE ROLE bumira_app WITH LOGIN PASSWORD '<sesuai DATABASE_URL di .env>';" -ForegroundColor Yellow
+      Write-Host "       CREATE DATABASE bumira OWNER bumira_app;" -ForegroundColor Yellow
       Write-Host "     Detail lengkap: README.md bagian 'Quick setup for judges / reviewers'." -ForegroundColor DarkGray
     }
   } else {
@@ -181,9 +181,9 @@ function Start-Wirabumi {
   [void][System.Console]::ReadKey($true)
 }
 
-function Stop-Wirabumi {
+function Stop-BUMIRA {
   Write-Host ""
-  Write-Host "  Mematikan Website WIRABUMI..." -ForegroundColor Yellow
+  Write-Host "  Mematikan Website BUMIRA..." -ForegroundColor Yellow
   Write-Host ""
   $stoppedAny = $false
 
@@ -216,7 +216,7 @@ function Stop-Wirabumi {
   [void][System.Console]::ReadKey($true)
 }
 
-$options = @('Nyalakan Website WIRABUMI', 'Matikan Website WIRABUMI', 'Keluar')
+$options = @('Nyalakan Website BUMIRA', 'Matikan Website BUMIRA', 'Keluar')
 $selected = 0
 Show-Menu $options $selected
 
@@ -227,8 +227,8 @@ while ($true) {
     40 { if ($selected -lt $options.Count - 1) { $selected++ }; Show-Menu $options $selected }
     13 {
       switch ($selected) {
-        0 { Start-Wirabumi }
-        1 { Stop-Wirabumi }
+        0 { Start-BUMIRA }
+        1 { Stop-BUMIRA }
         2 { Write-Host ""; Write-Host "  Sampai jumpa!" -ForegroundColor Cyan; Write-Host ""; Start-Sleep -Milliseconds 500; exit }
       }
       Show-Menu $options $selected

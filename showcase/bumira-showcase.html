@@ -1,5 +1,5 @@
 <meta charset="UTF-8" />
-<title>WIRABUMI - Showcase Interaktif</title>
+<title>BUMIRA - Showcase Interaktif</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
   /* ---------- design tokens ---------- */
@@ -368,16 +368,16 @@
 <header class="topnav">
   <div class="topnav-inner">
     <div class="brand" onclick="goScreen('beranda')">
-      <div class="brand-mark">W</div>
-      <span class="brand-name">WIRABUMI</span>
-      <span class="brand-badge">SOLO RAYA</span>
+      <div class="brand-mark">B</div>
+      <span class="brand-name">BUMIRA</span>
+      <span class="brand-badge">INDONESIA</span>
     </div>
     <nav class="navlinks">
       <button class="navlink" data-screen="dashboard" onclick="goScreen('dashboard')">Dashboard</button>
       <button class="navlink" data-screen="beranda" onclick="goScreen('beranda')">Beranda</button>
       <button class="navlink" data-screen="pembukuan" onclick="goScreen('pembukuan')">Pembukuan</button>
       <button class="navlink" data-screen="kur" onclick="goScreen('kur')">Skor &amp; KUR</button>
-      <button class="navlink" data-screen="sido" onclick="goScreen('sido')">Mas Sido</button>
+      <button class="navlink" data-screen="mira" onclick="goScreen('mira')">Mira</button>
     </nav>
     <div class="topnav-actions">
       <span class="demo-pill">MODE DEMO · OFFLINE</span>
@@ -398,7 +398,7 @@
 
 <script>
 /* =====================================================================
-   WIRABUMI - standalone interactive showcase
+   BUMIRA - standalone interactive showcase
    Semua angka dihitung live dari data contoh di bawah, memakai rumus
    yang sama persis dengan compute_score() / get_kur_offer() di aplikasi asli.
    Tidak ada koneksi keluar - seluruhnya berjalan di file ini saja.
@@ -416,7 +416,7 @@ const state = {
 };
 
 const PRODUCTS = [
-  { name: 'Batik Tulis Sidomukti', harga: 250000 },
+  { name: 'Kriya Tenun Nusantara', harga: 250000 },
   { name: 'Batik Cap Truntum', harga: 120000 },
   { name: 'Selendang Batik', harga: 75000 },
   { name: 'Sarung Batik', harga: 95000 },
@@ -464,7 +464,7 @@ function seed(){
   notifications = [
     { id: 1, type: 'capture_daily', title: `2 transaksi baru terdeteksi hari ini`, created: new Date(Date.now()-3*3600e3), read: false },
     { id: 2, type: 'monthly_recap', title: 'Pembukuan bulan lalu selesai disusun - cek ringkasannya', created: new Date(Date.now()-2*86400e3), read: false },
-    { id: 3, type: 'low_confidence', title: 'Ada 1 chat yang WIRABUMI kurang yakin bacanya - cek & koreksi manual?', created: new Date(Date.now()-4*86400e3), read: true },
+    { id: 3, type: 'low_confidence', title: 'Ada 1 chat yang BUMIRA kurang yakin bacanya - cek & koreksi manual?', created: new Date(Date.now()-4*86400e3), read: true },
   ];
 }
 seed();
@@ -752,23 +752,23 @@ function render(){
   else if (state.screen==='dashboard') app.innerHTML = renderDashboard();
   else if (state.screen==='pembukuan') app.innerHTML = renderPembukuan();
   else if (state.screen==='kur') app.innerHTML = renderKur();
-  else if (state.screen==='sido') app.innerHTML = renderSido();
+  else if (state.screen==='mira') app.innerHTML = renderMira();
   else if (state.screen==='profil') app.innerHTML = renderProfil();
 
   if (state.screen==='pembukuan') wirePembukuan();
-  if (state.screen==='sido') wireSido();
+  if (state.screen==='mira') wireMira();
 }
 
 function renderBeranda(){
   return `
   <div class="screen">
     <section class="hero">
-      <span class="eyebrow">Untuk UMKM Solo Raya</span>
-      <h1>Usahamu Laku Tiap Hari, Tapi <b>nggak punya "bukti" buat bank?</b><br/>WIRABUMI ubah itu tanpa kamu ubah cara jualan.</h1>
-      <p>Catat transaksi seperti biasa, WIRABUMI merapikannya jadi skor kelayakan dan simulasi KUR yang bank percaya.</p>
+      <span class="eyebrow">Untuk UMKM Indonesia</span>
+      <h1>Usahamu Laku Tiap Hari, Tapi <b>nggak punya "bukti" buat bank?</b><br/>BUMIRA ubah itu tanpa kamu ubah cara jualan.</h1>
+      <p>Catat transaksi seperti biasa, BUMIRA merapikannya jadi skor kelayakan dan simulasi KUR yang bank percaya.</p>
       <div class="hero-ctas">
         <button class="btn btn-primary" onclick="goScreen('dashboard')">Lihat Dashboard →</button>
-        <button class="btn btn-ghost" onclick="goScreen('sido')">Coba Mas Sido</button>
+        <button class="btn btn-ghost" onclick="goScreen('mira')">Coba Mira</button>
       </div>
       <div class="hero-stats">
         <div class="hero-stat"><b>2.400+</b><span>UMKM TERHUBUNG</span></div>
@@ -790,7 +790,7 @@ function renderDashboard(){
   return `
   <div class="screen">
     <div class="page-head">
-      <div><h2>Dashboard Usaha</h2><div class="sub">Batik Kliwon Jaya · Tekstil &amp; Batik · Pasar Kliwon, Solo</div></div>
+      <div><h2>Dashboard Usaha</h2><div class="sub">Batik Kliwon Jaya · Tekstil &amp; Batik · Sentra Kreatif Indonesia</div></div>
       <span class="live-pill">● Data real dari pembukuan (simulasi)</span>
     </div>
 
@@ -1002,42 +1002,42 @@ function renderKur(){
 }
 function setTenor(t){ state.tenor = t; render(); }
 
-/* ---------------- mas sido ---------------- */
-function renderSido(){
+/* ---------------- mira ---------------- */
+function renderMira(){
   if (state.chatLog.length===0){
-    state.chatLog.push({ role:'bot', text:`Halo, aku Mas Sido 👋 - namanya dari "sido dadi" (Jawa: jadi kesampaian). Tugasku nemenin pembukuanmu sampai beneran naik kelas. Coba tanya soal skor, omzet, laba, KUR, legalitas, atau pelanggan.` });
+    state.chatLog.push({ role:'bot', text:`Halo, aku Mira 👋 Aku asisten usaha BUMIRA yang membantu membaca data pembukuan dan menentukan langkah berikutnya. Coba tanya soal skor, omzet, laba, KUR, legalitas, atau pelanggan.` });
   }
   return `
   <div class="screen">
     <div class="chat-shell card">
-      <div class="chat-head"><div class="chat-avatar">S</div><div><h3>Mas Sido</h3><p>Asisten pembukuan WIRABUMI</p></div></div>
+      <div class="chat-head"><div class="chat-avatar">M</div><div><h3>Mira</h3><p>Asisten usaha BUMIRA</p></div></div>
       <div class="chat-body" id="chatBody">${state.chatLog.map(m=>`<div class="bubble ${m.role}">${m.text}</div>`).join('')}</div>
       <div class="chips">
-        <button class="chip-btn" onclick="askSido('Berapa skorku sekarang?')">Skorku berapa?</button>
-        <button class="chip-btn" onclick="askSido('Omzet bulan ini berapa?')">Omzet bulan ini</button>
-        <button class="chip-btn" onclick="askSido('Aku bisa pinjam KUR berapa?')">Simulasi KUR</button>
-        <button class="chip-btn" onclick="askSido('Legalitasku gimana?')">Cek legalitas</button>
+        <button class="chip-btn" onclick="askMira('Berapa skorku sekarang?')">Skorku berapa?</button>
+        <button class="chip-btn" onclick="askMira('Omzet bulan ini berapa?')">Omzet bulan ini</button>
+        <button class="chip-btn" onclick="askMira('Aku bisa pinjam KUR berapa?')">Simulasi KUR</button>
+        <button class="chip-btn" onclick="askMira('Legalitasku gimana?')">Cek legalitas</button>
       </div>
       <div class="chat-input-row">
-        <input id="sidoInput" placeholder="Tanya Mas Sido..." onkeydown="if(event.key==='Enter') sendSido();"/>
-        <button class="send-btn" onclick="sendSido()">Kirim</button>
+        <input id="miraInput" placeholder="Tanya Mira..." onkeydown="if(event.key==='Enter') sendMira();"/>
+        <button class="send-btn" onclick="sendMira()">Kirim</button>
       </div>
     </div>
   </div>`;
 }
-function wireSido(){ const body=document.getElementById('chatBody'); if (body) body.scrollTop = body.scrollHeight; }
-function sendSido(){
-  const input = document.getElementById('sidoInput');
+function wireMira(){ const body=document.getElementById('chatBody'); if (body) body.scrollTop = body.scrollHeight; }
+function sendMira(){
+  const input = document.getElementById('miraInput');
   const text = input.value.trim(); if (!text) return;
   input.value = '';
-  askSido(text);
+  askMira(text);
 }
-function askSido(text){
+function askMira(text){
   state.chatLog.push({ role:'user', text });
-  state.chatLog.push({ role:'bot', text: answerSido(text) });
+  state.chatLog.push({ role:'bot', text: answerMira(text) });
   render();
 }
-function answerSido(q){
+function answerMira(q){
   const s = snapshot();
   const t = q.toLowerCase();
   if (t.includes('skor') || t.includes('kelayakan')){
@@ -1070,7 +1070,7 @@ function renderProfil(){
   <div class="screen">
     <div class="card profile-head">
       <div class="profile-avatar">B</div>
-      <div><h2>Batik Kliwon Jaya</h2><p>Tekstil &amp; Batik · Pasar Kliwon, Solo · Bergabung sejak 90 hari lalu (simulasi)</p></div>
+      <div><h2>Batik Kliwon Jaya</h2><p>Tekstil &amp; Batik · Sentra Kreatif Indonesia · Bergabung sejak 90 hari lalu (simulasi)</p></div>
     </div>
     <div class="section-title"><h3>Lencana (${s.badges.filter(b=>b.earned).length}/${s.badges.length})</h3></div>
     <div class="badge-grid">

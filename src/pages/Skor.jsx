@@ -29,12 +29,12 @@ export default function Skor() {
       <div className="wrap-900">
         <header className="subheader">
           <div className="brand" onClick={() => navigate('/')}>
-            <div className="brand-mark small">W</div>
-            <span className="brand-name small">WIRABUMI</span>
+            <div className="brand-mark small">B</div>
+            <span className="brand-name small">BUMIRA</span>
           </div>
         </header>
 
-        <div className="score-panel" style={{ animation: 'wbFade .5s ease' }}>
+        <div className="score-panel" style={{ animation: 'bumiraFade .5s ease' }}>
           <div className="center-text">
             <div className="score-ring" style={{ background: `conic-gradient(var(--blue) 0 ${conicDeg}deg, var(--blue-light) ${conicDeg}deg 360deg)` }}>
               <div className="score-ring-inner">

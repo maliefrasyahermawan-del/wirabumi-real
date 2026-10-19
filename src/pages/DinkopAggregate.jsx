@@ -22,7 +22,7 @@ export default function DinkopAggregate() {
       <div className="wrap-1180" style={{ paddingTop: 30, paddingBottom: 60 }}>
         <div className="flex" style={{ alignItems: 'baseline', justifyContent: 'space-between', margin: '22px 0 20px', flexWrap: 'wrap', gap: 8 }}>
           <div>
-            <div className="muted" style={{ fontSize: 13, fontWeight: 700, marginBottom: 4 }}>Dashboard Dinkop UKM Perindustrian · Solo Raya</div>
+            <div className="muted" style={{ fontSize: 13, fontWeight: 700, marginBottom: 4 }}>Dashboard Dinkop UKM Perindustrian · Indonesia</div>
             <h1 className="serif" style={{ fontWeight: 600, fontSize: 28, letterSpacing: '-0.5px', margin: 0 }}>Persebaran Kelayakan UMKM</h1>
           </div>
           <span className="muted" style={{ fontSize: 13, fontWeight: 600 }}>Data agregat real-time · tanpa data individu</span>

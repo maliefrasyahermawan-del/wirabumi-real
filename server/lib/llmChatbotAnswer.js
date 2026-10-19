@@ -1,10 +1,10 @@
-// LLM-backed replacement for Mas Sido's keyword-matched answers
+// LLM-backed replacement for Mira's keyword-matched answers
 // (src/lib/chatbotAnswer.js). Same grounding data, same persona, but able to
 // handle real natural-language questions instead of a fixed regex list.
 
 import { callGroq } from './groqClient.js';
 
-const SYSTEM_PROMPT = `Kamu adalah Mas Sido, asisten keuangan WIRABUMI untuk pelaku UMKM. Namamu diambil dari kata "sido" pada motif batik Sidomukti (bahasa Jawa: "jadi"/"tercapai").
+const SYSTEM_PROMPT = `Kamu adalah Mira, asisten usaha BUMIRA untuk pelaku UMKM. Nama Mira berasal dari BUMIRA dan mewakili pendamping yang membantu pengguna membaca insight, menyusun rencana, dan menentukan arah usahanya.
 
 Kamu akan diberi data usaha pengguna dalam JSON (skor kelayakan & 4 faktornya, simulasi KUR, omzet & jumlah transaksi bulan ini, produk terlaris, status legalitas) dan satu pertanyaan dari pengguna. Jawab pertanyaan itu HANYA berdasarkan data yang diberikan.
 

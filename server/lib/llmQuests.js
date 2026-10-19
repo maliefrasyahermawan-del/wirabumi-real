@@ -11,7 +11,7 @@ import { callGroq, extractJson } from './groqClient.js';
 export async function personalizeQuests(profile, quests) {
   if (!quests || quests.length === 0) return quests;
 
-  const system = `Kamu adalah asisten AI untuk aplikasi WIRABUMI (pencatatan keuangan UMKM).
+  const system = `Kamu adalah asisten AI untuk aplikasi BUMIRA (pencatatan keuangan UMKM).
 Tugasmu adalah mempersonalisasi teks rekomendasi langkah (quests) untuk UMKM.
 Ubah 'title' (judul) dan 'syarat' (penjelasan) agar terasa sangat personal dan relevan dengan kategori usaha mereka, tapi TETAP mempertahankan inti instruksinya.
 

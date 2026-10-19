@@ -10,31 +10,31 @@ export default function Tentang() {
     <div className="page full-h">
       <TopNav />
       <div className="wrap-940" style={{ paddingTop: 40, paddingBottom: 70 }}>
-        <div className="eyebrow"><span className="eyebrow-dot"></span>TENTANG WIRABUMI</div>
+        <div className="eyebrow"><span className="eyebrow-dot"></span>TENTANG BUMIRA</div>
         <h1 className="serif" style={{ fontWeight: 600, fontSize: 36, letterSpacing: '-0.6px', margin: '16px 0 0' }}>
-          Jualan yang sudah jalan, layak diakui bank.
+          Kenali usaha. Tentukan arah.
         </h1>
         <p className="page-sub" style={{ fontSize: 17, maxWidth: 'none', marginTop: 16 }}>
-          WIRABUMI adalah aplikasi pembukuan dan kesiapan pengajuan KUR untuk pelaku UMKM
-          di kawasan Solo Raya, dibangun untuk pedagang yang jualannya sudah jalan lewat
-          chat WhatsApp, tapi belum punya bentuk yang bisa "dibaca" oleh bank.
+          BUMIRA adalah pendamping pertumbuhan dan kesiapan pembiayaan untuk pelaku UMKM
+          di seluruh Indonesia. BUMIRA mengubah aktivitas usaha sehari-hari menjadi catatan,
+          insight, dan langkah yang lebih mudah dipahami pemilik usaha maupun mitra pembiayaan.
         </p>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 28, marginTop: 40 }}>
           <section>
-            <h2 className="serif" style={{ fontSize: 22, fontWeight: 600, margin: 0 }}>Asal nama WIRABUMI</h2>
+            <h2 className="serif" style={{ fontSize: 22, fontWeight: 600, margin: 0 }}>Asal nama BUMIRA</h2>
             <p style={{ fontSize: 15.5, lineHeight: 1.75, color: 'var(--text-muted)', marginTop: 10 }}>
-              WIRABUMI singkatan dari Wirausaha Bumi Solo Raya. "Wira" diambil dari kata
-              wirausaha, dan "Bumi" merujuk pada wilayah atau tanah Solo Raya. Namanya sendiri
-              sudah nyambung dengan filosofi produknya: platform untuk para wirausaha (pelaku
-              UMKM) di bumi (tanah) Solo Raya.
+              BUMIRA berarti <strong>Bangun Usaha Mikro dengan Insight, Rencana, dan Arah</strong>.
+              Nama ini memadukan akar usaha yang dekat dengan masyarakat dan arah pertumbuhan
+              yang dibentuk dari data. BUMIRA membantu pemilik usaha memahami kondisinya hari
+              ini, menyusun langkah berikutnya, dan membangun rekam jejak yang lebih kuat.
             </p>
           </section>
 
           <section>
-            <h2 className="serif" style={{ fontSize: 22, fontWeight: 600, margin: 0 }}>Kenapa WIRABUMI dibuat</h2>
+            <h2 className="serif" style={{ fontSize: 22, fontWeight: 600, margin: 0 }}>Kenapa BUMIRA dibuat</h2>
             <p style={{ fontSize: 15.5, lineHeight: 1.75, color: 'var(--text-muted)', marginTop: 10 }}>
-              Banyak pedagang kecil di Solo Raya, mulai dari penjual batik, makanan rumahan,
+              Banyak pelaku usaha kecil di Indonesia, mulai dari penjual produk kreatif, makanan rumahan,
               kerajinan, sampai jasa titip, sebenarnya sudah punya usaha yang jalan dan
               pelanggan yang rutin membeli. Masalahnya, catatan penjualan mereka tersebar di
               kepala, buku tulis, atau berserakan di riwayat chat WhatsApp. Saat ingin
@@ -44,7 +44,7 @@ export default function Tentang() {
               padahal bukan karena usahanya buruk, melainkan karena belum tercatat.
             </p>
             <p style={{ fontSize: 15.5, lineHeight: 1.75, color: 'var(--text-muted)', marginTop: 12 }}>
-              WIRABUMI dibuat untuk menjembatani itu: mengubah bukti jualan yang sudah ada
+              BUMIRA dibuat untuk menjembatani itu: mengubah bukti jualan yang sudah ada
               (chat, foto transfer, atau catatan manual) menjadi pembukuan yang terstruktur,
               tanpa mewajibkan pedagang belajar akuntansi dulu.
             </p>
@@ -55,7 +55,7 @@ export default function Tentang() {
             <p style={{ fontSize: 15.5, lineHeight: 1.75, color: 'var(--text-muted)', marginTop: 10 }}>
               Setiap transaksi yang dicatat, baik manual, dari tempel chat, maupun dari foto
               bukti transfer, tersimpan sungguhan ke database milikmu sendiri. Dari data itu,
-              WIRABUMI menghitung skor kelayakan usaha (dari konsistensi mencatat, tren
+              BUMIRA menghitung skor kelayakan usaha (dari konsistensi mencatat, tren
               omzet, pelanggan tetap, dan kelengkapan legalitas), lalu menyusunnya jadi
               simulasi plafon &amp; cicilan KUR memakai rumus anuitas yang sama dipakai bank,
               sampai ke berkas PDF yang bisa langsung kamu bawa. Bagian pencocokan teks
@@ -68,9 +68,9 @@ export default function Tentang() {
           <section>
             <h2 className="serif" style={{ fontSize: 22, fontWeight: 600, margin: 0 }}>Harapan di baliknya</h2>
             <p style={{ fontSize: 15.5, lineHeight: 1.75, color: 'var(--text-muted)', marginTop: 10 }}>
-              Harapannya sederhana: makin banyak pedagang Solo Raya yang usahanya diakui
+              Harapannya sederhana: makin banyak pelaku UMKM Indonesia yang usahanya diakui
               formal, bukan karena mengubah cara mereka berjualan, tapi karena akhirnya ada
-              yang mencatatkan apa yang sudah mereka kerjakan setiap hari. WIRABUMI tidak
+              yang mencatatkan apa yang sudah mereka kerjakan setiap hari. BUMIRA tidak
               menggantikan peran bank, akuntan, atau dinas koperasi. Posisinya adalah langkah
               pertama: membantu pedagang datang ke pintu itu dengan data di tangan, bukan
               dengan tangan kosong.

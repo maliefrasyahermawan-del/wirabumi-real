@@ -52,7 +52,7 @@ export async function generateUmkmInsight(data) {
 }
 
 // ---------- Government (Dinkop) ----------
-const GOVERNMENT_SYSTEM_PROMPT = `Kamu menulis 2-3 kalimat insight berbahasa Indonesia untuk staf Dinas Koperasi (Dinkop), berdasarkan data agregat UMKM binaan di sistem WIRABUMI.
+const GOVERNMENT_SYSTEM_PROMPT = `Kamu menulis 2-3 kalimat insight berbahasa Indonesia untuk staf Dinas Koperasi (Dinkop), berdasarkan data agregat UMKM binaan di sistem BUMIRA.
 
 Kamu akan diberi: total UMKM terhubung, skor rata-rata, persentase layak KUR, jumlah berkas KUR dibuat, skor rata-rata per kecamatan, dan jumlah pengguna aktif 24 jam terakhir.
 
@@ -134,7 +134,7 @@ export async function generateBankInsight(data) {
 }
 
 // ---------- Super Admin ----------
-const SUPER_ADMIN_SYSTEM_PROMPT = `Kamu menulis 2-3 kalimat insight teknis berbahasa Indonesia untuk Super Admin (developer/pengelola sistem WIRABUMI), berdasarkan metrik nyata sistem.
+const SUPER_ADMIN_SYSTEM_PROMPT = `Kamu menulis 2-3 kalimat insight teknis berbahasa Indonesia untuk Super Admin (developer/pengelola sistem BUMIRA), berdasarkan metrik nyata sistem.
 
 Kamu akan diberi: jumlah pengguna per peran, pemakaian LLM 7 hari terakhir per fitur (jumlah sukses vs gagal), dan jumlah error server 7 hari terakhir.
 

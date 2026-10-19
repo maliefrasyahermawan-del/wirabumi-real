@@ -1,21 +1,21 @@
 ========================================================
-FITUR WIRABUMI - DOKUMENTASI LENGKAP DAN JUJUR
+FITUR BUMIRA - DOKUMENTASI LENGKAP DAN JUJUR
 (ditulis ulang dari nol, langsung dari kode yang berjalan saat ini)
 ========================================================
 
-Dokumen ini menjelaskan SEMUA fitur WIRABUMI apa adanya: mana yang
+Dokumen ini menjelaskan SEMUA fitur BUMIRA apa adanya: mana yang
 benar-benar dihitung/tersimpan dari data asli, mana yang masih
 berbasis aturan, dan mana yang sekarang benar-benar memakai AI (LLM
 Groq di 4 titik, plus OCR Tesseract.js). Tidak ada yang dilebih-
 lebihkan, tidak ada yang disembunyikan.
 
-TENTANG WIRABUMI
+TENTANG BUMIRA
 --------------------------------------------------------
-WIRABUMI adalah aplikasi pembukuan dan kesiapan pengajuan KUR (Kredit
-Usaha Rakyat) untuk pelaku UMKM di kawasan Solo Raya. Nama WIRABUMI
-sendiri singkatan dari "Wirausaha Bumi Solo Raya" - "Wira" dari kata
-wirausaha, "Bumi" merujuk pada wilayah/tanah Solo Raya (cerita lengkap
-ada di halaman Tentang di dalam aplikasi).
+BUMIRA adalah aplikasi pembukuan, pertumbuhan usaha, dan kesiapan
+pengajuan KUR (Kredit Usaha Rakyat) untuk pelaku UMKM Indonesia.
+BUMIRA berarti "Bangun Usaha Mikro dengan Insight, Rencana, dan Arah".
+Nama ini merangkum alur produk: data usaha diolah menjadi pemahaman,
+rencana perbaikan, dan arah pertumbuhan yang bisa ditindaklanjuti.
 
 Aplikasi ini FUNGSIONAL NYATA: database sungguhan, akun pengguna
 sungguhan, dan seluruh perhitungan (skor, plafon, laba rugi) benar-benar
@@ -52,7 +52,7 @@ ARSITEKTUR & STACK TEKNIS
   penjelasan detail di bagian "APAKAH ADA YANG BENERAN AI" di bawah.
 - LLM: server/lib/groqClient.js adalah modul bersama untuk memanggil
   Groq API (model llama-3.3-70b-versatile), dipakai di 4 titik (parser
-  Tempel Chat, narasi Skor, parser hasil OCR foto, Mas Sido - lihat
+  Tempel Chat, narasi Skor, parser hasil OCR foto, Mira - lihat
   bagian "APAKAH ADA YANG BENERAN AI" untuk detail lengkapnya). Timeout
   8 detik per panggilan, dan KEEMPATNYA otomatis jatuh ke logic
   rule-based lama kalau panggilan Groq gagal/timeout/API key kosong -
@@ -87,11 +87,11 @@ Langkah-langkah:
 
 2. Siapkan database PostgreSQL. Lewat psql atau GUI (mis. pgAdmin),
    buat role & database-nya dulu:
-     CREATE ROLE wirabumi_app WITH LOGIN PASSWORD 'ganti_password_ini';
-     CREATE DATABASE wirabumi OWNER wirabumi_app;
-   Lalu jalankan SELURUH isi server/schema.sql ke database wirabumi itu
+     CREATE ROLE bumira_app WITH LOGIN PASSWORD 'ganti_password_ini';
+     CREATE DATABASE bumira OWNER bumira_app;
+   Lalu jalankan SELURUH isi server/schema.sql ke database bumira itu
    (membuat semua tabel + fungsi compute_score/get_kur_offer/dst):
-     psql -U wirabumi_app -d wirabumi -f server/schema.sql
+     psql -U bumira_app -d bumira -f server/schema.sql
    Kalau muncul error "function gen_random_uuid() does not exist"
    (biasanya cuma di Postgres versi lama, di bawah 13), jalankan dulu
    satu baris ini sebelum mengulang perintah di atas:
@@ -109,7 +109,7 @@ Langkah-langkah:
 
 4. Jalankan backend (satu terminal, biarkan tetap terbuka/jalan):
      npm run server
-   Berhasil kalau muncul "WIRABUMI API listening on
+   Berhasil kalau muncul "BUMIRA API listening on
    http://localhost:4001".
 
 5. Jalankan frontend (terminal KEDUA yang terpisah, juga dibiarkan
@@ -123,14 +123,14 @@ Langkah-langkah:
 
 CARA LEBIH CEPAT (setelah setup pertama di atas selesai sekali): dobel
 klik start.bat di folder utama proyek. Ini membuka terminal interaktif
-(wirabumi-launcher.ps1) dengan menu navigasi panah atas/bawah - pilih
-"Nyalakan Website Wirabumi" untuk menyalakan backend+frontend otomatis
+(bumira-launcher.ps1) dengan menu navigasi panah atas/bawah - pilih
+"Nyalakan Website BUMIRA" untuk menyalakan backend+frontend otomatis
 (skip kalau portnya sudah kepakai/sudah nyala), tunggu sampai keduanya
 benar-benar bisa diakses, lalu link lokal muncul dan otomatis kebuka di
-browser. Pilih "Matikan Website Wirabumi" untuk mematikan proses backend
+browser. Pilih "Matikan Website BUMIRA" untuk mematikan proses backend
 + frontend dengan rapi (berdasar port, bukan asal taskkill semua node),
 atau "Keluar" untuk menutup terminalnya saja tanpa mematikan apa pun.
-Log proses tersimpan di folder .wirabumi-run/ (di-gitignore, bukan
+Log proses tersimpan di folder .bumira-run/ (di-gitignore, bukan
 bagian dari kode aplikasi). start.bat ini murni alat menjalankan lokal
 untuk memudahkan - bukan pengganti langkah 1-5 di atas untuk instalasi
 pertama kali.
@@ -156,19 +156,19 @@ Navbar atas (komponen TopNav) berisi:
 - Dropdown "Keuangan": Pembukuan (catat penjualan), Pengeluaran (catat
   beban usaha), Laporan Laba Rugi (ringkasan & PDF), Ajukan KUR
   (simulasi plafon & unduh berkas)
-- Mas Sido (chatbot)
+- Mira (chatbot)
 - Lonceng notifikasi (badge jumlah belum dibaca)
 - Tombol ganti tema terang/gelap
 - Avatar/foto profil → dropdown: Lihat Profil, Pengaturan Akun,
   Tentang, Berikan Ulasan, Keluar
 - Navbar BERBEDA per peran (lihat bagian 17 untuk detail lengkap):
   UMKM Owner melihat menu di atas apa adanya (Dashboard/Beranda/Cara
-  Kerja/Keuangan/Mas Sido). Government & Super Admin melihat dropdown
+  Kerja/Keuangan/Mira). Government & Super Admin melihat dropdown
   "Admin" (Monitoring Aktivitas, Dashboard Dampak, dan khusus Super
   Admin: Dashboard Bank, Kelola Pengguna, System) plus link "Dashboard"
   yang mengarah ke Dashboard Dinkop (bukan dashboard pribadi). Bank
   hanya melihat satu link "Dashboard" ke halaman Bank-nya sendiri, tanpa
-  Keuangan/Mas Sido/dropdown Admin sama sekali.
+  Keuangan/Mira/dropdown Admin sama sekali.
 
 Catatan penamaan: menu "Pembukuan" itulah sisi PEMASUKAN (setiap
 transaksi yang dicatat = penjualan/uang masuk). Tidak ada menu terpisah
@@ -191,8 +191,8 @@ sama; "Pengeluaran" adalah pasangannya untuk uang keluar.
 ========================================================
 2. TENTANG
 ========================================================
-- Halaman publik yang menjelaskan: asal nama WIRABUMI (Wirausaha Bumi
-  Solo Raya), alasan aplikasi ini dibuat (banyak UMKM Solo Raya yang
+- Halaman publik yang menjelaskan: makna BUMIRA (Bangun Usaha Mikro
+  dengan Insight, Rencana, dan Arah), alasan aplikasi ini dibuat (banyak UMKM Indonesia yang
   jualannya sudah jalan lewat WhatsApp tapi belum punya "bukti" yang
   bisa dibaca bank), apa yang benar-benar dilakukan sistem, dan
   harapan di baliknya.
@@ -307,7 +307,7 @@ C. UNGGAH FOTO BUKTI TRANSFER
    - DUA TAHAP (tahap 1 TIDAK diubah sama sekali oleh penambahan LLM):
      1) OCR (pengenalan teks dari gambar) memakai Tesseract.js - teknologi
         AI sungguhan (lihat penjelasan di bawah), berjalan 100% di
-        browser sendiri; foto TIDAK pernah dikirim ke server WIRABUMI
+        browser sendiri; foto TIDAK pernah dikirim ke server BUMIRA
         atau cloud manapun. Model bahasa Indonesia untuk OCR (~10-20MB)
         diunduh dari CDN publik saat dipakai pertama kali, lalu
         tersimpan cache browser.
@@ -357,7 +357,7 @@ C. UNGGAH FOTO BUKTI TRANSFER
   Beban Usaha per kategori, lalu Laba/Rugi Bersih.
 - KETERBATASAN JUJUR: ini BUKAN laporan keuangan SAK EMKM yang
   lengkap. SAK EMKM formal punya 3 laporan (Laba Rugi, Posisi
-  Keuangan/Neraca, Catatan atas Laporan Keuangan) - WIRABUMI baru
+  Keuangan/Neraca, Catatan atas Laporan Keuangan) - BUMIRA baru
   menyediakan yang pertama, karena baru itu yang bisa dihitung dari
   data yang dicatat sekarang (penjualan + pengeluaran). Laporan Posisi
   Keuangan butuh pencatatan aset/utang/modal yang belum ada fiturnya.
@@ -384,7 +384,7 @@ yang sama, di bawah Ringkasan Laba Rugi:
   normal), "Mendekati batas Rp4,8 miliar" (kuning, begitu omzet
   kumulatif tahun berjalan lewat 80% dari Rp4,8 miliar), "Melebihi
   batas Rp4,8 miliar" (merah - di luar skema ini, disarankan konsultasi
-  ke konsultan pajak; WIRABUMI tidak menghitung pajak normal Pasal 17).
+  ke konsultan pajak; BUMIRA tidak menghitung pajak normal Pasal 17).
 - Muncul juga sebagai section tambahan di PDF Laporan Laba Rugi, dan
   sebagai satu baris "sinyal kepatuhan pajak tambahan" (bukan kewajiban
   terpisah) di PDF Berkas KUR - keduanya memakai compute_tax_estimate()
@@ -453,7 +453,7 @@ Skor tidak akan pernah error hanya karena Groq bermasalah.
     pilihan.
 - Checklist legalitas (NIB, P-IRT, Sertifikasi Halal) - mencentang di
   sini HANYA MENANDAI di sistem sendiri bahwa dokumen itu sudah
-  dipunya. WIRABUMI TIDAK memverifikasi ke OSS/BPJPH sungguhan.
+  dipunya. BUMIRA TIDAK memverifikasi ke OSS/BPJPH sungguhan.
   Setiap item menampilkan badge "Belum Punya" (amber) atau "Lengkap"
   (hijau), dan kalau belum punya, ada tombol "Daftar [X] →" yang
   membuka situs resmi pemerintahnya langsung di tab baru:
@@ -486,15 +486,13 @@ Skor tidak akan pernah error hanya karena Groq bermasalah.
 
 
 ========================================================
-10. MAS SIDO (Chatbot Asisten Keuangan)
+10. MIRA (Chatbot Asisten Keuangan)
 ========================================================
-Nama "Mas Sido" diambil dari kata "sido" pada motif batik Sidomukti,
-bahasa Jawa untuk "jadi"/"tercapai" - doa supaya usaha yang memakai
-WIRABUMI jadi dan tercapai. (Ini beda dengan asal nama WIRABUMI sendiri
-yang dijelaskan di halaman Tentang - "Sido" adalah nama persona
-chatbot, bukan singkatan nama aplikasi.)
+Nama "Mira" berasal dari BUMIRA. Persona ini mewakili pendamping yang
+membantu pengguna membaca insight, menyusun rencana, dan menentukan
+arah usaha berdasarkan data pembukuan mereka sendiri.
 
-UPDATE: SEKARANG BENERAN AI (LLM), DENGAN FALLBACK - Mas Sido tadinya
+UPDATE: SEKARANG BENERAN AI (LLM), DENGAN FALLBACK - Mira tadinya
 murni pencocokan kata kunci (regex), tapi sekarang jawabannya lewat
 POST /api/chat-messages/ask: frontend mengirim pertanyaan + data konteks
 usaha (skor & 4 faktornya, simulasi KUR, omzet bulan ini, produk
@@ -511,9 +509,9 @@ Kalau panggilan Groq gagal/timeout/API key kosong, backend OTOMATIS
 jatuh ke mesin jawaban aturan (regex) lama, yang sekarang dipindah ke
 src/lib/chatbotAnswer.js (logikanya PERSIS sama seperti sebelumnya,
 cuma dipindah lokasi filenya supaya bisa dipakai backend sebagai
-fallback juga) - jadi Mas Sido tidak akan pernah benar-benar diam
+fallback juga) - jadi Mira tidak akan pernah benar-benar diam
 hanya karena Groq bermasalah.
-JUJUR - bedanya dengan versi lama: dulu Mas Sido HANYA bisa menjawab
+JUJUR - bedanya dengan versi lama: dulu Mira HANYA bisa menjawab
 pertanyaan yang persis mengandung salah satu kata kunci di daftar
 tetapnya; kalau tidak, selalu dijawab "belum punya jawaban pasti".
 Sekarang, lewat LLM, dia bisa memahami pertanyaan yang ditulis dengan
@@ -564,7 +562,7 @@ JUJUR - PENTING:
   plafon KUR seolah-olah quest itu selesai, memakai rumus
   compute_score()/get_kur_offer() yang persis sama.
 - Quest "Hubungkan akun WhatsApp Business" di rancangan awal diganti
-  jadi "Catat transaksi pertama lewat Tempel Chat", karena WIRABUMI
+  jadi "Catat transaksi pertama lewat Tempel Chat", karena BUMIRA
   tidak punya integrasi API WhatsApp Business sungguhan.
 
 LENCANA (halaman Profil > Lencana), permanen begitu diraih (tidak
@@ -589,7 +587,7 @@ berulang dalam periode alaminya:
 
 1. Capture harian - "X transaksi baru terdeteksi hari ini, total
    RpY" (muncul sekali per hari kalau ada transaksi hari itu).
-2. Chat kurang yakin - "Ada X chat yang WIRABUMI kurang yakin
+2. Chat kurang yakin - "Ada X chat yang BUMIRA kurang yakin
    bacanya, cek & koreksi manual?" (transaksi 7 hari terakhir dengan
    label yakin low/medium dari sumber tempel-chat/foto).
 3. Rekap bulanan - "Pembukuan bulan [Nama Bulan] selesai disusun, X
@@ -655,7 +653,7 @@ B. DASHBOARD DINKOP (/dinkop - khusus Pemerintah, Bank, & Super Admin)
 15. CARA KERJA
 ========================================================
 - Halaman panduan interaktif 4 langkah (klik tiap langkah untuk lihat
-  detail): Kumpulkan bukti jualan -> WIRABUMI merapikan -> Lihat skor
+  detail): Kumpulkan bukti jualan -> BUMIRA merapikan -> Lihat skor
   kelayakan -> Ajukan KUR. Konten statis/penjelasan, tapi tombol-
   tombolnya mengarah ke halaman fitur sungguhan di atas.
 
@@ -687,7 +685,7 @@ dashboard yang jauh lebih kontras satu sama lain. Ada 4 peran akun:
 
 Setiap peran punya dashboard & menu navbar yang BENAR-BENAR berbeda,
 bukan halaman yang sama dengan tombol disembunyikan - UMKM Owner cuma
-melihat Dashboard/Beranda/Cara Kerja/Keuangan/Mas Sido; Government
+melihat Dashboard/Beranda/Cara Kerja/Keuangan/Mira; Government
 melihat Dashboard Dinkop + menu Admin (Monitoring, Dampak); Bank cuma
 melihat satu link "Dashboard" ke halamannya sendiri; Super Admin
 melihat semuanya plus System.
@@ -769,7 +767,7 @@ C. DASHBOARD BANK (/bank - KHUSUS Bank & Super Admin) - FITUR BARU
    - Data yang tampil untuk tiap UMKM yang mengizinkan: nama usaha,
      kategori, kecamatan, skor kelayakan (compute_score() yang sama),
      simulasi KUR terakhir (dari kur_documents kalau ada). TIDAK PERNAH
-     menampilkan transaksi mentah atau riwayat chat Mas Sido, sekalipun
+     menampilkan transaksi mentah atau riwayat chat Mira, sekalipun
      consent menyala - hanya ringkasan yang sudah ditampilkan di
      tempat lain juga.
    - Bank memberi status pengajuan: Menunggu/Disetujui/Ditolak, plus
@@ -779,7 +777,7 @@ C. DASHBOARD BANK (/bank - KHUSUS Bank & Super Admin) - FITUR BARU
    - JUJUR: mengubah status di sini TIDAK memblokir atau mengubah apa
      pun di sisi UMKM - murni catatan internal pihak Bank untuk
      menandai progres pengajuan yang mereka proses sendiri di luar
-     WIRABUMI.
+     BUMIRA.
 
 D. KELOLA PENGGUNA (/admin/pengguna - KHUSUS Super Admin)
    - Mengubah peran akun lain antara UMKM/Government/Bank lewat
@@ -827,7 +825,7 @@ BUKAN AI SAMA SEKALI (murni aturan/matematika, tidak berubah):
   disentuh LLM sedikit pun, supaya angka yang jadi dasar pengajuan KUR
   tetap 100% bisa diaudit/dijelaskan asal-usulnya - LLM hanya boleh
   menuliskan ULANG angka ini jadi kalimat (lihat "Narasi Skor" di
-  bawah) atau menjawab pertanyaan tentangnya (lihat "Mas Sido" di
+  bawah) atau menjawab pertanyaan tentangnya (lihat "Mira" di
   bawah), tidak pernah menghitungnya.
 - Sistem quest & lencana - katalog tetap dengan syarat deteksi
   otomatis, bukan model apa pun.
@@ -851,7 +849,7 @@ detik per panggilan):
    data terstruktur oleh LLM (lebih toleran ke noise/typo OCR
    dibanding regex kaku). Fallback: regex lama di
    src/lib/receiptParser.js (juga tidak dihapus).
-4. Mas Sido, chatbot (server/lib/llmChatbotAnswer.js, endpoint
+4. Mira, chatbot (server/lib/llmChatbotAnswer.js, endpoint
    POST /api/chat-messages/ask) - LLM menjawab pertanyaan bebas
    berbahasa natural, diberi data konteks usaha yang sama seperti versi
    lama (skor, KUR, omzet, produk terlaris, legalitas) dan diinstruksi
@@ -861,7 +859,7 @@ detik per panggilan):
    IDENTIK dengan sebelumnya, cuma pindah lokasi file).
 
 Di 3 titik yang menghasilkan data terstruktur (parser Tempel Chat, OCR
-foto, dan - kalau kamu tambahkan tampilannya - Mas Sido), badge kecil
+foto, dan - kalau kamu tambahkan tampilannya - Mira), badge kecil
 "✨ Diproses AI (Groq)" atau "⚙️ Mode cadangan (aturan)" bisa dipakai
 untuk menunjukkan jalur mana yang sebenarnya memproses input; saat ini
 badge itu sudah tampil di tabel review Tempel Chat & Unggah Foto.
@@ -869,10 +867,10 @@ badge itu sudah tampil di tabel review Tempel Chat & Unggah Foto.
 Tesseract.js (OCR, dari awal sudah ada, tidak diubah):
 - Mesin OCR (pengenalan karakter dari gambar) yang di dalamnya memakai
   model jaringan saraf terlatih (LSTM). Teknologi pihak ketiga yang
-  sudah jadi (bukan dilatih sendiri oleh tim WIRABUMI), berjalan 100%
+  sudah jadi (bukan dilatih sendiri oleh tim BUMIRA), berjalan 100%
   di browser - foto tidak pernah dikirim ke server manapun.
 
-CATATAN PENTING soal "tanpa cloud": sebelum perubahan ini, WIRABUMI
+CATATAN PENTING soal "tanpa cloud": sebelum perubahan ini, BUMIRA
 benar-benar tidak memanggil layanan pihak ketiga apa pun. Sekarang, 3
 fitur di atas memanggil Groq API (cloud, di luar komputer sendiri) -
 jadi klaim "100% lokal" itu SUDAH TIDAK SEPENUHNYA BENAR LAGI untuk 3
@@ -885,14 +883,14 @@ Jadi kalau ditanya "ini aplikasi AI?" - jawaban akuratnya: skor, KUR,
 dan quest tetap murni rule-based (sengaja, supaya bisa
 dipertanggungjawabkan); 4 titik yang berhubungan dengan membaca input
 tidak terstruktur (chat, hasil OCR), menjelaskan skor, dan menjawab
-pertanyaan bebas (Mas Sido) sekarang benar-benar memakai LLM Groq,
+pertanyaan bebas (Mira) sekarang benar-benar memakai LLM Groq,
 dengan jaring pengaman otomatis ke logic lama kalau LLM-nya bermasalah.
 
 
 ========================================================
 KETERBATASAN YANG PERLU DIKETAHUI
 ========================================================
-1. Mas Sido sekarang coba LLM lebih dulu (bisa paham pertanyaan bebas/
+1. Mira sekarang coba LLM lebih dulu (bisa paham pertanyaan bebas/
    berbelit), tapi tetap punya fallback ke pencocokan kata kunci lama
    kalau Groq gagal - di jalur fallback itu, keterbatasan lama masih
    berlaku (tidak akan paham pertanyaan yang rumit/berbelit).
@@ -926,14 +924,14 @@ KETERBATASAN YANG PERLU DIKETAHUI
     kebutuhan resmi tetap konsultasikan ke akuntan/konsultan pajak.
 11. "Poin" di sistem quest adalah label ilustratif, bukan angka yang
     ditambahkan langsung ke skor lewat pembukuan poin terpisah.
-12. 4 fitur LLM (parser Tempel Chat, narasi Skor, parser OCR foto, Mas
-    Sido) butuh koneksi internet & GROQ_API_KEY yang valid di .env
+12. 4 fitur LLM (parser Tempel Chat, narasi Skor, parser OCR foto, dan
+    Mira) butuh koneksi internet & GROQ_API_KEY yang valid di .env
     untuk benar-benar aktif memakai AI. Kalau salah satu tidak
     terpenuhi (offline, key kosong/salah, API Groq sedang down/
     timeout), keempat fitur itu otomatis jalan di "mode cadangan"
     (logic rule-based lama) tanpa error - untuk Tempel Chat & Unggah
     Foto, badge di tabel review menunjukkan mode mana yang aktif; untuk
-    Mas Sido & narasi Skor, cek log terminal backend untuk memastikan
+    Mira & narasi Skor, cek log terminal backend untuk memastikan
     (baris "Groq gagal..." muncul kalau sedang di mode cadangan).
 
 
@@ -953,7 +951,7 @@ NYATA (dihitung/tersimpan sungguhan dari database):
 - Statistik Beranda (agregat asli, tetap publik) & Dashboard Dinkop
   (agregat asli, sekarang khusus Government/Bank/Super Admin - lihat
   bagian 13 & 17)
-- Riwayat chat Mas Sido (tersimpan, dibatasi 5 percakapan)
+- Riwayat chat Mira (tersimpan, dibatasi 5 percakapan)
 - Sistem quest & lencana (status dideteksi dari data asli, simulasi
   dampak skor/plafon pakai rumus asli, lencana tersimpan permanen)
 - Notifikasi in-app (5 jenis, semua dihitung dari data asli)
@@ -978,7 +976,7 @@ HYBRID: LLM DULU, FALLBACK RULE-BASED KALAU GAGAL (baru):
   berantakan), fallback ke regex src/lib/receiptParser.js
 - Narasi Skor - Groq LLM menuliskan ulang angka skor (yang tetap
   murni SQL) jadi kalimat, fallback ke kalimat statis sederhana
-- Mas Sido (chatbot) - Groq LLM menjawab pertanyaan bebas dari data
+- Mira (chatbot) - Groq LLM menjawab pertanyaan bebas dari data
   konteks usaha, fallback ke pencocokan kata kunci di
   src/lib/chatbotAnswer.js (logika identik dengan versi lama)
 
@@ -991,5 +989,5 @@ AI SUNGGUHAN:
   hybrid di atas, opsional lewat GROQ_API_KEY di .env.
 
 Dokumen ini ditulis ulang supaya siapa pun yang membaca tahu persis
-apa yang sungguhan berjalan di WIRABUMI, apa yang masih sederhana, dan
+apa yang sungguhan berjalan di BUMIRA, apa yang masih sederhana, dan
 di mana tepatnya AI benar-benar dipakai - tanpa dilebih-lebihkan.

@@ -18,13 +18,13 @@ export default function Chatbot() {
   const [typing, setTyping] = useState(false);
   const [ctx, setCtx] = useState(null);
   const [txnCount, setTxnCount] = useState(0);
-  const [javaMode, setJavaMode] = useState(() => localStorage.getItem('wirabumi_mas_sido_jawa') === '1');
+  const [javaMode, setJavaMode] = useState(() => localStorage.getItem('bumira_mira_jawa') === '1');
   const scrollRef = useRef(null);
 
   function toggleJavaMode() {
     setJavaMode((prev) => {
       const next = !prev;
-      localStorage.setItem('wirabumi_mas_sido_jawa', next ? '1' : '0');
+      localStorage.setItem('bumira_mira_jawa', next ? '1' : '0');
       return next;
     });
   }
@@ -69,7 +69,7 @@ export default function Chatbot() {
         // A session-start nicety only - intentionally not persisted, so there's
         // no first-load race to double-insert it (StrictMode's double effect
         // invocation would otherwise write it twice).
-        const greeting = 'Halo, kenalin aku Mas Sido 👋 Aku asisten keuangan WIRABUMI, tugasku bantu jawab pertanyaan soal usahamu langsung dari data pembukuanmu sendiri: omzet, skor kelayakan, sampai simulasi KUR. Namaku diambil dari kata "sido" pada motif batik Sidomukti, yang dalam bahasa Jawa berarti "jadi" atau "tercapai", doa supaya usahamu jadi dan tercapai. Coba tanya apa saja, atau klik salah satu pertanyaan di bawah.';
+        const greeting = 'Halo, kenalin aku Mira 👋 Aku asisten usaha BUMIRA. Aku membantu membaca data pembukuanmu, mulai dari omzet, skor kesiapan, produk terlaris, sampai simulasi KUR. Coba tanya apa saja, atau klik salah satu pertanyaan di bawah.';
         setMessages([{ role: 'bot', text: greeting }]);
       }
     }
@@ -106,10 +106,10 @@ export default function Chatbot() {
           <div style={{ width: 46, height: 46, borderRadius: 13, background: 'var(--blue)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--white)', fontSize: 22 }}>◍</div>
           <div style={{ flex: 1 }}>
             <div className="flex-center gap-8" style={{ gap: 9 }}>
-              <h1 className="serif" style={{ fontWeight: 600, fontSize: 22, margin: 0 }}>Mas Sido</h1>
+              <h1 className="serif" style={{ fontWeight: 600, fontSize: 22, margin: 0 }}>Mira</h1>
               <span className="connected-badge"><span className="connected-dot"></span>Terhubung ke data usahamu</span>
             </div>
-            <div className="muted" style={{ fontSize: 13, marginTop: 2 }}>Asisten Keuangan WIRABUMI · Menjawab dari {txnCount} transaksi · {profile?.business_name}</div>
+            <div className="muted" style={{ fontSize: 13, marginTop: 2 }}>Asisten Keuangan BUMIRA · Menjawab dari {txnCount} transaksi · {profile?.business_name}</div>
           </div>
           <button
             type="button"
@@ -156,7 +156,7 @@ export default function Chatbot() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); pushUser(input); } }}
-            placeholder="Tanya Mas Sido soal omzet, skor, KUR, angsuran…"
+            placeholder="Tanya Mira soal omzet, skor, KUR, angsuran…"
           />
           <button className="btn btn-primary" style={{ fontSize: 15, padding: '14px 24px', borderRadius: 12 }} onClick={() => pushUser(input)}>Kirim</button>
         </div>
