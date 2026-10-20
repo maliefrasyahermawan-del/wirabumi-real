@@ -5,6 +5,7 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:bumira_mobile/main.dart';
@@ -15,5 +16,16 @@ void main() {
 
     expect(find.text('BUMIRA'), findsOneWidget);
     expect(find.text('Kenali usahamu, tentukan arah.'), findsOneWidget);
+  });
+
+  testWidgets('membuka profil usaha Batik Sekar dari avatar', (tester) async {
+    await tester.pumpWidget(const BumiraApp());
+
+    await tester.tap(find.byType(InkWell).first);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Profil usaha'), findsOneWidget);
+    expect(find.text('Batik Sekar'), findsAtLeastNWidgets(1));
+    expect(find.text('Surakarta, Jawa Tengah'), findsOneWidget);
   });
 }

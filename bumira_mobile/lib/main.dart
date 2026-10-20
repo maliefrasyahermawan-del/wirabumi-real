@@ -178,22 +178,35 @@ class _BumiraAppState extends State<BumiraApp> {
 }
 
 class MobileHeader extends StatelessWidget {
-  const MobileHeader({super.key, required this.greeting});
+  const MobileHeader({
+    super.key,
+    required this.greeting,
+    this.onOpenProfile,
+  });
   final String greeting;
+  final VoidCallback? onOpenProfile;
 
   @override
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.fromLTRB(20, 18, 20, 10),
         child: Row(children: [
-          Container(
-            width: 40,
-            height: 40,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-                color: _brandYellow, borderRadius: BorderRadius.circular(13)),
-            child: const Text('B',
-                style: TextStyle(
-                    color: _ink, fontSize: 21, fontWeight: FontWeight.w900)),
+          InkWell(
+            onTap: onOpenProfile,
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: _brandYellow,
+                borderRadius: BorderRadius.circular(13),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Image.asset(
+                'assets/images/batik-store-avatar.jpg',
+                fit: BoxFit.cover,
+                filterQuality: FilterQuality.medium,
+              ),
+            ),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -231,10 +244,15 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) => ListView(
         padding: const EdgeInsets.only(bottom: 20),
         children: [
-          const MobileHeader(greeting: 'Kenali usahamu, tentukan arah.'),
+          MobileHeader(
+            greeting: 'Kenali usahamu, tentukan arah.',
+            onOpenProfile: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const ProfilePage()),
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Text('Halo, pemilik usaha 👋',
+            child: Text('Halo, Batik Sekar 👋',
                 style: Theme.of(context)
                     .textTheme
                     .headlineSmall
@@ -340,6 +358,106 @@ class HomePage extends StatelessWidget {
                   action: 'Lihat')),
         ],
       );
+}
+
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(title: const Text('Profil usaha')),
+        body: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+          children: [
+            Center(
+              child: Container(
+                width: 104,
+                height: 104,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: _brandYellow, width: 4),
+                  image: const DecorationImage(
+                    image: AssetImage('assets/images/batik-store-avatar.jpg'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 14),
+            const Text('Batik Sekar',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
+            const SizedBox(height: 4),
+            const Text('Batik & busana khas Indonesia',
+                textAlign: TextAlign.center, style: TextStyle(color: _muted)),
+            const SizedBox(height: 24),
+            const Card(
+              child: Padding(
+                padding: EdgeInsets.all(18),
+                child: Column(
+                  children: [
+                    _ProfileRow(
+                        icon: Icons.storefront_outlined,
+                        label: 'Nama usaha',
+                        value: 'Batik Sekar'),
+                    Divider(color: _divider, height: 26),
+                    _ProfileRow(
+                        icon: Icons.location_on_outlined,
+                        label: 'Lokasi usaha',
+                        value: 'Surakarta, Jawa Tengah'),
+                    Divider(color: _divider, height: 26),
+                    _ProfileRow(
+                        icon: Icons.category_outlined,
+                        label: 'Kategori',
+                        value: 'Fashion & kerajinan'),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            FilledButton.icon(
+              onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Profil usaha siap diperbarui.')),
+              ),
+              style: FilledButton.styleFrom(
+                minimumSize: const Size.fromHeight(52),
+                backgroundColor: _brandYellow,
+                foregroundColor: _ink,
+              ),
+              icon: const Icon(Icons.edit_outlined),
+              label: const Text('Edit profil usaha'),
+            ),
+          ],
+        ),
+      );
+}
+
+class _ProfileRow extends StatelessWidget {
+  const _ProfileRow(
+      {required this.icon, required this.label, required this.value});
+  final IconData icon;
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) => Row(children: [
+        Container(
+          width: 40,
+          height: 40,
+          decoration:
+              const BoxDecoration(color: _cream, shape: BoxShape.circle),
+          child: Icon(icon, color: _ink),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(label, style: const TextStyle(fontSize: 12, color: _muted)),
+            const SizedBox(height: 2),
+            Text(value, style: const TextStyle(fontWeight: FontWeight.w800)),
+          ]),
+        ),
+      ]);
 }
 
 class LedgerPage extends StatelessWidget {

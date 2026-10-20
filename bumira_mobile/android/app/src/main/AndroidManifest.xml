@@ -2,7 +2,7 @@
     <application
         android:label="BUMIRA"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@drawable/bumira_logo">
         <activity
             android:name=".MainActivity"
             android:exported="true"
