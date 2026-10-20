@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 
 void main() => runApp(const BumiraApp());
 
-const _blue = Color(0xFF155FA8);
-const _ink = Color(0xFF172233);
-const _mist = Color(0xFFF5F8FC);
-const _green = Color(0xFF17825D);
+// Palet BUMIRA: terang, hangat, dan tetap mudah dibaca di layar ponsel.
+const _brandYellow = Color(0xFFFFD51E);
+const _softYellow = Color(0xFFFFE45C);
+const _gold = Color(0xFFF5C400);
+const _cream = Color(0xFFFFF1CF);
+const _warmWhite = Color(0xFFFAFAF7);
+const _divider = Color(0xFFEDEBE5);
+const _ink = Color(0xFF252525);
+const _muted = Color(0xFF8A8A8A);
+const _error = Color(0xFFFF6F76);
 
 class TransactionItem {
   TransactionItem({
@@ -81,11 +87,55 @@ class _BumiraAppState extends State<BumiraApp> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: _blue, brightness: Brightness.light),
-        scaffoldBackgroundColor: _mist,
+        colorScheme: const ColorScheme.light(
+          primary: _brandYellow,
+          onPrimary: _ink,
+          secondary: _softYellow,
+          onSecondary: _ink,
+          surface: _warmWhite,
+          onSurface: _ink,
+          error: _error,
+          onError: Colors.white,
+        ),
+        scaffoldBackgroundColor: Colors.white,
         appBarTheme: const AppBarTheme(
-            backgroundColor: _mist, foregroundColor: _ink, elevation: 0),
+            backgroundColor: Colors.white, foregroundColor: _ink, elevation: 0),
+        cardTheme: CardThemeData(
+          color: _warmWhite,
+          elevation: 0,
+          margin: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: const BorderSide(color: _divider),
+          ),
+        ),
+        navigationBarTheme: const NavigationBarThemeData(
+          backgroundColor: Colors.white,
+          indicatorColor: _cream,
+          surfaceTintColor: Colors.white,
+          labelTextStyle: WidgetStatePropertyAll(
+            TextStyle(fontWeight: FontWeight.w700, color: _ink),
+          ),
+          iconTheme: WidgetStatePropertyAll(IconThemeData(color: _ink)),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: _warmWhite,
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: _divider),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: _divider),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: _gold, width: 2),
+          ),
+        ),
         fontFamily: 'Roboto',
       ),
       home: Scaffold(
@@ -140,12 +190,10 @@ class MobileHeader extends StatelessWidget {
             height: 40,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-                color: _blue, borderRadius: BorderRadius.circular(13)),
+                color: _brandYellow, borderRadius: BorderRadius.circular(13)),
             child: const Text('B',
                 style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 21,
-                    fontWeight: FontWeight.w900)),
+                    color: _ink, fontSize: 21, fontWeight: FontWeight.w900)),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -158,8 +206,7 @@ class MobileHeader extends StatelessWidget {
                         fontWeight: FontWeight.w900,
                         color: _ink)),
                 Text(greeting,
-                    style: const TextStyle(
-                        fontSize: 12, color: Color(0xFF657184))),
+                    style: const TextStyle(fontSize: 12, color: _muted)),
               ])),
           IconButton(
               onPressed: () {},
@@ -197,10 +244,10 @@ class HomePage extends StatelessWidget {
           const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Text('Ringkasan hari ini dari pembukuan BUMIRA.',
-                  style: TextStyle(color: Color(0xFF657184)))),
+                  style: TextStyle(color: _muted))),
           const SizedBox(height: 18),
           SizedBox(
-            height: 126,
+            height: 132,
             child: ListView(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -209,19 +256,19 @@ class HomePage extends StatelessWidget {
                       label: 'OMZET BULAN INI',
                       value: formatRupiah(revenue),
                       note: '$transactionCount transaksi',
-                      accent: _blue),
+                      accent: _brandYellow),
                   const SizedBox(width: 12),
                   const MetricCard(
                       label: 'LABA BERSIH',
                       value: 'Rp 635.000',
                       note: 'Naik 12% dari bulan lalu',
-                      accent: _green),
+                      accent: _gold),
                   const SizedBox(width: 12),
                   const MetricCard(
                       label: 'SKOR KESIAPAN',
                       value: '72 / 100',
                       note: 'Naik 5 poin minggu ini',
-                      accent: Color(0xFFF39A32)),
+                      accent: _ink),
                 ]),
           ),
           const SizedBox(height: 18),
@@ -233,7 +280,8 @@ class HomePage extends StatelessWidget {
                 label: const Text('Catat transaksi sekarang'),
                 style: FilledButton.styleFrom(
                     minimumSize: const Size.fromHeight(54),
-                    backgroundColor: _blue,
+                    backgroundColor: _brandYellow,
+                    foregroundColor: _ink,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16)))),
           ),
@@ -242,7 +290,7 @@ class HomePage extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Card(
               elevation: 0,
-              color: const Color(0xFFE8F2FF),
+              color: _cream,
               child: InkWell(
                 borderRadius: BorderRadius.circular(16),
                 onTap: onInsight,
@@ -253,10 +301,9 @@ class HomePage extends StatelessWidget {
                         width: 48,
                         height: 48,
                         decoration: BoxDecoration(
-                            color: _blue,
+                            color: _brandYellow,
                             borderRadius: BorderRadius.circular(15)),
-                        child: const Icon(Icons.insights_rounded,
-                            color: Colors.white)),
+                        child: const Icon(Icons.insights_rounded, color: _ink)),
                     const SizedBox(width: 13),
                     const Expanded(
                         child: Column(
@@ -267,8 +314,7 @@ class HomePage extends StatelessWidget {
                                   fontWeight: FontWeight.w900, color: _ink)),
                           SizedBox(height: 3),
                           Text('Lengkapi NIB untuk menaikkan skor kesiapanmu.',
-                              style: TextStyle(
-                                  fontSize: 13, color: Color(0xFF53647B))),
+                              style: TextStyle(fontSize: 13, color: _ink)),
                         ])),
                     const Icon(Icons.chevron_right_rounded),
                   ]),
@@ -313,10 +359,10 @@ class LedgerPage extends StatelessWidget {
                       ?.copyWith(fontWeight: FontWeight.w900))),
           IconButton(
               onPressed: onAdd,
-              icon: const Icon(Icons.add_circle, color: _blue, size: 30))
+              icon: const Icon(Icons.add_circle, color: _gold, size: 30))
         ]),
         const Text('Semua transaksi yang menjadi dasar insight BUMIRA.',
-            style: TextStyle(color: Color(0xFF657184))),
+            style: TextStyle(color: _muted)),
         const SizedBox(height: 18),
         ...items.map((item) => Card(
               elevation: 0,
@@ -324,18 +370,18 @@ class LedgerPage extends StatelessWidget {
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                 leading: CircleAvatar(
-                    backgroundColor: const Color(0xFFE8F2FF),
+                    backgroundColor: _cream,
                     child: Icon(
                         item.source == 'Scan struk'
                             ? Icons.document_scanner_outlined
                             : Icons.shopping_bag_outlined,
-                        color: _blue)),
+                        color: _ink)),
                 title: Text(item.name,
                     style: const TextStyle(fontWeight: FontWeight.w800)),
                 subtitle: Text('${formatDate(item.date)} · ${item.source}'),
                 trailing: Text(formatRupiah(item.amount),
                     style: const TextStyle(
-                        fontWeight: FontWeight.w900, color: _green)),
+                        fontWeight: FontWeight.w900, color: _ink)),
               ),
             )),
       ]);
@@ -406,12 +452,12 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
         const SizedBox(height: 20),
         if (_mode == 2)
           const Card(
-              color: Color(0xFFE8F2FF),
+              color: _cream,
               elevation: 0,
               child: Padding(
                   padding: EdgeInsets.all(16),
                   child: Row(children: [
-                    Icon(Icons.camera_alt_outlined, color: _blue),
+                    Icon(Icons.camera_alt_outlined, color: _ink),
                     SizedBox(width: 10),
                     Expanded(
                         child: Text(
@@ -419,7 +465,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                   ]))),
         if (_mode == 1)
           const Card(
-              color: Color(0xFFF7F2FF),
+              color: _cream,
               elevation: 0,
               child: Padding(
                   padding: EdgeInsets.all(16),
@@ -447,7 +493,8 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
             onPressed: _save,
             style: FilledButton.styleFrom(
                 minimumSize: const Size.fromHeight(54),
-                backgroundColor: _blue,
+                backgroundColor: _brandYellow,
+                foregroundColor: _ink,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16))),
             child: const Text('Simpan transaksi')),
@@ -474,7 +521,7 @@ class InsightPage extends StatelessWidget {
                 ?.copyWith(fontWeight: FontWeight.w900)),
         const SizedBox(height: 5),
         const Text('Dibentuk dari data yang kamu catat.',
-            style: TextStyle(color: Color(0xFF657184))),
+            style: TextStyle(color: _muted)),
         const SizedBox(height: 22),
         Center(
             child: SizedBox(
@@ -484,8 +531,8 @@ class InsightPage extends StatelessWidget {
                   CircularProgressIndicator(
                       value: .72,
                       strokeWidth: 15,
-                      backgroundColor: const Color(0xFFDDEAF8),
-                      color: _blue),
+                      backgroundColor: _cream,
+                      color: _brandYellow),
                   const Column(mainAxisSize: MainAxisSize.min, children: [
                     Text('72',
                         style: TextStyle(
@@ -507,15 +554,13 @@ class InsightPage extends StatelessWidget {
         Text(
             '$transactionCount transaksi tercatat dengan omzet ${formatRupiah(revenue)}. Tambahkan legalitas dan pertahankan catatan harian untuk menaikkan skor.',
             textAlign: TextAlign.center,
-            style: const TextStyle(color: Color(0xFF657184), height: 1.5)),
+            style: const TextStyle(color: _muted, height: 1.5)),
         const SectionTitle(title: 'Apa yang membentuk skor'),
         const FactorTile(
-            label: 'Konsistensi transaksi', value: 82, color: _green),
-        const FactorTile(label: 'Volume usaha', value: 71, color: _blue),
-        const FactorTile(
-            label: 'Pelanggan tetap', value: 66, color: Color(0xFFF39A32)),
-        const FactorTile(
-            label: 'Legalitas usaha', value: 40, color: Color(0xFFE05B5B)),
+            label: 'Konsistensi transaksi', value: 82, color: _brandYellow),
+        const FactorTile(label: 'Volume usaha', value: 71, color: _gold),
+        const FactorTile(label: 'Pelanggan tetap', value: 66, color: _ink),
+        const FactorTile(label: 'Legalitas usaha', value: 40, color: _error),
         const SizedBox(height: 18),
         OutlinedButton.icon(
             onPressed: onAdd,
@@ -564,15 +609,15 @@ class _MiraPageState extends State<MiraPage> {
             padding: EdgeInsets.fromLTRB(20, 20, 20, 12),
             child: Row(children: [
               CircleAvatar(
-                  backgroundColor: _blue,
-                  child: Icon(Icons.auto_awesome, color: Colors.white)),
+                  backgroundColor: _brandYellow,
+                  child: Icon(Icons.auto_awesome, color: _ink)),
               SizedBox(width: 10),
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text('Mira',
                     style:
                         TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
                 Text('Asisten usaha BUMIRA',
-                    style: TextStyle(fontSize: 12, color: Color(0xFF657184))),
+                    style: TextStyle(fontSize: 12, color: _muted)),
               ]),
             ]),
           ),
@@ -591,12 +636,10 @@ class _MiraPageState extends State<MiraPage> {
                     padding: const EdgeInsets.all(13),
                     constraints: const BoxConstraints(maxWidth: 300),
                     decoration: BoxDecoration(
-                        color: message.mine ? _blue : Colors.white,
+                        color: message.mine ? _brandYellow : _warmWhite,
                         borderRadius: BorderRadius.circular(16)),
                     child: Text(message.text,
-                        style: TextStyle(
-                            color: message.mine ? Colors.white : _ink,
-                            height: 1.4)),
+                        style: TextStyle(color: _ink, height: 1.4)),
                   ),
                 );
               },
@@ -627,7 +670,7 @@ class _MiraPageState extends State<MiraPage> {
                       decoration: const InputDecoration(
                           hintText: 'Tanya Mira…',
                           filled: true,
-                          fillColor: Colors.white,
+                          fillColor: _warmWhite,
                           border: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(16)),
@@ -635,8 +678,8 @@ class _MiraPageState extends State<MiraPage> {
               const SizedBox(width: 8),
               IconButton.filled(
                   onPressed: _ask,
-                  style: IconButton.styleFrom(backgroundColor: _blue),
-                  icon: const Icon(Icons.arrow_upward, color: Colors.white)),
+                  style: IconButton.styleFrom(backgroundColor: _brandYellow),
+                  icon: const Icon(Icons.arrow_upward, color: _ink)),
             ]),
           ),
         ],
@@ -658,7 +701,7 @@ class MetricCard extends StatelessWidget {
       child: Card(
           elevation: 0,
           child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -667,17 +710,16 @@ class MetricCard extends StatelessWidget {
                             fontSize: 10,
                             letterSpacing: .6,
                             fontWeight: FontWeight.w900,
-                            color: Color(0xFF657184))),
+                            color: _muted)),
                     const Spacer(),
                     Text(value,
                         style: TextStyle(
-                            fontSize: 22,
+                            fontSize: 20,
                             fontWeight: FontWeight.w900,
                             color: accent)),
                     const SizedBox(height: 4),
                     Text(note,
-                        style: const TextStyle(
-                            fontSize: 11, color: Color(0xFF657184)))
+                        style: const TextStyle(fontSize: 10, color: _muted))
                   ]))));
 }
 
@@ -706,14 +748,13 @@ class ActionCard extends StatelessWidget {
       elevation: 0,
       child: ListTile(
           leading: CircleAvatar(
-              backgroundColor: const Color(0xFFE8F2FF),
-              child: Icon(icon, color: _blue)),
+              backgroundColor: _cream, child: Icon(icon, color: _ink)),
           title:
               Text(title, style: const TextStyle(fontWeight: FontWeight.w800)),
           subtitle: Text(subtitle),
           trailing: Text(action,
               style:
-                  const TextStyle(color: _blue, fontWeight: FontWeight.w800))));
+                  const TextStyle(color: _ink, fontWeight: FontWeight.w800))));
 }
 
 class FactorTile extends StatelessWidget {
@@ -748,7 +789,7 @@ class FactorTile extends StatelessWidget {
                     minHeight: 8,
                     borderRadius: BorderRadius.circular(8),
                     color: color,
-                    backgroundColor: const Color(0xFFE8EDF3))
+                    backgroundColor: _cream)
               ]))));
 }
 
